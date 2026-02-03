@@ -1,0 +1,778 @@
+[
+  {
+    "id": "07M5ugBdQ600YTxeufce",
+    "nombre": "Samsung Galaxy S25 Ultra 5g 512GB/12 RAM",
+    "before": {
+      "ram": 12,
+      "almacenamiento": 512,
+      "camara": 200,
+      "pantalla": 6.8
+    },
+    "parsed": {
+      "ram": 12,
+      "almacenamiento": 512,
+      "bateria": null,
+      "camara": 200,
+      "pantalla": 6.8
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "0E7C0JDHHBn5Kv8BbNnM",
+    "nombre": "REDMI NOTE 14 PRO PLUS 5G/ 256 GB",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5110,
+      "camara": 200
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5110,
+      "camara": 200,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "1INLnbyqToxw8OC7qR68",
+    "nombre": "Audífonos APPLE AirPods 4 con Cancelación Activa de Ruido Blanco",
+    "before": {},
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "3T5SSjKFCOt0BA7V6SAK",
+    "nombre": "Redmi note 14 256 GB",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5500,
+      "camara": 108,
+      "pantalla": 7
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5500,
+      "camara": 108,
+      "pantalla": 7
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "4AGNJuD7YMb5wz3FG0fg",
+    "nombre": "Adaptador|Cargador de Corriente APPLE 20W USB-C Blanco",
+    "before": {},
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "6zGQU7kgulN1bPbdmpjk",
+    "nombre": "INFINIX Hot 50 Pro+ 256GB/ 16 RAM Púrpura",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "8WeEYvSwk8UMOe6obi96",
+    "nombre": "Xiaomi Redmi 15c 8gb Ram 256gb Dual Sim 50mp Huella Fm Dimm Azul",
+    "before": {
+      "ram": 8,
+      "almacenamiento": 256,
+      "bateria": 0,
+      "camara": 50,
+      "pantalla": 9
+    },
+    "parsed": {
+      "ram": 8,
+      "almacenamiento": 256,
+      "bateria": 0,
+      "camara": 50,
+      "pantalla": 9
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "8nigmOcqE7yYNfMPomtN",
+    "nombre": "Redmi 14c 256 GB",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 50,
+      "pantalla": 4
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 50,
+      "pantalla": 4
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "9LkxfkKBmSPZBCsveSU1",
+    "nombre": "IPHONE 11 EXIBICION /128gb/4Ram",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "camara": 12,
+      "pantalla": 6.1
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": null,
+      "camara": 12,
+      "pantalla": 6.1
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "9NxNUgHiKzkNWheuhFml",
+    "nombre": "SAMSUNG Galaxy A56 256GB 5G Gris",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "Brt3FSXr5Gp7QeViieNl",
+    "nombre": "Celular REDMI A5 128GB Dorado",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "FfStozFuc2iptbVIAlvm",
+    "nombre": "Audifonos REDMI Inalambricos Bluetooth In Ear Buds 6 Lite",
+    "before": {},
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "FqtTcaF6QK8OE2d2Bw05",
+    "nombre": "iPhone 15 128 GB",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "camara": 48
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": null,
+      "camara": 48,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "Gie6nTQDeV9KXNvxHv2e",
+    "nombre": "SAMSUNG GALAXY S24 ULTRA/256gb/12Ram",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "camara": 200
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": 200,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "KWS4CNiWisJP71yVzYsy",
+    "nombre": "SAMSUNG Galaxy A36 256GB 5G Verde",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 50,
+      "pantalla": 6.7
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 50,
+      "pantalla": 6.7
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "Ktmn4OmI2VaN8D6Uo7yx",
+    "nombre": "Tecno Spark 30C 256 GB",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 50,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "LntPpEZliAtuB2Ej8bbu",
+    "nombre": "REDMI 14C/128gb/4ram",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "camara": 50
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": null,
+      "camara": 50,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "NFqrnssGxzSDdfMyIvTp",
+    "nombre": "SAMSUNG A55 256GB 5G Azul Claro",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "NMFYdZOWZte8zxTZF1pP",
+    "nombre": "Samsung A06 128 GB",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": 0,
+      "camara": 50,
+      "pantalla": 7
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": 0,
+      "camara": 50,
+      "pantalla": 7
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "NUXzJGT6u9AgPT3kPoEG",
+    "nombre": "INFINIX SMART 9/128gb/4Ram",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "ORvHZgIyniPpspx6N1Ns",
+    "nombre": "MacBook Air 15\" Pulgadas Chip M3 CPU 8 núcleos GPU 10 núcleos - RAM 8 GB - SSD 256 GB - Blanco Estrella",
+    "before": {
+      "ram": 8,
+      "almacenamiento": 256,
+      "pantalla": 5
+    },
+    "parsed": {
+      "ram": 8,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": null,
+      "pantalla": 5
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "PUhF8GvJs5qRYDqVNio6",
+    "nombre": "INFINITIX NOTE 50 PRO/ 256GB/12RAM",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "QSmu5KDtPcK5DEX55dk4",
+    "nombre": "MacBook Air de 13\" Pulgadas MGN63LA/A Chip M1 RAM 8GB Disco Estado Solido 256 GB - Gris espacial",
+    "before": {
+      "ram": 8,
+      "almacenamiento": 256,
+      "pantalla": 3
+    },
+    "parsed": {
+      "ram": 8,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": null,
+      "pantalla": 3
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "QqTSqGB68EiugGG4Tnmd",
+    "nombre": "iPhone 16 Pro 128 GB",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "camara": 48
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": null,
+      "camara": 48,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "S35YIviUpH6CR9RTOTcg",
+    "nombre": "MOTOROLA Edge 50 Fusion 256GB Azul",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "T0HpsNeuAUmkrUSzXSMW",
+    "nombre": "AirTag 1 Unidad",
+    "before": {},
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "VX68POL2n6Ahun68V4Kq",
+    "nombre": "iPhone 16 128 GB",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "XqhETPSvt4KqhmycLSDK",
+    "nombre": "TECNO SPARK GO 1/ 128 GB",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": 5000,
+      "camara": 13
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": 5000,
+      "camara": 13,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "aZDIHgphxGOufvt37uqQ",
+    "nombre": "Celular OPPO A60 256GB Blanco",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "atHCDrj1cMaUYsOYkwMr",
+    "nombre": "SAMSUNG A05s",
+    "before": {
+      "camara": 50,
+      "pantalla": 7
+    },
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": 50,
+      "pantalla": 7
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "dHq07gW7xMNbfdVXUoly",
+    "nombre": "Reloj REDMI Watch 5 Active 50.8mm Negro",
+    "before": {
+      "pantalla": 2
+    },
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": null,
+      "pantalla": 2
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "dJ09a00QUgziEjHvikOl",
+    "nombre": "Cable APPLE USB‑C a Lightning de 1.0 Metro Blanco",
+    "before": {},
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "dNOFaqaEr3MqDqUq9aR4",
+    "nombre": "Celular Xiaomi Redmi 15 Sandy Purple 8GB RAM 256GB ROM",
+    "before": {
+      "ram": 8,
+      "almacenamiento": 256,
+      "bateria": 7000,
+      "camara": 50,
+      "pantalla": 6.9
+    },
+    "parsed": {
+      "ram": 8,
+      "almacenamiento": 256,
+      "bateria": 7000,
+      "camara": 50,
+      "pantalla": 6.9
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "g7cd26q1zP0na0RAqwX1",
+    "nombre": "SAMSUNG S25 Plus 256GB 5G Plateado",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 900,
+      "pantalla": 6.7
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 900,
+      "camara": null,
+      "pantalla": 6.7
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "h6eqliQE3KFsOV4FWPay",
+    "nombre": "Audífonos Apple AirPods Pro 2 Estuche MagSafe USB-C Blanco",
+    "before": {},
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "knnjgSVFhbuq26EiGS1F",
+    "nombre": "iPhone 13 128 GB",
+    "before": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "camara": 12,
+      "pantalla": 6.1
+    },
+    "parsed": {
+      "ram": 28,
+      "almacenamiento": 128,
+      "bateria": null,
+      "camara": 12,
+      "pantalla": 6.1
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "kvZboSh2LoN0IWKxcJC5",
+    "nombre": "INFINITIX HOT 50!/256gb/4Ram",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 48,
+      "pantalla": 7
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 48,
+      "pantalla": 7
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "pG6pF5tnW17omgEfUyu4",
+    "nombre": "Samsung Galaxy A16 5g",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 13,
+      "pantalla": 6.7
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 5000,
+      "camara": 13,
+      "pantalla": 6.7
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "pnAGTA9bxT9hzBUcffmS",
+    "nombre": "INFINITIX SMART 10/256gb/4ram",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 0,
+      "camara": 57
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": 0,
+      "camara": 57,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "uZcvwFdiywj7SN8CB2lY",
+    "nombre": "Reloj REDMI Watch 5 Lite 49.78 Negro",
+    "before": {
+      "pantalla": 6
+    },
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": null,
+      "pantalla": 6
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "vh7sNxHEWwRJQcOLbNyP",
+    "nombre": "AirTag x4 Unidades",
+    "before": {},
+    "parsed": {
+      "ram": null,
+      "almacenamiento": null,
+      "bateria": null,
+      "camara": null,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "wS8kFweDpSFQTFzGwnLW",
+    "nombre": "Redmi note 14 pro",
+    "before": {
+      "ram": 8,
+      "almacenamiento": 512,
+      "bateria": 5110,
+      "camara": 200,
+      "pantalla": 7
+    },
+    "parsed": {
+      "ram": 8,
+      "almacenamiento": 512,
+      "bateria": 5110,
+      "camara": 200,
+      "pantalla": 7
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "wfbTg0Wn9iRuqUNlNvZR",
+    "nombre": "iPhone 16 pro max 256 GB- SIM FISICA",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "camara": 48
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": 48,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  },
+  {
+    "id": "z6Jk5c0PHpJBIMdFLZv1",
+    "nombre": "TECNO CAMÓN 40 PRO/256GB/8RAM",
+    "before": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "camara": 50
+    },
+    "parsed": {
+      "ram": 56,
+      "almacenamiento": 256,
+      "bateria": null,
+      "camara": 50,
+      "pantalla": null
+    },
+    "write": {},
+    "willUpdate": false
+  }
+]

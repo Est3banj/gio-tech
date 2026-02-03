@@ -1,0 +1,168 @@
+/* ========================================
+   DECORACIONES VISUALES DE TEMPORADA
+   GIO TECH - Estilo Moderno & Minimalista
+   ======================================== */
+
+/*
+  ✔ Estilo elegante, sin emojis visibles.
+  ✔ Gradientes sutiles, brillos suaves y partículas minimalistas.
+  ✔ ZERO interferencia con elementos, ZERO ruptura de diseño.
+  ✔ Mantiene tu UI profesional tipo tienda premium.
+*/
+
+/* ========================================
+   BASE GLOBAL PARA TODOS LOS TEMAS
+   ======================================== */
+
+html[data-theme-name] #root {
+  transition: background 0.6s ease, box-shadow 0.6s ease;
+}
+
+html[data-theme-name] header,
+html[data-theme-name] footer {
+  position: relative;
+}
+
+html[data-theme-name] .product-card:hover {
+  transition: box-shadow 0.3s ease;
+}
+
+/* Partículas decorativas sutiles */
+.season-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+  background-repeat: repeat;
+  opacity: 0.08;
+  animation: floatParticles 10s linear infinite;
+}
+
+@keyframes floatParticles {
+  from {
+    background-position: 0 0;
+  }
+
+  to {
+    background-position: 200px 200px;
+  }
+}
+
+/* ========================================
+   🎄 NAVIDAD – ELEGANTE
+   ======================================== */
+
+html[data-theme-name="christmas"] #root {
+  background: radial-gradient(circle at top,
+      rgba(0, 150, 80, 0.12),
+      transparent 60%);
+}
+
+html[data-theme-name="christmas"] header::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 3px;
+  background: linear-gradient(90deg, #0f5132, #b30000, #0f5132);
+  border-radius: 90px;
+  opacity: 0.3;
+}
+
+html[data-theme-name="christmas"] .product-card:hover {
+  box-shadow: 0 0 20px rgba(0, 130, 60, 0.2) !important;
+}
+
+/* Partículas navideñas: puntos luminosos */
+html[data-theme-name="christmas"] .season-particles {
+  background-image: radial-gradient(#ffffff 1px, transparent 1px);
+}
+
+/* ========================================
+   🎃 HALLOWEEN – MODERNO & OSCURO
+   ======================================== */
+
+html[data-theme-name="halloween"] #root {
+  background: radial-gradient(circle at top,
+      rgba(255, 98, 0, 0.10),
+      transparent 70%);
+}
+
+html[data-theme-name="halloween"] header::after {
+  content: "";
+  position: absolute;
+  top: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 3px;
+  background: linear-gradient(90deg, #ff6d00, #7b1fa2, #ff6d00);
+  border-radius: 90px;
+  opacity: 0.25;
+}
+
+html[data-theme-name="halloween"] .product-card:hover {
+  box-shadow: 0 0 20px rgba(255, 109, 0, 0.25) !important;
+}
+
+/* Partículas halloween: puntos suaves naranja/morado */
+html[data-theme-name="halloween"] .season-particles {
+  background-image: radial-gradient(#ff6d00 1px, transparent 1px),
+    radial-gradient(#7b1fa2 1px, transparent 1px);
+  background-size: 80px 80px, 120px 120px;
+  opacity: 0.06;
+}
+
+/* ========================================
+   💘 AMOR Y AMISTAD – PREMIUM ROSADO
+   ======================================== */
+
+html[data-theme-name="valentine"] #root {
+  background: radial-gradient(circle at top,
+      rgba(255, 100, 150, 0.10),
+      transparent 60%);
+}
+
+html[data-theme-name="valentine"] header::after {
+  content: "";
+  position: absolute;
+  top: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  height: 3px;
+  background: linear-gradient(90deg, #ff4081, #f48fb1, #ff4081);
+  border-radius: 90px;
+  opacity: 0.28;
+}
+
+html[data-theme-name="valentine"] .product-card:hover {
+  box-shadow: 0 0 20px rgba(255, 64, 129, 0.23) !important;
+}
+
+/* Partículas rosadas premium */
+html[data-theme-name="valentine"] .season-particles {
+  background-image: radial-gradient(#ff80ab 1px, transparent 1px);
+  opacity: 0.09;
+}
+
+/* ========================================
+   RESPONSIVE
+   ======================================== */
+
+@media (max-width: 768px) {
+  .season-particles {
+    opacity: 0.05;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .season-particles {
+    animation: none !important;
+  }
+}

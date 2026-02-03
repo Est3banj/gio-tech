@@ -1,0 +1,424 @@
+// src/components/ProductCard.jsx
+import React, { useState } from "react";
+import { Modal, Button, Card, Row, Col } from "react-bootstrap";
+import { useCart } from "../contexts/CartContext";
+import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
+
+function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, no se pasa como prop
+  const [mostrar, setMostrar] = useState(false);
+  const { addToCart, cartItems } = useCart();
+  const safeCartItems = Array.isArray(cartItems) ? cartItems : [];
+  const rawPhoneNumber = useWhatsappNumber();
+  const phoneNumber = rawPhoneNumber || '573248022632'; // Asegura un número por defecto
+
+  const abrir = () => setMostrar(true);
+  const cerrar = () => setMostrar(false);
+
+  // Helper de formato de precio
+  function formatoPrecio(valor) {
+    if (valor === null || typeof valor === 'undefined' || valor === '') return '—';
+    const numero = typeof valor === "string" ? parseFloat(valor.replace(/\s+/g, '').replace(/,/, '.')) : Number(valor);
+    if (!isNaN(numero) && Number.isFinite(numero)) {
+      return numero.toLocaleString("es-CO", {
+        style: "currency",
+        currency: "COP",
+        maximumFractionDigits: 0,
+      });
+    }
+    return '—';
+  }
+
+  // Desestructuración del producto
+  const {
+    nombre = "Producto sin nombre",
+    descripcion = "",
+    contado,
+    cuotas6,
+    cuotas8,
+    imagen,
+    // promo
+    promoActive,
+    promoPrice,
+    promoLabel,
+    promoStart,
+    promoEnd,
+    promoPriority,
+    promoBadgeBg,
+    promoBadgeText,
+    promoHighlight,
+    // nuevo + display
+    nuevo,
+    nuevoBadgeText,
+    nuevoBadgeBg,
+    badgeMode,
+  } = producto || {};
+
+  // Compatibilidad promo flag
+  const effectivePromoActive = (producto?.promoActive !== undefined ? producto.promoActive
+    : (producto?.promo !== undefined ? producto.promo
+      : undefined));
+
+  // Helpers promo timing
+  const getMillis = (ts) => {
+    if (!ts) return null;
+    if (typeof ts === 'number') return ts;
+    if (typeof ts?.toMillis === 'function') return ts.toMillis();
+    const n = +new Date(ts);
+    return Number.isFinite(n) ? n : null;
+  };
+  const nowMs = Date.now();
+  const startMs = getMillis(promoStart);
+  const endMs = getMillis(promoEnd);
+  const inWindow = (!startMs || nowMs >= startMs) && (!endMs || nowMs <= endMs);
+
+  // Validez precio promo (solo para mostrar precio promocional)
+  const countedPromoPrice = Number(promoPrice);
+  const countedContado = Number(contado);
+  const hasPromoPrice = Number.isFinite(countedPromoPrice) && countedPromoPrice > 0 && Number.isFinite(countedContado) && countedContado > 0 && countedPromoPrice < countedContado;
+
+  // Modo de badges y flags de visibilidad (separado: badge vs precio)
+  const effectiveBadgeMode = badgeMode || 'promo';
+  const showPromoBadge = (effectiveBadgeMode === 'promo' || effectiveBadgeMode === 'ambos') && !!effectivePromoActive && inWindow;
+  const showNuevoBadge = (effectiveBadgeMode === 'nuevo' || effectiveBadgeMode === 'ambos') && !!nuevo;
+
+  // Si hay precio promo válido, mostrar precio promo en UI
+  const showPromoPrice = hasPromoPrice && inWindow && !!effectivePromoActive;
+
+  const priceRegularStr = formatoPrecio(contado);
+  const pricePromoStr = formatoPrecio(promoPrice);
+
+  const badgeBg = promoBadgeBg || 'var(--promo-badge-bg, #ff5722)';
+  const badgeText = promoBadgeText || 'var(--promo-badge-text, #ffffff)';
+  const highlightColor = (promoHighlight && String(promoHighlight).trim()) || 'var(--promo-highlight, rgba(255,87,34,.25))';
+
+  const cuotaInicial = Number(producto?.cuotaInicial || 0);
+
+  const mensajeWhatsAppContadoDirecto = showPromoPrice
+    ? `Hola, estoy interesado en comprar el ${nombre}.\nPrecio promocional: ${pricePromoStr} (antes ${priceRegularStr}).\n¿Está disponible para entrega inmediata?`
+    : `Hola, estoy interesado en comprar al contado el ${nombre}.\nPrecio: ${priceRegularStr}.\n¿Está disponible para entrega inmediata?`;
+
+  const mensajeWhatsAppCreditoDirecto = `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatoPrecio(cuotaInicial)}\n16 cuotas quincenales: ${formatoPrecio(cuotas6)}\n8 cuotas mensuales: ${formatoPrecio(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
+
+  const isInCartContado = safeCartItems.some(item => (item.productId === producto.id || item.itemId === producto.id) && item.cotizacionType === 'contado');
+  const isInCartCredito = safeCartItems.some(item => (item.productId === producto.id || item.itemId === producto.id) && item.cotizacionType === 'credito');
+
+  return (
+    <>
+      {/* Estilos responsivos específicos para el layout de badges.
+          Los insertamos inline aquí para no tocar hojas externas y mantenerlo encapsulado. */}
+      <style>{`
+        .gio-badge-container {
+          position: absolute;
+          top: 10px;
+          left: 10px;
+          right: 10px;
+          display: flex;
+          justify-content: space-between;
+          align-items: flex-start;
+          gap: 8px;
+          pointer-events: none; /* que no bloquee clicks sobre la tarjeta */
+          z-index: 20;
+        }
+        .gio-badge-wrapper {
+          pointer-events: auto; /* permitir interacciones puntuales si se desea */
+          display: inline-block;
+        }
+        .gio-badge {
+          padding: 6px 10px;
+          border-radius: 6px;
+          font-weight: 700;
+          font-size: 0.85rem;
+          display: inline-block;
+        }
+
+        /* Responsive: apilar en pantallas pequeñas */
+        @media (max-width: 480px) {
+          .gio-badge-container {
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+          }
+        }
+
+        /* ===== ESTILOS DEL MODAL ===== */
+        
+        /* Descripción del producto - mejorar legibilidad */
+        .modal-body p {
+          line-height: 1.7;
+          margin-bottom: 1rem;
+        }
+        
+        /* Precios de cuotas - mayor peso visual */
+        .modal-body p strong {
+          font-weight: 700;
+          color: #2c3e50;
+          font-size: 1.05em;
+        }
+        
+        /* Espaciado entre bloques de información */
+        .modal-body > p:not(:last-child) {
+          margin-bottom: 0.75rem;
+        }
+        
+        /* BOTONES DE WHATSAPP - Máxima prioridad visual */
+        .btn-whatsapp-primary {
+          background: linear-gradient(135deg, #25D366 0%, #1ebe57 100%) !important;
+          border: none !important;
+          color: white !important;
+          font-weight: 700 !important;
+          font-size: 1.05rem !important;
+          padding: 14px 24px !important;
+          box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3) !important;
+          transition: all 0.3s ease !important;
+        }
+        
+        .btn-whatsapp-primary:hover {
+          background: linear-gradient(135deg, #1ebe57 0%, #128c4a 100%) !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4) !important;
+        }
+        
+        .btn-whatsapp-secondary {
+          background: linear-gradient(135deg, #D32F2F 0%, #b71c1c 100%) !important;
+          border: none !important;
+          color: white !important;
+          font-weight: 700 !important;
+          font-size: 1.05rem !important;
+          padding: 14px 24px !important;
+          box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3) !important;
+          transition: all 0.3s ease !important;
+        }
+        
+        .btn-whatsapp-secondary:hover {
+          background: linear-gradient(135deg, #b71c1c 0%, #8b0000 100%) !important;
+          transform: translateY(-2px) !important;
+          box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4) !important;
+        }
+        
+        /* BOTONES DE CARRITO - Acción secundaria */
+        .btn-cart-outline {
+          background: transparent !important;
+          border: 2px solid #dee2e6 !important;
+          color: #6c757d !important;
+          font-weight: 600 !important;
+          padding: 10px 20px !important;
+          transition: all 0.3s ease !important;
+        }
+        
+        .btn-cart-outline:hover {
+          background: #f8f9fa !important;
+          border-color: #adb5bd !important;
+          color: #495057 !important;
+        }
+        
+        .btn-cart-outline:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+        }
+        
+        /* Títulos de secciones en el modal */
+        .modal-section-title {
+          font-size: 1.1rem;
+          font-weight: 700;
+          color: #25D366;
+          margin-bottom: 1rem;
+          text-align: center;
+        }
+        
+        .modal-section-subtitle {
+          font-size: 0.9rem;
+          font-weight: 600;
+          color: #6c757d;
+          margin-top: 1.5rem;
+          margin-bottom: 0.75rem;
+          text-align: center;
+        }
+        
+        /* Espaciado del footer del modal */
+        .modal-footer {
+          padding-top: 1.5rem;
+          padding-bottom: 1.5rem;
+        }
+      `}</style>
+
+      <Card
+        className="product-card h-100 shadow-sm position-relative"
+        onClick={abrir}
+        style={{
+          cursor: "pointer",
+          ...(showPromoBadge
+            ? {
+              border: `2px solid ${highlightColor}`,
+              boxShadow: `0 0 0 4px ${highlightColor} inset, 0 6px 18px rgba(0,0,0,.06)`
+            }
+            : {})
+        }}
+      >
+        {/* CONTENEDOR DE BADGES: distribuye left (NUEVO) y right (PROMO).
+            Usamos clases CSS para poder aplicar media-queries y no romper nada. */}
+        <div className="gio-badge-container" aria-hidden={!showPromoBadge && !showNuevoBadge}>
+          <div className="gio-badge-wrapper" style={{ visibility: showNuevoBadge ? 'visible' : 'hidden' }}>
+            <span
+              className="gio-badge"
+              style={{
+                backgroundColor: nuevoBadgeBg || '#28a745',
+                color: '#ffffff',
+              }}
+            >
+              {nuevoBadgeText || 'NUEVO'}
+            </span>
+          </div>
+
+          <div className="gio-badge-wrapper" style={{ visibility: showPromoBadge ? 'visible' : 'hidden' }}>
+            <span
+              className="gio-badge"
+              style={{
+                backgroundColor: promoBadgeBg || badgeBg,
+                color: promoBadgeText || badgeText,
+              }}
+            >
+              {promoLabel || promoBadgeText || 'PROMO'}
+            </span>
+          </div>
+        </div>
+
+        <Card.Img
+          variant="top"
+          src={imagen || "https://via.placeholder.com/300x300?text=Sin+imagen"}
+          alt={nombre}
+          className="product-card-img"
+          loading="lazy"
+        />
+        <Card.Body className="text-center d-flex flex-column">
+          <div>
+            <div className="d-flex justify-content-between align-items-start mb-1">
+              <Card.Title className="product-card-title mb-0">{nombre}</Card.Title>
+            </div>
+
+            {showPromoPrice ? (
+              <>
+                <Card.Text className="text-muted mb-0"><del>{priceRegularStr}</del></Card.Text>
+                <Card.Text className="product-card-price fw-bold fs-5 mb-0" style={{ color: 'var(--gio-red, #d32f2f)' }}>
+                  {pricePromoStr}
+                </Card.Text>
+                <Card.Text className="text-muted small">Precio promocional</Card.Text>
+              </>
+            ) : (
+              <>
+                <Card.Text className="product-card-price fw-bold text-primary fs-5 mb-0">
+                  {priceRegularStr}
+                </Card.Text>
+                <Card.Text className="text-muted small">Precio al contado</Card.Text>
+              </>
+            )}
+          </div>
+
+          {/* Botón Ver detalles */}
+          <button
+            className="btn-ver-detalles"
+            onClick={(e) => {
+              e.stopPropagation();
+              abrir();
+            }}
+            style={{
+              marginTop: 'auto',
+              backgroundColor: '#D32F2F',
+              color: 'white',
+              border: 'none',
+              borderRadius: '8px',
+              padding: '10px 20px',
+              fontSize: '0.95rem',
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'background-color 0.3s ease',
+              width: '100%',
+            }}
+            onMouseEnter={(e) => e.target.style.backgroundColor = '#B71C1C'}
+            onMouseLeave={(e) => e.target.style.backgroundColor = '#D32F2F'}
+          >
+            Ver detalles
+          </button>
+        </Card.Body>
+      </Card>
+
+      {/* Modal */}
+      <Modal show={mostrar} onHide={cerrar} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{nombre}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <p style={{ fontSize: '0.95rem' }}>{descripcion && descripcion.trim() !== "" ? descripcion : "Sin descripción."}</p>
+
+          {showPromoPrice ? (
+            <>
+              <p className="mb-2"><strong>Precio regular:</strong> <del>{priceRegularStr}</del></p>
+              <p className="mb-3"><strong>Precio promocional:</strong> <span style={{ color: '#D32F2F', fontSize: '1.15em' }}>{pricePromoStr}</span> {promoLabel ? <span className="badge ms-2" style={{ backgroundColor: promoBadgeBg || badgeBg, color: promoBadgeText || badgeText }}>{promoLabel}</span> : null}</p>
+            </>
+          ) : (
+            <p className="mb-3"><strong>Precio contado:</strong> <span style={{ color: '#D32F2F', fontSize: '1.15em' }}>{priceRegularStr}</span></p>
+          )}
+
+          {cuotaInicial > 0 && (
+            <p className="mb-2"><strong>Cuota inicial:</strong> {formatoPrecio(cuotaInicial)}</p>
+          )}
+
+          <div style={{ marginTop: '1.25rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+            <p className="mb-2"><strong>16 cuotas quincenales:</strong> <span style={{ fontSize: '1.1em', color: '#2c3e50' }}>{formatoPrecio(cuotas6)}</span></p>
+            <p className="mb-0"><strong>8 cuotas mensuales:</strong> <span style={{ fontSize: '1.1em', color: '#2c3e50' }}>{formatoPrecio(cuotas8)}</span></p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="d-flex flex-column">
+          {/* PRIORIDAD 1: Botones de WhatsApp - Asesoría Directa */}
+          <h6 className="modal-section-title">💬 Asesoría Directa por WhatsApp</h6>
+          <Row className="g-3 w-100 mb-4">
+            <Col xs={12} md={6}>
+              <Button
+                onClick={() => phoneNumber && window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensajeWhatsAppContadoDirecto)}`, "_blank")}
+                className="w-100 btn-whatsapp-primary"
+              >
+                <i className="bi bi-whatsapp me-2"></i> Comprar Contado
+              </Button>
+            </Col>
+            <Col xs={12} md={6}>
+              <Button
+                onClick={() => phoneNumber && window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensajeWhatsAppCreditoDirecto)}`, "_blank")}
+                className="w-100 btn-whatsapp-secondary"
+              >
+                <i className="bi bi-whatsapp me-2"></i> Cotizar Crédito
+              </Button>
+            </Col>
+          </Row>
+
+          {/* PRIORIDAD 2: Carrito de Intereses - Acción Secundaria */}
+          <p className="modal-section-subtitle">O añade al carrito para comparar después:</p>
+          <Row className="g-2 w-100 mb-3">
+            <Col xs={12} md={6}>
+              <Button
+                onClick={() => { addToCart(producto, 'contado'); cerrar(); }}
+                className="w-100 btn-cart-outline"
+                disabled={isInCartContado}
+              >
+                {isInCartContado ? '✓ Añadido (Contado)' : <><i className="bi bi-cart-plus me-2"></i> Añadir (Contado)</>}
+              </Button>
+            </Col>
+            <Col xs={12} md={6}>
+              <Button
+                onClick={() => { addToCart(producto, 'credito'); cerrar(); }}
+                className="w-100 btn-cart-outline"
+                disabled={isInCartCredito}
+              >
+                {isInCartCredito ? '✓ Añadido (Crédito)' : <><i className="bi bi-credit-card me-2"></i> Añadir (Crédito)</>}
+              </Button>
+            </Col>
+          </Row>
+
+          <Button variant="secondary" onClick={cerrar} className="mt-3 w-100">
+            Cerrar
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </>
+  );
+}
+
+export default ProductCard;

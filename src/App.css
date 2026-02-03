@@ -1,0 +1,177 @@
+/* src/App.css */
+
+/* Define tus variables de color de marca */
+:root {
+  --gio-red: #C00000; /* Un ROJO FUERTE y GENÉRICO. ¡Cámbialo a tu HEX EXACTO si lo tienes! */
+  --gio-red-dark: #900000; /* Un rojo más oscuro para hover (ajustado al rojo de arriba) */
+  --gio-light-gray: #F5F5F5; /* Gris muy claro */
+  --gio-gray: #CCCCCC; /* Gris intermedio para bordes/textos sutiles */
+  --gio-white: #FFFFFF; /* Blanco */
+  --gio-dark-text: #343a40; /* Un gris oscuro para texto principal */
+  --promo-badge-bg: #d32f2f;
+  --promo-badge-text: #ffffff;
+  --promo-highlight: rgba(211, 47, 47, 0.12);
+  --card-radius: 12px;
+}
+
+/* Estilos de la configuración inicial de Vite */
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--gio-light-gray); /* Fondo general de la aplicación */
+}
+
+.logo { /* Estilos genéricos para logos, si se usan en otros lugares */
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin { /* Animación de spin, si se usa */
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card { /* Puedes mantener esta, pero las Card de react-bootstrap se manejan mejor con sus propias clases */
+  padding: 2em;
+}
+
+.read-the-docs { /* Si usas enlaces con esta clase */
+  color: #888;
+}
+
+/* Colores de texto y botones que usan la variable --gio-red */
+.text-primary { /* Sobreescribimos el color primario de Bootstrap para que sea tu rojo */
+    color: var(--gio-red) !important;
+}
+
+.btn-primary { /* Si usas botones primary en otros lugares, también serán rojos */
+    background-color: var(--gio-red) !important;
+    border-color: var(--gio-red) !important;
+    color: var(--gio-white) !important; /* Texto blanco en botones rojos */
+}
+
+.btn-primary:hover {
+    background-color: var(--gio-red-dark) !important;
+    border-color: var(--gio-red-dark) !important;
+}
+
+.btn-outline-primary { /* Botones con borde rojo */
+    color: var(--gio-red) !important;
+    border-color: var(--gio-red) !important;
+}
+.btn-outline-primary:hover {
+    background-color: var(--gio-red) !important;
+    color: var(--gio-white) !important;
+}
+
+/* Estilos para ProductCard */
+.product-card {
+  position: relative;
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  background-color: var(--gio-white); /* Fondo de tarjeta blanco */
+  border: 1px solid var(--gio-gray); /* Borde sutil */
+}
+
+.product-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15) !important;
+}
+
+.product-card-img {
+  max-height: 200px;
+  object-fit: contain;
+  padding: 1rem;
+}
+
+.product-card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--gio-dark-text); /* Color de texto oscuro para títulos */
+}
+
+.product-card-price {
+  color: var(--gio-red) !important; /* Rojo de GIO TECH para el precio */
+  font-weight: bold;
+}
+
+/* Estilo para el botón de WhatsApp (verde específico) */
+.btn-success {
+  background-color: #25D366 !important;
+  border-color: #25D366 !important;
+  color: var(--gio-white) !important;
+}
+.btn-success:hover {
+  background-color: #1DA851 !important;
+  border-color: #1DA851 !important;
+}
+
+/* Color para el botón 'info' usado para Crédito en ProductCard */
+.btn-info {
+  background-color: #17A2B8 !important; /* Un azul cian, puedes cambiarlo */
+  border-color: #17A2B8 !important;
+  color: var(--gio-white) !important; /* Asegurar texto blanco */
+}
+.btn-info:hover {
+  background-color: #138496 !important;
+  border-color: #138496 !important;
+}
+
+/* Estilos para el Offcanvas (panel lateral del carrito) */
+.offcanvas-body {
+    display: flex;
+    flex-direction: column;
+}
+
+.offcanvas-body .list-group {
+    flex-grow: 1; /* Permite que la lista crezca y el scroll sea interno */
+    overflow-y: auto; /* Habilita el scroll si la lista es muy larga */
+}
+
+.offcanvas-body .mt-auto { /* Asegura que los botones de acción final se queden abajo */
+    margin-top: auto;
+}
+
+/* Helper para ubicar el badge de promoción dentro de la tarjeta */
+.promo-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  background-color: var(--promo-badge-bg);
+  color: var(--promo-badge-text);
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 2px 8px rgba(0,0,0,.1);
+  pointer-events: none; /* no interferir con clics en la tarjeta */
+}
+
+/* Redondeo base de tarjetas controlado por variable */
+.product-card,
+.card {
+  border-radius: var(--card-radius);
+}

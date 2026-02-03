@@ -1,0 +1,14 @@
+{
+  "name": "gio-tech-scripts",
+  "version": "1.0.0",
+  "private": true,
+  "type": "commonjs",
+  "scripts": {
+    "backfill:preview": "node backfillSpecs.js",
+    "backfill:apply": "node backfillSpecs.js --apply",
+    "backfill:force": "node backfillSpecs.js --apply --force"
+  },
+  "dependencies": {
+    "firebase-admin": "^12.5.0"
+  }
+}
