@@ -1,6 +1,6 @@
 // src/components/ProductCard.jsx
 import React, { useState } from "react";
-import { Modal, Button, Card, Row, Col } from "react-bootstrap";
+import { Modal, Button, Card, Row, Col, Badge } from "react-bootstrap";
 import { useCart } from "../contexts/CartContext";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 
@@ -51,6 +51,9 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
     nuevoBadgeText,
     nuevoBadgeBg,
     badgeMode,
+    // financiación 12 meses
+    solo12Meses,
+    cuotas12,
   } = producto || {};
 
   // Compatibilidad promo flag
@@ -97,7 +100,9 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
     ? `Hola, estoy interesado en comprar el ${nombre}.\nPrecio promocional: ${pricePromoStr} (antes ${priceRegularStr}).\n¿Está disponible para entrega inmediata?`
     : `Hola, estoy interesado en comprar al contado el ${nombre}.\nPrecio: ${priceRegularStr}.\n¿Está disponible para entrega inmediata?`;
 
-  const mensajeWhatsAppCreditoDirecto = `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatoPrecio(cuotaInicial)}\n16 cuotas quincenales: ${formatoPrecio(cuotas6)}\n8 cuotas mensuales: ${formatoPrecio(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
+  const mensajeWhatsAppCreditoDirecto = solo12Meses && cuotas12
+    ? `Hola, estoy interesado en el ${nombre} con el plan especial de 12 meses.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatoPrecio(cuotaInicial)}\n12 cuotas mensuales: ${formatoPrecio(cuotas12)}\n¿Me pueden dar más información?`
+    : `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatoPrecio(cuotaInicial)}\n16 cuotas quincenales: ${formatoPrecio(cuotas6)}\n8 cuotas mensuales: ${formatoPrecio(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
 
   const isInCartContado = safeCartItems.some(item => (item.productId === producto.id || item.itemId === producto.id) && item.cotizacionType === 'contado');
   const isInCartCredito = safeCartItems.some(item => (item.productId === producto.id || item.itemId === producto.id) && item.cotizacionType === 'credito');
@@ -362,10 +367,31 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
             <p className="mb-2"><strong>Cuota inicial:</strong> {formatoPrecio(cuotaInicial)}</p>
           )}
 
-          <div style={{ marginTop: '1.25rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-            <p className="mb-2"><strong>16 cuotas quincenales:</strong> <span style={{ fontSize: '1.1em', color: '#2c3e50' }}>{formatoPrecio(cuotas6)}</span></p>
-            <p className="mb-0"><strong>8 cuotas mensuales:</strong> <span style={{ fontSize: '1.1em', color: '#2c3e50' }}>{formatoPrecio(cuotas8)}</span></p>
-          </div>
+          {solo12Meses && cuotas12 ? (
+            // Plan exclusivo 12 meses
+            <div style={{
+              marginTop: '1.25rem',
+              padding: '1.25rem',
+              backgroundColor: '#e3f2fd',
+              borderRadius: '8px',
+              border: '2px solid #2196f3'
+            }}>
+              <div className="text-center mb-2">
+                <Badge bg="info" style={{ fontSize: '0.9rem', padding: '8px 16px' }}>
+                  PLAN ESPECIAL
+                </Badge>
+              </div>
+              <p className="mb-0 text-center" style={{ fontSize: '1.2rem', fontWeight: '700', color: '#1976d2' }}>
+                12 cuotas mensuales de {formatoPrecio(cuotas12)}
+              </p>
+            </div>
+          ) : (
+            // Plan estándar
+            <div style={{ marginTop: '1.25rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
+              <p className="mb-2"><strong>16 cuotas quincenales:</strong> <span style={{ fontSize: '1.1em', color: '#2c3e50' }}>{formatoPrecio(cuotas6)}</span></p>
+              <p className="mb-0"><strong>8 cuotas mensuales:</strong> <span style={{ fontSize: '1.1em', color: '#2c3e50' }}>{formatoPrecio(cuotas8)}</span></p>
+            </div>
+          )}
         </Modal.Body>
         <Modal.Footer className="d-flex flex-column">
           {/* PRIORIDAD 1: Botones de WhatsApp - Asesoría Directa */}

@@ -1,9 +1,10 @@
-// src/components/AdminPanel.jsx
 import React, { useState, useEffect } from 'react';
 import { db, auth } from '../firebase';
 import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, setDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { subscribeToProducts, createProduct, updateProduct, deleteProduct } from '../services/product.service';
+import { subscribeToConfig, updateConfig } from '../services/config.service';
 import { getApp, getApps, initializeApp, deleteApp } from 'firebase/app';
 import { getAuth as getAuthSecondary } from 'firebase/auth';
 
@@ -36,6 +37,10 @@ function AdminPanel() {
 
   // >>> Modo de badge (controla visualización) - 'none'|'promo'|'nuevo'|'ambos'
   const [badgeMode, setBadgeMode] = useState('promo');
+
+  // >>> Financiación exclusiva 12 meses <<<
+  const [solo12Meses, setSolo12Meses] = useState(false);
+  const [cuotas12Producto, setCuotas12Producto] = useState('');
 
   // ===== Configuración del negocio / tema =====
   const [nombreNegocio, setNombreNegocio] = useState('');
@@ -132,26 +137,25 @@ function AdminPanel() {
   // ===== Suscripciones =====
   useEffect(() => {
     // productos
-    const unsubProductos = onSnapshot(collection(db, "productos"), (snapshot) => {
-      const lista = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const unsubProductos = subscribeToProducts((lista) => {
       setProductos(lista);
     });
 
     // configuracion/general
-    const unsubConfig = onSnapshot(doc(db, "configuracion", "general"), (docSnap) => {
-      if (docSnap.exists()) {
-        const data = docSnap.data();
-        setNombreNegocio(data.nombre || '');
-        setPreviewLogo(data.logo || '');
-        setConfigId(docSnap.id);
+    const unsubConfig = subscribeToConfig((data) => {
+      setNombreNegocio(data.nombre || '');
+      setPreviewLogo(data.logo || '');
+      // setConfigId(docSnap.id); // configId might not be needed if service handles it, or we simply don't use it for reading. 
+      // If we need the ID, the service typically returns data. 
+      // In the original code, docSnap.id is "general".
+      setConfigId("general");
 
-        const theme = data.theme || null;
-        if (theme) {
-          setThemeEnabled(!!theme.enabled);
-          setThemeStart(toTimeInput(theme.start));
-          setThemeEnd(toTimeInput(theme.end));
-          setThemeVars((curr) => ({ ...curr, ...(theme.vars || {}) }));
-        }
+      const theme = data.theme || null;
+      if (theme) {
+        setThemeEnabled(!!theme.enabled);
+        setThemeStart(toTimeInput(theme.start));
+        setThemeEnd(toTimeInput(theme.end));
+        setThemeVars((curr) => ({ ...curr, ...(theme.vars || {}) }));
       }
     });
 
@@ -200,6 +204,10 @@ function AdminPanel() {
     // badge mode
     setBadgeMode('promo');
 
+    // 12 meses
+    setSolo12Meses(false);
+    setCuotas12Producto('');
+
     setEditandoProducto(null);
   };
 
@@ -243,14 +251,17 @@ function AdminPanel() {
         nuevoBadgeText: nuevoActivo ? (nuevoBadgeText || 'NUEVO') : null,
         nuevoBadgeBg: nuevoActivo ? (nuevoBadgeBg || null) : null,
         // badge display mode
-        badgeMode: badgeMode || 'promo'
+        badgeMode: badgeMode || 'promo',
+        // financiación 12 meses
+        solo12Meses: !!solo12Meses,
+        cuotas12: solo12Meses ? parseNumberSafe(cuotas12Producto) : null
       };
 
       if (editandoProducto) {
-        await updateDoc(doc(db, "productos", editandoProducto.id), payload);
+        await updateProduct(editandoProducto.id, payload);
         setSuccess('Producto actualizado exitosamente!');
       } else {
-        await addDoc(collection(db, "productos"), payload);
+        await createProduct(payload);
         setSuccess('Producto agregado exitosamente!');
       }
       resetProductoForm();
@@ -284,13 +295,17 @@ function AdminPanel() {
 
     // badge mode
     setBadgeMode(producto.badgeMode || 'promo');
+
+    // 12 meses
+    setSolo12Meses(!!producto.solo12Meses);
+    setCuotas12Producto(producto.cuotas12 || '');
   };
 
   const handleDeleteProducto = async (id) => {
     setError(''); setSuccess('');
     if (window.confirm("¿Estás seguro de que quieres eliminar este producto?")) {
       try {
-        await deleteDoc(doc(db, "productos", id));
+        await deleteProduct(id);
         setSuccess('Producto eliminado exitosamente!');
       } catch (err) {
         console.error("Error al eliminar producto:", err);
@@ -316,7 +331,7 @@ function AdminPanel() {
         await uploadBytes(logoRef, logoNegocio);
         logoUrl = await getDownloadURL(logoRef);
       }
-      await setDoc(doc(db, "configuracion", "general"), {
+      await updateConfig({
         nombre: nombreNegocio,
         logo: logoUrl,
         theme: {
@@ -325,7 +340,7 @@ function AdminPanel() {
           end: toDateOrNull(themeEnd),
           vars: themeVars
         }
-      }, { merge: true });
+      });
       setSuccess('Configuración actualizada exitosamente!');
       setLogoNegocio(null);
     } catch (err) {
@@ -536,6 +551,7 @@ function AdminPanel() {
                     <Form.Control
                       type="number"
                       value={cuotas6Producto}
+                      disabled={solo12Meses}
                       onChange={e => {
                         const v = e.target.value;
                         setCuotas6Producto(v);
@@ -547,13 +563,14 @@ function AdminPanel() {
                         }
                       }}
                     />
+                    {solo12Meses && <Form.Text className="text-muted">Deshabilitado (modo 12 meses activo)</Form.Text>}
                   </Form.Group>
                 </Col>
                 <Col md={4}>
                   <Form.Group className="mb-3">
                     <Form.Label>8 Cuotas Mensuales</Form.Label>
-                    <Form.Control type="number" value={cuotas8Producto} onChange={e => setCuotas8Producto(e.target.value)} />
-                    <Form.Text className="text-muted">Se completa automáticamente como el doble de las 16 quincenas (editable).</Form.Text>
+                    <Form.Control type="number" value={cuotas8Producto} disabled={solo12Meses} onChange={e => setCuotas8Producto(e.target.value)} />
+                    <Form.Text className="text-muted">{solo12Meses ? 'Deshabilitado (modo 12 meses activo)' : 'Se completa automáticamente como el doble de las 16 quincenas (editable).'}</Form.Text>
                   </Form.Group>
                 </Col>
               </Row>
@@ -654,6 +671,39 @@ function AdminPanel() {
                 <Form.Text className="text-muted">
                   Si dejas colores vacíos, se usarán los del <strong>tema de temporada</strong> (si está activo).
                 </Form.Text>
+              </Card>
+
+              {/* === BLOQUE FINANCIACIÓN 12 MESES === */}
+              <Card className="p-3 mb-3" style={{ borderLeft: '4px solid #2196f3' }}>
+                <div className="d-flex align-items-center justify-content-between">
+                  <h5 className="mb-0">
+                    Financiación Exclusiva 12 Meses
+                    {solo12Meses && <Badge bg="info" className="ms-2">ACTIVA</Badge>}
+                  </h5>
+                  <Form.Check
+                    type="switch"
+                    id="solo12meses-switch"
+                    label={solo12Meses ? "Activo" : "Inactivo"}
+                    checked={solo12Meses}
+                    onChange={(e) => setSolo12Meses(e.target.checked)}
+                  />
+                </div>
+
+                <Row className="mt-3 g-3">
+                  <Col md={12}>
+                    <Form.Label>Cuota Mensual (12 meses)</Form.Label>
+                    <Form.Control
+                      type="number"
+                      value={cuotas12Producto}
+                      disabled={!solo12Meses}
+                      onChange={(e) => setCuotas12Producto(e.target.value)}
+                      placeholder="ej. 150000"
+                    />
+                    <Form.Text className="text-muted">
+                      <strong>Importante:</strong> Cuando se active esta opción, el producto mostrará <strong>ÚNICAMENTE</strong> el plan de 12 cuotas mensuales en el catálogo. Los campos de 16 quincenas y 8 meses se deshabilitarán pero sus valores se conservarán.
+                    </Form.Text>
+                  </Col>
+                </Row>
               </Card>
 
               <Button variant="primary" type="submit" className="me-2">
@@ -762,7 +812,15 @@ function AdminPanel() {
 
                         {/* Precio Crédito */}
                         <td className="align-middle">
-                          {producto.cuotas6 ? (
+                          {producto.solo12Meses && producto.cuotas12 ? (
+                            <div className="small">
+                              <Badge bg="info" className="mb-1 d-block" style={{ fontSize: '0.65rem' }}>12 MESES</Badge>
+                              <div>
+                                <strong>${parseFloat(producto.cuotas12).toLocaleString('es-CO')}</strong>
+                                <span className="text-muted"> /mes</span>
+                              </div>
+                            </div>
+                          ) : producto.cuotas6 ? (
                             <>
                               <div className="small">
                                 <strong>${parseFloat(producto.cuotas6).toLocaleString('es-CO')}</strong>

@@ -1,18 +1,16 @@
 // src/components/Header.jsx
-import React, { useEffect, useState } from "react";
-import { doc, onSnapshot } from "firebase/firestore";
-import { db } from "../firebase"; // Asegúrate que 'db' está exportado desde firebase.js
+import { useEffect, useState } from "react";
+import { subscribeToConfig } from "../services/config.service";
 
 function Header() {
   const [config, setConfig] = useState({});
 
   useEffect(() => {
     // Listener para la configuración del negocio desde Firestore
-    const unsub = onSnapshot(doc(db, "configuracion", "general"), (docSnap) => {
-      if (docSnap.exists()) {
-        setConfig(docSnap.data());
-      }
-    });
+    const unsub = subscribeToConfig(
+      (data) => setConfig(data),
+      (error) => console.error("Header config error:", error)
+    );
     return () => unsub(); // Limpiar el listener al desmontar el componente
   }, []);
 

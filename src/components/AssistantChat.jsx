@@ -1,8 +1,7 @@
 // src/components/AssistantChat.jsx
 import { useEffect, useMemo, useState } from "react";
 import { Offcanvas, Button, Badge, Card, Spinner } from "react-bootstrap";
-import { collection, query, where, getDocs, orderBy, limit } from "firebase/firestore";
-import { db } from "../firebase";
+import { searchProducts } from "../services/product.service";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { useCart } from "../contexts/CartContext";
 import CompareModal from "./CompareModal";
@@ -19,9 +18,9 @@ function normalizeBudget(sel) {
   if (!sel) return {};
   if (typeof sel === "string" && sel.startsWith("personal:")) {
     const [, range] = sel.split(":");
-    const [a,b] = (range || "").split("-");
-    const min = parseInt(a,10) || undefined;
-    const max = parseInt(b,10) || undefined;
+    const [a, b] = (range || "").split("-");
+    const min = parseInt(a, 10) || undefined;
+    const max = parseInt(b, 10) || undefined;
     return { min, max };
   }
   if (sel.includes("<")) return { max: 800000 };
@@ -33,12 +32,12 @@ function normalizeBudget(sel) {
 
 function whatsAppLink(number, producto, answers) {
   const nombre = producto?.nombre || "Equipo";
-  const contado = Number(producto?.contado || 0).toLocaleString("es-CO", { style:"currency", currency:"COP", maximumFractionDigits:0 });
+  const contado = Number(producto?.contado || 0).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
   const cuotas =
     (producto?.cuotas6 ? `\n16 quincenales: ${Number(producto.cuotas6).toLocaleString("es-CO")}` : "") +
     (producto?.cuotas8 ? `\n8 mensuales: ${Number(producto.cuotas8).toLocaleString("es-CO")}` : "");
   const pref = [];
-  if (answers?.presupuesto) pref.push(`Presupuesto: ${String(answers.presupuesto).startsWith('personal:') ? String(answers.presupuesto).replace('personal:','').replace('-', ' a ') : answers.presupuesto}`);
+  if (answers?.presupuesto) pref.push(`Presupuesto: ${String(answers.presupuesto).startsWith('personal:') ? String(answers.presupuesto).replace('personal:', '').replace('-', ' a ') : answers.presupuesto}`);
   if (answers?.marca) pref.push(`Marca: ${answers.marca}`);
   const prefText = pref.length ? `\nPreferencias: ${pref.join(' | ')}` : '';
   const msg = encodeURIComponent(
@@ -102,7 +101,7 @@ export default function AssistantChat({ show, onHide }) {
     try {
       sessionStorage.removeItem(PERSIST_ANS_KEY);
       sessionStorage.removeItem(PERSIST_STEP_KEY);
-    } catch (_) {}
+    } catch (_) { }
   };
 
   useEffect(() => {
@@ -110,39 +109,30 @@ export default function AssistantChat({ show, onHide }) {
     (async () => {
       setLoading(true);
       try {
-        const col = collection(db, "productos");
         // Construcción de filtros básicos (adaptar a tus campos reales)
         const budget = normalizeBudget(answers.presupuesto || "");
         const filters = [];
-        if (budget.min) filters.push(where("contado", ">=", budget.min));
-        if (budget.max) filters.push(where("contado", "<=", budget.max));
+        if (budget.min) filters.push({ field: "contado", op: ">=", value: budget.min });
+        if (budget.max) filters.push({ field: "contado", op: "<=", value: budget.max });
 
         // Marca (si “Cualquiera”, no filtramos)
         if (answers.marca && answers.marca !== "Cualquiera") {
           const marca = answers.marca.toLowerCase();
           // asumiendo que guardas una “marca” en el doc; si no, filtra por nombre.
-          filters.push(where("marca", "==", marca));
+          filters.push({ field: "marca", op: "==", value: marca });
         }
 
         // Si no tienes campos de cámara/batería/memoria en Firestore,
         // no uses where; puedes ordenar por precio y devolver una lista acotada.
 
-        let qRef;
-        if (filters.length) {
-          // getDocs con limit para UX rápida
-          qRef = query(col, ...filters, orderBy("contado", "asc"), limit(20));
-        } else {
-          qRef = query(col, orderBy("contado", "asc"), limit(20));
-        }
-        const snap = await getDocs(qRef);
-        const items = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const items = await searchProducts(filters);
 
         // Filtro en cliente para “camara”, “bateria”, “memoria” si no existen en tus docs
         const refined = items.filter(p => {
           // ejemplo simple por nombre/descripcion si no hay campos dedicados
           const text = `${p.nombre} ${p.descripcion || ""}`.toLowerCase();
           const matchCamera = !answers.camara || text.includes(answers.camara.toLowerCase()) || true;
-          const matchMem = !answers.memoria || text.includes(answers.memoria.replace(/\//g," ").toLowerCase()) || true;
+          const matchMem = !answers.memoria || text.includes(answers.memoria.replace(/\//g, " ").toLowerCase()) || true;
           const matchBat = !answers.bateria || true; // puedes refinar si tienes “mAh” en descripción
           return matchCamera && matchMem && matchBat;
         });
@@ -164,15 +154,15 @@ export default function AssistantChat({ show, onHide }) {
       const s = sessionStorage.getItem(PERSIST_STEP_KEY);
       if (a) setAnswers(JSON.parse(a));
       if (s) setStepIndex(parseInt(s, 10) || 0);
-    } catch (_) {}
+    } catch (_) { }
   }, []);
 
   // Guardar cambios en sessionStorage
   useEffect(() => {
-    try { sessionStorage.setItem(PERSIST_ANS_KEY, JSON.stringify(answers)); } catch (_) {}
+    try { sessionStorage.setItem(PERSIST_ANS_KEY, JSON.stringify(answers)); } catch (_) { }
   }, [answers]);
   useEffect(() => {
-    try { sessionStorage.setItem(PERSIST_STEP_KEY, String(stepIndex)); } catch (_) {}
+    try { sessionStorage.setItem(PERSIST_STEP_KEY, String(stepIndex)); } catch (_) { }
   }, [stepIndex]);
 
   return (
@@ -196,24 +186,24 @@ export default function AssistantChat({ show, onHide }) {
                     className="form-control"
                     placeholder="Mín (COP)"
                     value={customMin}
-                    onChange={e=>setCustomMin(e.target.value)}
+                    onChange={e => setCustomMin(e.target.value)}
                   />
                   <input
                     type="number"
                     className="form-control"
                     placeholder="Máx (COP)"
                     value={customMax}
-                    onChange={e=>setCustomMax(e.target.value)}
+                    onChange={e => setCustomMax(e.target.value)}
                   />
                 </div>
                 <Button
                   className="mt-2"
                   onClick={() => {
-                    const min = parseInt(customMin,10)||"";
-                    const max = parseInt(customMax,10)||"";
+                    const min = parseInt(customMin, 10) || "";
+                    const max = parseInt(customMax, 10) || "";
                     if (!min && !max) return;
-                    setAnswers(prev => ({ ...prev, presupuesto: `personal:${min||''}-${max||''}` }));
-                    setStepIndex(i=>i+1);
+                    setAnswers(prev => ({ ...prev, presupuesto: `personal:${min || ''}-${max || ''}` }));
+                    setStepIndex(i => i + 1);
                   }}
                 >
                   Confirmar rango
@@ -221,7 +211,7 @@ export default function AssistantChat({ show, onHide }) {
                 <Button
                   variant="link"
                   className="mt-2"
-                  onClick={()=>{
+                  onClick={() => {
                     setCustomBudget(false);
                     setCustomMin("");
                     setCustomMax("");
@@ -239,7 +229,7 @@ export default function AssistantChat({ show, onHide }) {
             )}
             {stepIndex > 0 && (
               <div className="mt-3">
-                {Object.entries(answers).map(([k,v]) => (
+                {Object.entries(answers).map(([k, v]) => (
                   <Badge key={k} bg="light" text="dark" className="me-2">{v}</Badge>
                 ))}
                 <Button variant="link" className="ms-1" onClick={resetFlow}>Cambiar respuestas</Button>
@@ -271,7 +261,7 @@ export default function AssistantChat({ show, onHide }) {
               </p>
             ) : (
               results.map(p => {
-                const precio = Number(p.contado || 0).toLocaleString("es-CO",{ style:"currency", currency:"COP", maximumFractionDigits:0 });
+                const precio = Number(p.contado || 0).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
                 const wa = whatsappNumber ? whatsAppLink(whatsappNumber, p, answers) : null;
                 return (
                   <Card key={p.id} className="mb-3">
@@ -284,7 +274,7 @@ export default function AssistantChat({ show, onHide }) {
                           {p.cuotas8 && <Card.Text>8 mensuales: {Number(p.cuotas8).toLocaleString("es-CO")}</Card.Text>}
                         </div>
                         {p.imagen && (
-                          <img src={p.imagen} alt={p.nombre} style={{ width: 64, height: 64, objectFit:"cover", borderRadius: 8 }} loading="lazy" />
+                          <img src={p.imagen} alt={p.nombre} style={{ width: 64, height: 64, objectFit: "cover", borderRadius: 8 }} loading="lazy" />
                         )}
                       </div>
                       <div className="mt-2 d-flex flex-wrap gap-2">
@@ -297,7 +287,7 @@ export default function AssistantChat({ show, onHide }) {
                           <i className="bi bi-columns-gap me-1"></i> {isCompared(p.id) ? 'Quitar de comparación' : 'Comparar'}
                         </Button>
                         {whatsappNumber && (
-                          <Button size="sm" variant="success" onClick={() => window.open(whatsAppLink(whatsappNumber, p, answers), "_blank", "noopener,noreferrer") }>
+                          <Button size="sm" variant="success" onClick={() => window.open(whatsAppLink(whatsappNumber, p, answers), "_blank", "noopener,noreferrer")}>
                             <i className="bi bi-whatsapp me-1"></i> Cotizar
                           </Button>
                         )}
@@ -313,7 +303,7 @@ export default function AssistantChat({ show, onHide }) {
       <CompareModal
         show={showCompare}
         onHide={() => setShowCompare(false)}
-        items={results.filter(r => compareIds.includes(r.id)).slice(0,3)}
+        items={results.filter(r => compareIds.includes(r.id)).slice(0, 3)}
       />
     </Offcanvas>
   );

@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from "react";
-import { collection, onSnapshot, doc } from "firebase/firestore";
-import { db } from "../firebase";
+import { subscribeToProducts } from "../services/product.service";
+import { subscribeToConfig } from "../services/config.service";
 import ProductCard from "./ProductCard";
 import { Container, Row, Col, Form, Spinner, Card, Button, Offcanvas, Badge } from 'react-bootstrap';
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
-import WelcomeModal from './WelcomeModal';
 import { useCart } from "../contexts/CartContext";
-import CompareModal from "./CompareModal";
+// import CompareModal from "./CompareModal"; // Removed for lazy loading
 import HeroCarousel from "./HeroCarousel";
+
+// Lazy loading modals
+const WelcomeModal = React.lazy(() => import('./WelcomeModal'));
+const CompareModal = React.lazy(() => import('./CompareModal'));
 
 function Catalogo() {
   const [productos, setProductos] = useState([]);
@@ -96,8 +99,9 @@ function Catalogo() {
   const toCOP = (n) => (Number(n || 0)).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
   const waLink = (number, p) => {
     if (!number) return null;
-    const cuotas =
-      (p?.cuotas6 ? `\n16 quincenales: ${Number(p.cuotas6).toLocaleString("es-CO")}` : "") +
+    const cuotas = p?.solo12Meses && p?.cuotas12
+      ? `\n12 cuotas mensuales: ${Number(p.cuotas12).toLocaleString("es-CO")}`
+      : (p?.cuotas6 ? `\n16 quincenales: ${Number(p.cuotas6).toLocaleString("es-CO")}` : "") +
       (p?.cuotas8 ? `\n8 mensuales: ${Number(p.cuotas8).toLocaleString("es-CO")}` : "");
     const pref = [];
     if (answers?.presupuesto) pref.push(`Presupuesto: ${answers.presupuesto.startsWith('personal:') ? answers.presupuesto.replace('personal:', '').replace('-', ' a ') : answers.presupuesto}`);
@@ -119,15 +123,16 @@ function Catalogo() {
 
   useEffect(() => {
     setIsLoading(true);
-    const unsubscribe = onSnapshot(collection(db, "productos"), (snapshot) => {
-      const lista = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      setProductos(lista);
-      setIsLoading(false);
-    }, (error) => {
-      console.error("Error al cargar productos desde Firebase:", error);
-      setIsLoading(false);
-    });
-
+    const unsubscribe = subscribeToProducts(
+      (lista) => {
+        setProductos(lista);
+        setIsLoading(false);
+      },
+      (error) => {
+        // Error handling is already logged in service, but we can stop loading
+        setIsLoading(false);
+      }
+    );
     return () => unsubscribe();
   }, []);
 
@@ -141,14 +146,15 @@ function Catalogo() {
   }, []);
 
   useEffect(() => {
-    const unsub = onSnapshot(doc(db, "configuracion", "general"), (snap) => {
-      const data = snap.data();
-      setBusinessName((data && data.nombre) ? data.nombre : "");
-    }, (err) => {
-      console.error("Error leyendo configuracion/general:", err);
-      setBusinessName("");
-    });
-    return () => unsub();
+    const unsubscribe = subscribeToConfig(
+      (data) => {
+        setBusinessName((data && data.nombre) ? data.nombre : "");
+      },
+      (err) => {
+        setBusinessName("");
+      }
+    );
+    return () => unsubscribe();
   }, []);
 
 
@@ -221,11 +227,13 @@ function Catalogo() {
 
   return (
     <>
-      <WelcomeModal
-        show={showWelcome}
-        onClose={() => setShowWelcome(false)}
-        businessName={businessName}
-      />
+      <React.Suspense fallback={null}>
+        <WelcomeModal
+          show={showWelcome}
+          onClose={() => setShowWelcome(false)}
+          businessName={businessName}
+        />
+      </React.Suspense>
 
       {/* Hero Carousel - Carrusel dinámico gestionado desde el admin */}
       <HeroCarousel />
@@ -390,8 +398,16 @@ function Catalogo() {
                           <div>
                             <Card.Title className="mb-1">{p.nombre}</Card.Title>
                             <Card.Text className="mb-1">Contado: {(Number(p.contado) || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}</Card.Text>
-                            {p.cuotas6 && <Card.Text className="mb-0">16 quincenales: {Number(p.cuotas6).toLocaleString('es-CO')}</Card.Text>}
-                            {p.cuotas8 && <Card.Text>8 mensuales: {Number(p.cuotas8).toLocaleString('es-CO')}</Card.Text>}
+                            {p.solo12Meses && p.cuotas12 ? (
+                              <Card.Text className="mb-0">
+                                <Badge bg="info">12 meses</Badge> {Number(p.cuotas12).toLocaleString('es-CO')}/mes
+                              </Card.Text>
+                            ) : (
+                              <>
+                                {p.cuotas6 && <Card.Text className="mb-0">16 quincenales: {Number(p.cuotas6).toLocaleString('es-CO')}</Card.Text>}
+                                {p.cuotas8 && <Card.Text>8 mensuales: {Number(p.cuotas8).toLocaleString('es-CO')}</Card.Text>}
+                              </>
+                            )}
                           </div>
                           {p.imagen && (
                             <img src={p.imagen} alt={p.nombre} style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }} loading="lazy" />
@@ -423,11 +439,13 @@ function Catalogo() {
           </Offcanvas.Body>
 
           {/* Modal de comparación */}
-          <CompareModal
-            show={showCompare}
-            onHide={() => setShowCompare(false)}
-            items={agentResults.filter(r => compareIds.includes(r.id)).slice(0, 3)}
-          />
+          <React.Suspense fallback={null}>
+            <CompareModal
+              show={showCompare}
+              onHide={() => setShowCompare(false)}
+              items={agentResults.filter(r => compareIds.includes(r.id)).slice(0, 3)}
+            />
+          </React.Suspense>
         </Offcanvas>
 
         {/* Botón flotante del asistente (estilo/posición igual al carrito) */}

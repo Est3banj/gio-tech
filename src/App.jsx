@@ -17,6 +17,7 @@ import WhatsappFloatingButton from "./components/WhatsappFloatingButton"; // �
 // Contextos
 import { CartProvider } from "./contexts/CartContext";
 import { WhatsappNumberProvider } from "./contexts/WhatsappNumberContext"; // Importamos el nuevo proveedor de WhatsApp
+import { subscribeToConfig } from "./services/config.service";
 
 // Estilos globales
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -74,12 +75,19 @@ function App() {
       }
     });
 
+
+
+    // ... (existing helper function code not shown here, assuming it's part of component body)
+
     // Listener para la configuración general del sitio (nombre, logo) desde Firestore
-    const unsubConfig = onSnapshot(doc(db, "configuracion", "general"), (docSnap) => {
-      if (docSnap.exists()) {
-        setConfiguracion(docSnap.data());
+    const unsubConfig = subscribeToConfig(
+      (data) => {
+        setConfiguracion(data);
+      },
+      (error) => {
+        console.error("Error fetching config:", error);
       }
-    });
+    );
 
     // Función de limpieza: se ejecutan al desmontar el componente App para evitar fugas de memoria
     return () => {
