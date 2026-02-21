@@ -109,8 +109,6 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
 
   return (
     <>
-      {/* Estilos responsivos específicos para el layout de badges.
-          Los insertamos inline aquí para no tocar hojas externas y mantenerlo encapsulado. */}
       <style>{`
         .gio-badge-container {
           position: absolute;
@@ -121,128 +119,58 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           justify-content: space-between;
           align-items: flex-start;
           gap: 8px;
-          pointer-events: none; /* que no bloquee clicks sobre la tarjeta */
+          pointer-events: none;
           z-index: 20;
         }
         .gio-badge-wrapper {
-          pointer-events: auto; /* permitir interacciones puntuales si se desea */
+          pointer-events: auto;
           display: inline-block;
         }
         .gio-badge {
-          padding: 6px 10px;
-          border-radius: 6px;
+          padding: 6px 12px;
+          border-radius: var(--radius-sm);
           font-weight: 700;
           font-size: 0.85rem;
           display: inline-block;
+          box-shadow: var(--shadow-sm);
         }
 
-        /* Responsive: apilar en pantallas pequeñas */
         @media (max-width: 480px) {
           .gio-badge-container {
             flex-direction: column;
-            align-items: center;
-            gap: 10px;
+            align-items: flex-start;
+            gap: 6px;
           }
         }
 
         /* ===== ESTILOS DEL MODAL ===== */
-        
-        /* Descripción del producto - mejorar legibilidad */
         .modal-body p {
           line-height: 1.7;
           margin-bottom: 1rem;
+          color: var(--text-primary);
         }
         
-        /* Precios de cuotas - mayor peso visual */
         .modal-body p strong {
           font-weight: 700;
-          color: #2c3e50;
+          color: var(--text-primary);
           font-size: 1.05em;
         }
         
-        /* Espaciado entre bloques de información */
-        .modal-body > p:not(:last-child) {
-          margin-bottom: 0.75rem;
+        /* Plan exclusivo 12 meses */
+        .plan-special-box {
+          margin-top: 1.25rem;
+          padding: 1.25rem;
+          background: var(--bg-hover);
+          border-radius: var(--radius-md);
+          border: 1.5px solid var(--brand-blue);
         }
-        
-        /* BOTONES DE WHATSAPP - Máxima prioridad visual */
-        .btn-whatsapp-primary {
-          background: linear-gradient(135deg, #25D366 0%, #1ebe57 100%) !important;
-          border: none !important;
-          color: white !important;
-          font-weight: 700 !important;
-          font-size: 1.05rem !important;
-          padding: 14px 24px !important;
-          box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3) !important;
-          transition: all 0.3s ease !important;
-        }
-        
-        .btn-whatsapp-primary:hover {
-          background: linear-gradient(135deg, #1ebe57 0%, #128c4a 100%) !important;
-          transform: translateY(-2px) !important;
-          box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4) !important;
-        }
-        
-        .btn-whatsapp-secondary {
-          background: linear-gradient(135deg, #D32F2F 0%, #b71c1c 100%) !important;
-          border: none !important;
-          color: white !important;
-          font-weight: 700 !important;
-          font-size: 1.05rem !important;
-          padding: 14px 24px !important;
-          box-shadow: 0 4px 12px rgba(211, 47, 47, 0.3) !important;
-          transition: all 0.3s ease !important;
-        }
-        
-        .btn-whatsapp-secondary:hover {
-          background: linear-gradient(135deg, #b71c1c 0%, #8b0000 100%) !important;
-          transform: translateY(-2px) !important;
-          box-shadow: 0 6px 16px rgba(211, 47, 47, 0.4) !important;
-        }
-        
-        /* BOTONES DE CARRITO - Acción secundaria */
-        .btn-cart-outline {
-          background: transparent !important;
-          border: 2px solid #dee2e6 !important;
-          color: #6c757d !important;
-          font-weight: 600 !important;
-          padding: 10px 20px !important;
-          transition: all 0.3s ease !important;
-        }
-        
-        .btn-cart-outline:hover {
-          background: #f8f9fa !important;
-          border-color: #adb5bd !important;
-          color: #495057 !important;
-        }
-        
-        .btn-cart-outline:disabled {
-          opacity: 0.5;
-          cursor: not-allowed;
-        }
-        
-        /* Títulos de secciones en el modal */
-        .modal-section-title {
-          font-size: 1.1rem;
-          font-weight: 700;
-          color: #25D366;
-          margin-bottom: 1rem;
-          text-align: center;
-        }
-        
-        .modal-section-subtitle {
-          font-size: 0.9rem;
-          font-weight: 600;
-          color: #6c757d;
-          margin-top: 1.5rem;
-          margin-bottom: 0.75rem;
-          text-align: center;
-        }
-        
-        /* Espaciado del footer del modal */
-        .modal-footer {
-          padding-top: 1.5rem;
-          padding-bottom: 1.5rem;
+
+        .plan-standard-box {
+          margin-top: 1.25rem;
+          padding: 1.25rem;
+          background: var(--bg-hover);
+          border-radius: var(--radius-md);
+          border: 1px solid var(--border-subtle);
         }
       `}</style>
 
@@ -259,8 +187,6 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
             : {})
         }}
       >
-        {/* CONTENEDOR DE BADGES: distribuye left (NUEVO) y right (PROMO).
-            Usamos clases CSS para poder aplicar media-queries y no romper nada. */}
         <div className="gio-badge-container" aria-hidden={!showPromoBadge && !showNuevoBadge}>
           <div className="gio-badge-wrapper" style={{ visibility: showNuevoBadge ? 'visible' : 'hidden' }}>
             <span
@@ -303,7 +229,7 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
             {showPromoPrice ? (
               <>
                 <Card.Text className="text-muted mb-0"><del>{priceRegularStr}</del></Card.Text>
-                <Card.Text className="product-card-price fw-bold fs-5 mb-0" style={{ color: 'var(--gio-red, #d32f2f)' }}>
+                <Card.Text className="product-card-price fw-bold fs-5 mb-0" style={{ color: 'var(--gio-red)' }}>
                   {pricePromoStr}
                 </Card.Text>
                 <Card.Text className="text-muted small">Precio promocional</Card.Text>
@@ -318,7 +244,6 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
             )}
           </div>
 
-          {/* Botón Ver detalles */}
           <button
             className="btn-ver-detalles"
             onClick={(e) => {
@@ -327,26 +252,33 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
             }}
             style={{
               marginTop: 'auto',
-              backgroundColor: '#D32F2F',
-              color: 'white',
+              background: 'linear-gradient(135deg, var(--gio-red), var(--gio-red-dark))',
+              color: 'var(--text-white)',
               border: 'none',
-              borderRadius: '8px',
-              padding: '10px 20px',
-              fontSize: '0.95rem',
+              borderRadius: 'var(--radius-sm)',
+              padding: '11px 20px',
+              fontSize: '0.9rem',
               fontWeight: '600',
+              letterSpacing: '0.01em',
               cursor: 'pointer',
-              transition: 'background-color 0.3s ease',
+              transition: 'all var(--trans-base)',
               width: '100%',
+              fontFamily: 'inherit',
             }}
-            onMouseEnter={(e) => e.target.style.backgroundColor = '#B71C1C'}
-            onMouseLeave={(e) => e.target.style.backgroundColor = '#D32F2F'}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-2px)';
+              e.currentTarget.style.boxShadow = 'var(--shadow-red)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = 'none';
+            }}
           >
             Ver detalles
           </button>
         </Card.Body>
       </Card>
 
-      {/* Modal */}
       <Modal show={mostrar} onHide={cerrar} centered>
         <Modal.Header closeButton>
           <Modal.Title>{nombre}</Modal.Title>
@@ -357,10 +289,10 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           {showPromoPrice ? (
             <>
               <p className="mb-2"><strong>Precio regular:</strong> <del>{priceRegularStr}</del></p>
-              <p className="mb-3"><strong>Precio promocional:</strong> <span style={{ color: '#D32F2F', fontSize: '1.15em' }}>{pricePromoStr}</span> {promoLabel ? <span className="badge ms-2" style={{ backgroundColor: promoBadgeBg || badgeBg, color: promoBadgeText || badgeText }}>{promoLabel}</span> : null}</p>
+              <p className="mb-3"><strong>Precio promocional:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{pricePromoStr}</span> {promoLabel ? <span className="badge ms-2" style={{ backgroundColor: promoBadgeBg || badgeBg, color: promoBadgeText || badgeText }}>{promoLabel}</span> : null}</p>
             </>
           ) : (
-            <p className="mb-3"><strong>Precio contado:</strong> <span style={{ color: '#D32F2F', fontSize: '1.15em' }}>{priceRegularStr}</span></p>
+            <p className="mb-3"><strong>Precio contado:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{priceRegularStr}</span></p>
           )}
 
           {cuotaInicial > 0 && (
@@ -368,33 +300,24 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           )}
 
           {solo12Meses && cuotas12 ? (
-            // Plan exclusivo 12 meses
-            <div style={{
-              marginTop: '1.25rem',
-              padding: '1.25rem',
-              backgroundColor: '#e3f2fd',
-              borderRadius: '8px',
-              border: '2px solid #2196f3'
-            }}>
+            <div className="plan-special-box">
               <div className="text-center mb-2">
-                <Badge bg="info" style={{ fontSize: '0.9rem', padding: '8px 16px' }}>
+                <Badge bg="info" style={{ fontSize: '0.85rem', padding: '7px 16px', borderRadius: '8px', letterSpacing: '0.03em' }}>
                   PLAN ESPECIAL
                 </Badge>
               </div>
-              <p className="mb-0 text-center" style={{ fontSize: '1.2rem', fontWeight: '700', color: '#1976d2' }}>
+              <p className="mb-0 text-center" style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--brand-blue)' }}>
                 12 cuotas mensuales de {formatoPrecio(cuotas12)}
               </p>
             </div>
           ) : (
-            // Plan estándar
-            <div style={{ marginTop: '1.25rem', padding: '1rem', backgroundColor: '#f8f9fa', borderRadius: '8px' }}>
-              <p className="mb-2"><strong>16 cuotas quincenales:</strong> <span style={{ fontSize: '1.1em', color: '#2c3e50' }}>{formatoPrecio(cuotas6)}</span></p>
-              <p className="mb-0"><strong>8 cuotas mensuales:</strong> <span style={{ fontSize: '1.1em', color: '#2c3e50' }}>{formatoPrecio(cuotas8)}</span></p>
+            <div className="plan-standard-box">
+              <p className="mb-2"><strong>16 cuotas quincenales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatoPrecio(cuotas6)}</span></p>
+              <p className="mb-0"><strong>8 cuotas mensuales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatoPrecio(cuotas8)}</span></p>
             </div>
           )}
         </Modal.Body>
         <Modal.Footer className="d-flex flex-column">
-          {/* PRIORIDAD 1: Botones de WhatsApp - Asesoría Directa */}
           <h6 className="modal-section-title">💬 Asesoría Directa por WhatsApp</h6>
           <Row className="g-3 w-100 mb-4">
             <Col xs={12} md={6}>
@@ -415,7 +338,6 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
             </Col>
           </Row>
 
-          {/* PRIORIDAD 2: Carrito de Intereses - Acción Secundaria */}
           <p className="modal-section-subtitle">O añade al carrito para comparar después:</p>
           <Row className="g-2 w-100 mb-3">
             <Col xs={12} md={6}>

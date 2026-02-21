@@ -26,7 +26,7 @@ const CartFloatingButton = () => {
 
     let mensaje = "Hola, estoy interesado en los siguientes productos de GIO TECH:\n\n";
     cartItems.forEach((item, index) => {
-      const precioInfo = item.cotizacionType === 'contado' 
+      const precioInfo = item.cotizacionType === 'contado'
         ? `Precio al contado: ${formatoPrecio(item.contado)}`
         : `Cotizar a crédito (Cuotas: Q${formatoPrecio(item.cuotas6)} / M${formatoPrecio(item.cuotas8)})`;
 
@@ -53,13 +53,13 @@ const CartFloatingButton = () => {
           alignItems: 'center',
           justifyContent: 'center',
           zIndex: 1050, // Asegura que esté por encima de la mayoría de los elementos
-          backgroundColor: 'var(--gio-red)', // Usar tu variable CSS
+          backgroundColor: 'var(--gio-red)',
           borderColor: 'var(--gio-red)'
         }}
       >
-        <i className="bi bi-cart"></i> {/* Ícono de carrito */}
+        <i className="bi bi-cart"></i>
         {cartCount > 0 && (
-          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-dark">
+          <span className="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-light">
             {cartCount}
             <span className="visually-hidden">productos en lista</span>
           </span>
@@ -84,7 +84,7 @@ const CartFloatingButton = () => {
                     <div className="flex-grow-1">
                       <h6 className="mb-0">{item.nombre}</h6>
                       <small className="text-muted">
-                        {item.cotizacionType === 'contado' 
+                        {item.cotizacionType === 'contado'
                           ? `Opción: Contado (${formatoPrecio(item.contado)})`
                           : `Opción: Crédito (Cuotas: Q${formatoPrecio(item.cuotas6)} / M${formatoPrecio(item.cuotas8)})`}
                       </small>
@@ -95,7 +95,7 @@ const CartFloatingButton = () => {
                   </ListGroup.Item>
                 ))}
               </ListGroup>
-              
+
               <div className="mt-auto d-grid gap-2 p-2 border-top">
                 <Button
                   variant="success"
@@ -104,10 +104,10 @@ const CartFloatingButton = () => {
                   rel="noopener noreferrer"
                   onClick={handleClose}
                   className="fw-bold py-2"
-                  style={{ backgroundColor: '#25D366', borderColor: '#25D366' }}
-                  disabled={!phoneNumber} // Deshabilita el botón si no hay número
+                  style={{ backgroundColor: 'var(--brand-green)', borderColor: 'var(--brand-green)' }}
+                  disabled={!phoneNumber}
                 >
-                  <i className="bi bi-whatsapp me-2"></i> Enviar Cotización al Asesor
+                  <i className="bi bi-whatsapp me-2"></i> Enviar Cotización
                 </Button>
                 <Button variant="outline-secondary" onClick={clearCart}>
                   Vaciar Carrito

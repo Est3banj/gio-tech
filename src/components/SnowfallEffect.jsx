@@ -74,7 +74,7 @@ const SnowfallEffect = ({ enabled = false }) => {
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`; // Note: strictly we should use var(--text-white) if possible, but canvas needs RGBA
                 ctx.fill();
             }
         }

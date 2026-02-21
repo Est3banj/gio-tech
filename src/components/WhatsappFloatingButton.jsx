@@ -1,15 +1,8 @@
-// src/components/WhatsappFloatingButton.jsx
 import React from 'react';
 import { useWhatsappNumber } from '../contexts/WhatsappNumberContext';
 
-/**
- * Botón flotante de WhatsApp que aparece en la esquina inferior derecha
- * Usa el número de WhatsApp del contexto (puede ser del asesor o el número general)
- */
 const WhatsappFloatingButton = () => {
   const phoneNumber = useWhatsappNumber();
-
-  // Mensaje predeterminado para asesoría general
   const mensajeDefault = "Hola GIO TECH, me interesa recibir asesoría sobre un equipo";
 
   const handleClick = () => {
@@ -22,109 +15,118 @@ const WhatsappFloatingButton = () => {
   return (
     <>
       <style>{`
-        .whatsapp-float-button {
+        .whatsapp-container {
           position: fixed;
-          bottom: 20px;
-          left: 20px; /* Cambiado a la izquierda para no chocar con el carrito */
-          width: 60px;
-          height: 60px;
-          background: linear-gradient(135deg, #25D366 0%, #1ebe57 100%);
+          bottom: 25px;
+          left: 20px;
+          display: flex;
+          align-items: center;
+          z-index: 1000;
+          cursor: pointer;
+          animation: fadeInUp 0.5s ease-out;
+        }
+
+        /* La pestaña de mensaje - MÁS PEQUEÑA Y REFINADA */
+        .whatsapp-badge {
+          background: #ffffff;
+          color: #444;
+          padding: 6px 12px;
+          border-radius: 12px; /* Menos redondeado para verse moderno */
+          font-size: 13px; /* Texto más pequeño */
+          font-weight: 500;
+          margin-left: 8px;
+          box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+          white-space: nowrap;
+          border: 1px solid #efefef;
+          position: relative;
+          transition: all 0.3s ease;
+          letter-spacing: -0.2px;
+        }
+
+        /* Triangulito miniatura */
+        .whatsapp-badge::before {
+          content: "";
+          position: absolute;
+          left: -6px;
+          top: 50%;
+          transform: translateY(-50%);
+          border-top: 6px solid transparent;
+          border-bottom: 6px solid transparent;
+          border-right: 6px solid #ffffff;
+        }
+
+        .whatsapp-float-button {
+          width: 50px; /* Reducido de 60px a 50px */
+          height: 50px;
+          background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
           border-radius: 50%;
           display: flex;
           align-items: center;
           justify-content: center;
-          box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
-          cursor: pointer;
-          z-index: 1000;
-          transition: all 0.3s ease;
+          box-shadow: 0 4px 12px rgba(37, 211, 102, 0.3);
           border: none;
+          color: white;
+          transition: all 0.3s ease;
         }
 
-        .whatsapp-float-button:hover {
-          transform: scale(1.1) translateY(-3px);
-          box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
-          background: linear-gradient(135deg, #1ebe57 0%, #128c4a 100%);
-        }
-
-        .whatsapp-float-button:active {
+        /* Hover efectos */
+        .whatsapp-container:hover .whatsapp-float-button {
           transform: scale(1.05);
+        }
+        
+        .whatsapp-container:hover .whatsapp-badge {
+          background: #fff;
+          box-shadow: 0 6px 15px rgba(0,0,0,0.15);
         }
 
         .whatsapp-float-button i {
-          font-size: 32px;
-          color: white;
+          font-size: 26px; /* Icono ajustado al nuevo tamaño */
         }
 
-        /* Ajustes para móviles */
+        /* Ajustes para Móviles */
         @media (max-width: 768px) {
-          .whatsapp-float-button {
-            bottom: 20px; /* Mantener en la misma altura */
-            left: 15px;
-            width: 56px;
-            height: 56px;
-          }
-
-          .whatsapp-float-button i {
-            font-size: 28px;
-          }
-        }
-
-        @media (max-width: 480px) {
-          .whatsapp-float-button {
+          .whatsapp-container {
             bottom: 20px;
-            left: 12px;
-            width: 52px;
-            height: 52px;
+            left: 15px;
           }
-
+          .whatsapp-badge {
+            font-size: 12px; /* Texto aún más pequeño en móvil */
+            padding: 5px 10px;
+          }
+          .whatsapp-float-button {
+            width: 45px;
+            height: 45px;
+          }
           .whatsapp-float-button i {
-            font-size: 26px;
+            font-size: 22px;
           }
         }
 
-        /* Animación de entrada suave */
+        /* Para pantallas muy pequeñas (relojes o mini-celulares) */
+        @media (max-width: 360px) {
+          .whatsapp-badge {
+            display: none; /* Solo aquí desaparece si el espacio es crítico */
+          }
+        }
+
         @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        .whatsapp-float-button {
-          animation: fadeInUp 0.5s ease-out;
-        }
-
-        /* Pulse animation para llamar la atención (opcional) */
-        @keyframes pulse {
-          0% {
-            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
-          }
-          50% {
-            box-shadow: 0 4px 20px rgba(37, 211, 102, 0.7);
-          }
-          100% {
-            box-shadow: 0 4px 16px rgba(37, 211, 102, 0.4);
-          }
-        }
-
-        /* Activar pulse cada 3 segundos para llamar atención */
-        .whatsapp-float-button {
-          animation: fadeInUp 0.5s ease-out, pulse 2s ease-in-out 2s infinite;
+          from { opacity: 0; transform: translateY(10px); }
+          to { opacity: 1; transform: translateY(0); }
         }
       `}</style>
 
-      <button
-        className="whatsapp-float-button"
-        onClick={handleClick}
-        aria-label="Contactar por WhatsApp"
-        title="Chatea con nosotros por WhatsApp"
-      >
-        <i className="bi bi-whatsapp"></i>
-      </button>
+      <div className="whatsapp-container" onClick={handleClick}>
+        <button
+          className="whatsapp-float-button"
+          aria-label="Contactar por WhatsApp"
+        >
+          <i className="bi bi-whatsapp"></i>
+        </button>
+
+        <div className="whatsapp-badge">
+          ¿Dudas? Escríbenos
+        </div>
+      </div>
     </>
   );
 };

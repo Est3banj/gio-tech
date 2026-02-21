@@ -9,7 +9,7 @@ function HomePage({ anuncio }) {
         alt="Logo"
         style={{ width: "150px", borderRadius: "50px", marginBottom: "1rem" }}
       />
-      <h1 className="fw-bold">Bienvenido a GIO TECH 📱</h1>
+      <h1 className="fw-bold">Bienvenido a GIO TECH</h1>
       <p className="lead text-muted">Tu tienda confiable de celulares con cotización directa por WhatsApp</p>
 
       {anuncio && (

@@ -5,43 +5,62 @@ import { Container, Row, Col } from 'react-bootstrap';
 const Footer = () => {
   const phoneNumber = '573248022632'; // Tu número de WhatsApp aquí
   // Reemplaza con la URL real de tu página de Facebook
-  const facebookPageUrl = 'https://www.facebook.com/share/1CUYUF25YF/?mibextid=wwXIfr'; 
+  const facebookPageUrl = 'https://www.facebook.com/share/1CUYUF25YF/?mibextid=wwXIfr';
   // Reemplaza con tu dirección física
-  const businessAddress = 'Calle 32 #13-36,B-Camilo Torres, Puerto Asís, Putumayo.'; 
+  const businessAddress = 'Calle 32 #13-36,B-Camilo Torres, Puerto Asís, Putumayo.';
 
   return (
-    <footer className="bg-dark text-white mt-auto py-3">
+    <footer className="gio-footer mt-auto">
       <Container>
-        <Row className="justify-content-center"> {/* Centrar contenido del footer */}
+        <Row className="justify-content-center">
           <Col md={10} lg={8} className="text-center">
-            <p className="mb-2">&copy; {new Date().getFullYear()} GIO TECH. Todos los derechos reservados.</p>
-            
-            <p className="mb-3">
-              <a href="#" className="text-white mx-2 text-decoration-none">Términos y Condiciones</a> |
-              <a href="#" className="text-white mx-2 text-decoration-none">Política de Privacidad</a>
+
+            {/* Redes sociales */}
+            <div className="mb-3">
+              <a
+                href={facebookPageUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon icon-facebook"
+                aria-label="Facebook"
+              >
+                <i className="bi bi-facebook"></i>
+              </a>
+              <a
+                href={`https://wa.me/${phoneNumber}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="social-icon icon-whatsapp"
+                aria-label="WhatsApp"
+              >
+                <i className="bi bi-whatsapp"></i>
+              </a>
+            </div>
+
+            {/* Info de contacto */}
+            <div className="footer-contact mb-3">
+              <p className="mb-1">
+                <i className="bi bi-geo-alt-fill me-2" style={{ color: 'var(--gio-red)' }}></i>
+                {businessAddress}
+              </p>
+              <p className="mb-1">
+                <i className="bi bi-telephone-fill me-2" style={{ color: 'var(--gio-red)' }}></i>
+                <a href={`tel:${phoneNumber}`} className="text-white text-decoration-none" style={{ opacity: 0.75 }}>{phoneNumber}</a>
+              </p>
+            </div>
+
+            {/* Links legales */}
+            <p className="mb-2" style={{ fontSize: '0.8rem' }}>
+              <a href="#" className="footer-link mx-2">Términos y Condiciones</a>
+              <span style={{ color: 'var(--border-color)' }}>|</span>
+              <a href="#" className="footer-link mx-2">Política de Privacidad</a>
             </p>
 
-            {/* INFORMACIÓN DE CONTACTO ADICIONAL */}
-            <div className="contact-info mb-3">
-              <p className="mb-1">
-                <i className="bi bi-geo-alt-fill me-2"></i> {/* Ícono de ubicación */}
-                Dirección: {businessAddress}
-              </p>
-              <p className="mb-1">
-                <i className="bi bi-telephone-fill me-2"></i> {/* Ícono de teléfono */}
-                Teléfono: <a href={`tel:${phoneNumber}`} className="text-white text-decoration-none">{phoneNumber}</a>
-              </p>
-            </div>
+            {/* Copyright */}
+            <p className="footer-copy mb-0">
+              &copy; {new Date().getFullYear()} GIO TECH. Todos los derechos reservados.
+            </p>
 
-            {/* SECCIÓN DE REDES SOCIALES */}
-            <div className="social-icons mb-2">
-              <a href={facebookPageUrl} target="_blank" rel="noopener noreferrer" className="text-white mx-2 fs-4">
-                <i className="bi bi-facebook"></i> {/* Ícono de Facebook */}
-              </a>
-              <a href={`https://wa.me/${phoneNumber}`} target="_blank" rel="noopener noreferrer" className="text-white mx-2 fs-4">
-                <i className="bi bi-whatsapp"></i> {/* Ícono de WhatsApp */}
-              </a>
-            </div>
           </Col>
         </Row>
       </Container>

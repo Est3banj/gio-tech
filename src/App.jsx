@@ -27,6 +27,8 @@ import './App.css';
 const Login = lazy(() => import("./components/Login"));
 const AdminPanel = lazy(() => import("./components/AdminPanel"));
 const AsesorPanel = lazy(() => import("./components/AsesorPanel"));
+const LandingPage = lazy(() => import("./components/LandingPage"));
+const ServicioTecnicoPage = lazy(() => import("./components/ServicioTecnicoPage"));
 
 // ========================================
 // 🎄 CONFIGURACIÓN DE TEMPORADA NAVIDEÑA
@@ -110,7 +112,7 @@ function App() {
   };
 
   // Lógica para decidir si mostrar la información de sesión (email y botón de cerrar sesión)
-  const routesToHideSessionInfo = ["/", "/login"]; // Rutas donde la info de sesión NO debe mostrarse
+  const routesToHideSessionInfo = ["/", "/login", "/servicio-tecnico"]; // Rutas donde la info de sesión NO debe mostrarse
   const showSessionInfo = usuario && !routesToHideSessionInfo.includes(location.pathname);
 
   // Lógica para decidir si mostrar el Header y el Footer de la aplicación
@@ -135,7 +137,7 @@ function App() {
 
           {/* Información del usuario logueado y botón de cerrar sesión, renderizado condicionalmente */}
           {showSessionInfo && (
-            <div className="container d-flex justify-content-between align-items-center my-3 p-3 bg-light rounded shadow-sm">
+            <div className="section-inner d-flex justify-content-between align-items-center my-3 p-3 bg-light rounded shadow-sm">
               <div>
                 <strong>{usuario.email}</strong> ({usuario.rol})
               </div>
@@ -146,10 +148,36 @@ function App() {
           )}
 
           {/* Área principal de contenido que crecerá para ocupar el espacio restante */}
-          <main className="flex-grow-1 container py-4">
+          <main className="flex-grow-1">
             <Routes> {/* Define las rutas de la aplicación */}
-              {/* Ruta para el catálogo de productos (página principal) */}
-              <Route path="/" element={<Catalogo />} />
+              {/* Ruta para la Home premium (landing page) */}
+              <Route
+                path="/"
+                element={
+                  <Suspense fallback={
+                    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+                      <p className="lead mb-0">Cargando…</p>
+                    </div>
+                  }>
+                    <LandingPage />
+                  </Suspense>
+                }
+              />
+              {/* Ruta para el catálogo completo de productos */}
+              <Route path="/catalogo" element={<Catalogo />} />
+              {/* Ruta para la página de servicio técnico */}
+              <Route
+                path="/servicio-tecnico"
+                element={
+                  <Suspense fallback={
+                    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+                      <p className="lead mb-0">Cargando…</p>
+                    </div>
+                  }>
+                    <ServicioTecnicoPage />
+                  </Suspense>
+                }
+              />
               {/* Ruta para el login de usuarios */}
               <Route
                 path="/login"
@@ -199,8 +227,8 @@ function App() {
           {/* Pie de página de la aplicación, renderizado condicionalmente */}
           {showHeaderAndFooter && <Footer />}
 
-          {/* Botón flotante del carrito, visible SOLO en la página principal ("/") */}
-          {location.pathname === "/" && <CartFloatingButton />}
+          {/* Botón flotante del carrito, visible en la Home y en el catálogo */}
+          {(location.pathname === "/" || location.pathname === "/catalogo") && <CartFloatingButton />}
 
           {/* 💬 Botón flotante de WhatsApp - Visible en todas las páginas excepto login */}
           {showHeaderAndFooter && <WhatsappFloatingButton />}

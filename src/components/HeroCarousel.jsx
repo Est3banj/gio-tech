@@ -16,8 +16,7 @@ function HeroCarousel() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Suscripción en tiempo real a la colección carrusel
-    // Carga todos los slides y filtra/ordena en el cliente para evitar índice compuesto
+    // Suscripción en tiempo real manteniéndose fiel a tu estructura original
     const unsubscribe = onSnapshot(
       collection(db, 'carrusel'),
       (snapshot) => {
@@ -26,9 +25,7 @@ function HeroCarousel() {
             id: doc.id,
             ...doc.data(),
           }))
-          // Filtrar solo slides activos
           .filter((slide) => slide.activo === true)
-          // Ordenar por campo 'orden'
           .sort((a, b) => (a.orden || 0) - (b.orden || 0));
 
         setSlides(slidesData);
@@ -43,13 +40,13 @@ function HeroCarousel() {
     return () => unsubscribe();
   }, []);
 
-  // No renderizar nada si no hay slides activos
+  // Si no hay slides, no ocupamos espacio innecesario
   if (isLoading || slides.length === 0) {
-    return null;
+    return <div style={{ height: '80vh', backgroundColor: '#f8f9fa' }} />; // Placeholder mientras carga para evitar saltos
   }
 
   return (
-    <div className="hero-carousel-wrapper mb-5">
+    <div className="hero-carousel-wrapper full-width-carousel mb-5">
       <Swiper
         modules={[Navigation, Pagination, Autoplay, EffectFade]}
         spaceBetween={0}
@@ -66,25 +63,31 @@ function HeroCarousel() {
         loop={slides.length > 1}
         className="hero-swiper"
       >
-        {slides.map((slide) => (
+        {slides.map((slide, index) => (
           <SwiperSlide key={slide.id}>
             <div className="hero-slide">
-              {/* Imagen de fondo */}
-              <div
-                className="hero-slide-image"
-                style={{
-                  backgroundImage: `url(${slide.url_imagen})`,
-                }}
+              {/* MEJORA: Usamos tag img para mejor rendimiento (LCP) y SEO */}
+              <img
+                src={slide.url_imagen}
+                alt={slide.titulo || "GIO TECH Promoción"}
+                className="hero-slide-image-element"
+                // El primer slide debe cargar rápido (eager), los demás después (lazy)
+                loading={index === 0 ? "eager" : "lazy"}
               />
 
-              {/* Overlay oscuro para legibilidad */}
-              <div className="hero-overlay" />
+              {/* Overlay con gradiente para legibilidad */}
+              <div className="hero-overlay-gradient" />
 
               {/* Contenido del slide */}
               {slide.titulo && (
                 <div className="hero-content">
                   <div className="container">
-                    <h1 className="hero-title">{slide.titulo}</h1>
+                    {/* Solo el primer slide lleva el H1 principal para el SEO de la web */}
+                    {index === 0 ? (
+                      <h1 className="hero-title">{slide.titulo}</h1>
+                    ) : (
+                      <h2 className="hero-title">{slide.titulo}</h2>
+                    )}
                   </div>
                 </div>
               )}
@@ -93,35 +96,32 @@ function HeroCarousel() {
         ))}
       </Swiper>
 
-      {/* Estilos inline para el carrusel */}
+      {/* Estilos encapsulados */}
       <style>{`
         .hero-carousel-wrapper {
           width: 100%;
           position: relative;
           margin: 0;
           padding: 0;
+          overflow: hidden;
+          background-color: #000; /* Fondo negro mientras carga la imagen */
         }
 
         .hero-swiper {
           width: 100%;
-          aspect-ratio: 16 / 10;
-          max-height: 90vh;
+          height: 80vh;
+          min-height: 500px;
+          padding-top: 80px;
         }
 
-        /* Fallback para navegadores que no soportan aspect-ratio */
-        @supports not (aspect-ratio: 16 / 10) {
+        @media (max-width: 991px) {
+          .hero-swiper { padding-top: 70px; }
+        }
+
+        @media (max-width: 768px) {
           .hero-swiper {
-            height: 0;
-            padding-bottom: 62.5%; /* 10/16 = 0.625 = 62.5% */
-            position: relative;
-          }
-          
-          .hero-swiper > * {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            height: 60vh;
+            min-height: 400px;
           }
         }
 
@@ -132,160 +132,83 @@ function HeroCarousel() {
           overflow: hidden;
         }
 
-        .hero-slide-image {
+        /* Ajuste de la imagen para que sea fluida y no se rompa */
+        .hero-slide-image-element {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-          transition: transform 0.3s ease;
+          object-fit: cover;
+          object-position: center;
+          transition: transform 10s ease-out;
+          z-index: 0;
         }
 
-        .hero-slide:hover .hero-slide-image {
-          transform: scale(1.05);
+        .swiper-slide-active .hero-slide-image-element {
+          transform: scale(1.15);
         }
 
-        .hero-overlay {
+        .hero-overlay-gradient {
           position: absolute;
           top: 0;
           left: 0;
           width: 100%;
           height: 100%;
-          background: rgba(0, 0, 0, 0.4);
+          background: linear-gradient(0deg, rgba(0,0,0,0.6) 0%, rgba(0,0,0,0) 100%);
           z-index: 1;
         }
 
         .hero-content {
           position: absolute;
-          top: 50%;
+          bottom: 25%;
           left: 0;
           right: 0;
-          transform: translateY(-50%);
           z-index: 2;
           text-align: center;
-          padding: 0 20px;
+          padding: 0 1.5rem;
         }
 
         .hero-title {
-          color: #ffffff;
-          font-size: 1.8rem;
-          font-weight: 700;
-          text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.7);
+          color: white;
+          font-size: clamp(2.2rem, 8vw, 5.5rem);
+          font-weight: 800;
+          text-shadow: 0 4px 20px rgba(0,0,0,0.5);
           margin: 0;
-          animation: fadeInUp 0.8s ease;
-          line-height: 1.2;
+          opacity: 0;
+          transform: translateY(40px);
+          transition: all 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+          line-height: 1;
+          letter-spacing: -0.05em;
         }
 
-        @media (min-width: 576px) {
-          .hero-title {
-            font-size: 2.2rem;
-          }
+        .swiper-slide-active .hero-title {
+          opacity: 1;
+          transform: translateY(0);
+          transition-delay: 0.4s;
         }
 
-        @media (min-width: 768px) {
-          .hero-title {
-            font-size: 3rem;
-          }
-        }
-
-        @media (min-width: 992px) {
-          .hero-title {
-            font-size: 3.5rem;
-          }
-        }
-
-        @media (min-width: 1200px) {
-          .hero-title {
-            font-size: 4.5rem;
-          }
-        }
-
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(30px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        /* Estilos para los controles de navegación */
+        /* Controles de Swiper personalizados */
         .hero-swiper .swiper-button-next,
         .hero-swiper .swiper-button-prev {
-          color: #ffffff;
-          background: rgba(0, 0, 0, 0.5);
-          width: 40px;
-          height: 40px;
+          color: white;
+          background: rgba(0,0,0,0.3);
+          backdrop-filter: blur(8px);
+          width: 48px;
+          height: 48px;
           border-radius: 50%;
           transition: all 0.3s ease;
         }
 
-        @media (min-width: 768px) {
-          .hero-swiper .swiper-button-next,
-          .hero-swiper .swiper-button-prev {
-            width: 50px;
-            height: 50px;
-          }
-        }
-
         .hero-swiper .swiper-button-next:after,
         .hero-swiper .swiper-button-prev:after {
-          font-size: 18px;
-        }
-
-        @media (min-width: 768px) {
-          .hero-swiper .swiper-button-next:after,
-          .hero-swiper .swiper-button-prev:after {
-            font-size: 20px;
-          }
-        }
-
-        .hero-swiper .swiper-button-next:hover,
-        .hero-swiper .swiper-button-prev:hover {
-          background: rgba(0, 0, 0, 0.8);
-          transform: scale(1.1);
-        }
-
-        /* Estilos para la paginación */
-        .hero-swiper .swiper-pagination-bullet {
-          width: 10px;
-          height: 10px;
-          background: #ffffff;
-          opacity: 0.6;
-          transition: all 0.3s ease;
-        }
-
-        @media (min-width: 768px) {
-          .hero-swiper .swiper-pagination-bullet {
-            width: 12px;
-            height: 12px;
-          }
+          font-size: 1.2rem;
         }
 
         .hero-swiper .swiper-pagination-bullet-active {
-          opacity: 1;
-          background: #ffffff;
-          width: 24px;
-          border-radius: 6px;
-        }
-
-        @media (min-width: 768px) {
-          .hero-swiper .swiper-pagination-bullet-active {
-            width: 30px;
-          }
-        }
-
-        /* Mostrar flechas en todos los dispositivos */
-        .hero-swiper .swiper-button-next,
-        .hero-swiper .swiper-button-prev {
-          display: flex;
-          align-items: center;
-          justify-content: center;
+          background: white !important;
+          width: 30px;
+          border-radius: 4px;
         }
       `}</style>
     </div>

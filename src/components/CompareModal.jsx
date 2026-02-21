@@ -167,7 +167,7 @@ export default function CompareModal({ show, onHide, items = [] }) {
         <img
           src={row.imagen}
           alt={row.nombre || 'Producto'}
-          style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 8 }}
+          style={{ width: 48, height: 48, objectFit: 'contain', borderRadius: 'var(--radius-sm)' }}
           loading="lazy"
         />
       ) : (

@@ -1,5 +1,14 @@
-/* Estilos base si necesitas algo */
+/* Base body styles */
 body {
-    background-color: #f8f9fa;
-    font-family: system-ui, sans-serif;
-  }
+  background-color: var(--bg-primary);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+  line-height: 1.6;
+  color: var(--text-primary);
+}
+
+* {
+  box-sizing: border-box;
+}

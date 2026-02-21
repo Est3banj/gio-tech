@@ -13,7 +13,7 @@ function Login({ onLogin }) {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(""); // Nuevo estado para mensajes de éxito (ej. restablecer contraseña)
-  
+
   // *** NUEVOS ESTADOS para funcionalidades ***
   const [showPassword, setShowPassword] = useState(false); // Para alternar visibilidad de contraseña
   const [rememberMe, setRememberMe] = useState(false); // Para el checkbox "Recordarme"
@@ -28,7 +28,7 @@ function Login({ onLogin }) {
     try {
       // Configurar la persistencia de la sesión
       await setPersistence(auth, rememberMe ? browserLocalPersistence : browserSessionPersistence);
-      
+
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const user = userCredential.user;
 
@@ -85,11 +85,15 @@ function Login({ onLogin }) {
 
 
   return (
-    <Container className="py-5">
+    <Container className="py-5 login-page">
       <Row className="justify-content-center">
         <Col md={6} lg={4}>
-          <Card className="p-4 shadow-sm">
-            <h3 className="text-center mb-4">Iniciar sesión</h3>
+          <Card className="login-card">
+            {/* Ícono de marca */}
+            <div className="login-brand-icon">
+              <i className="bi bi-phone-fill"></i>
+            </div>
+            <h3 className="text-center mb-4 fw-bold" style={{ fontSize: '1.4rem', letterSpacing: '-0.02em', color: 'var(--gio-dark-text)' }}>Iniciar sesión</h3>
             {error && <Alert variant="danger">{error}</Alert>}
             {success && <Alert variant="success">{success}</Alert>} {/* Mostrar mensajes de éxito */}
 
@@ -125,9 +129,9 @@ function Login({ onLogin }) {
               {/* *** Checkbox "Recordarme" y Enlace "Olvidé mi contraseña" *** */}
               <div className="d-flex justify-content-between align-items-center mb-3">
                 <Form.Group controlId="formBasicCheckbox">
-                  <Form.Check 
-                    type="checkbox" 
-                    label="Recordarme" 
+                  <Form.Check
+                    type="checkbox"
+                    label="Recordarme"
                     checked={rememberMe}
                     onChange={(e) => setRememberMe(e.target.checked)}
                   />

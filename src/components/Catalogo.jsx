@@ -238,7 +238,7 @@ function Catalogo() {
       {/* Hero Carousel - Carrusel dinámico gestionado desde el admin */}
       <HeroCarousel />
 
-      <Container className="py-4">
+      <div className="section-inner py-4 header-offset">
         <Row className="mb-5 justify-content-center">
           <Col xs={12} md={10} lg={8} className="text-center">
             <h2 className="display-5 fw-bold mb-3 text-primary">Nuestros Productos</h2>
@@ -248,7 +248,7 @@ function Catalogo() {
             </p>
           </Col>
           <Col xs={12} md={10} lg={8}>
-            <Card className="p-4 shadow-sm">
+            <Card className="search-card p-4">
               <Row className="g-3 align-items-center">
                 <Col md={6} lg={5}>
                   <Form.Control
@@ -410,7 +410,7 @@ function Catalogo() {
                             )}
                           </div>
                           {p.imagen && (
-                            <img src={p.imagen} alt={p.nombre} style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 8 }} loading="lazy" />
+                            <img src={p.imagen} alt={p.nombre} style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} loading="lazy" />
                           )}
                         </div>
 
@@ -451,25 +451,13 @@ function Catalogo() {
         {/* Botón flotante del asistente (estilo/posición igual al carrito) */}
         <Button
           variant="primary"
-          className="floating-chat-btn rounded-circle shadow-lg"
+          className="floating-chat-btn rounded-circle"
           onClick={() => setShowAgent(true)}
           aria-label="Abrir asistente de recomendaciones"
-          style={{
-            position: 'fixed',
-            bottom: 'calc(20px + 60px + 12px)',
-            right: '20px',
-            width: '60px',
-            height: '60px',
-            fontSize: '1.5rem',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1050
-          }}
         >
           <i className="bi bi-chat-dots"></i>
         </Button>
-      </Container>
+      </div>
     </>
   );
 }
