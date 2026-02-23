@@ -16,8 +16,16 @@
   /* Brand Semantic extensions */
   --brand-green: #22c55e;
   --brand-green-dark: #16a34a;
+  --brand-green-light: rgba(34, 197, 94, 0.1);
   --brand-blue: #0ea5e9;
   --brand-blue-dark: #0284c7;
+
+  --bg-trust-dark: #111827;
+  --rating-star: #f59e0b;
+  --gio-red-soft: rgba(200, 16, 46, 0.07);
+
+  --shadow-green: 0 6px 20px rgba(34, 197, 94, 0.32);
+  --shadow-green-hover: 0 10px 28px rgba(34, 197, 94, 0.42);
 
   /* Semantic Theme Variables (Light Mode Default) */
   --bg-app: #f8fafc;
@@ -28,7 +36,6 @@
   --bg-modal: #ffffff;
   --bg-filter: #f1f5f9;
   --bg-header: rgba(248, 250, 252, 0.85);
-  /* Mejorado para legibilidad del contenido que pasa por debajo */
   --bg-hover: rgba(15, 23, 42, 0.04);
 
   --text-primary: #0f172a;
@@ -43,14 +50,21 @@
   --border-input: #e2e8f0;
   --border-subtle: rgba(0, 0, 0, 0.05);
 
-  /* Elevation (Sombras optimizadas) */
+  /* Elevation */
   --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
   --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
   --shadow-elevated: 0 25px 50px -12px rgba(0, 0, 0, 0.12);
   --shadow-red: 0 10px 15px -3px rgba(200, 16, 46, 0.25);
 
-  --hero-overlay: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.8));
+  /* Hero gradients (corregido light) */
+  --hero-gradient-light: linear-gradient(180deg,
+      #f8fafc 0%,
+      #e2e8f0 100%);
+
+  --hero-gradient-dark: linear-gradient(180deg,
+      #0f172a 0%,
+      #1e293b 100%);
 
   /* Radius */
   --radius-sm: 12px;
@@ -59,18 +73,32 @@
   --radius-xl: 32px;
   --card-radius: 20px;
 
-  /* Transitions (Optimizado a 250ms para sensación de velocidad instantánea) */
+  /* Transitions */
   --trans-base: 250ms cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Derived semantic helpers - Ahora pueden derivarse bien tras la inicialización del Dark Mode si se usan localmente, pero en :root se resuelven contra light */
+  --gio-dark-text: var(--text-primary);
+  --gio-muted: var(--text-muted);
 }
 
-/* Dark Mode Overrides — Premium Refinement */
+
+/* ─── Hero Rules (FUERA de :root, como debe ser) ─────────── */
+
+.landing-hero {
+  background: var(--hero-gradient-light);
+}
+
+.dark-mode .landing-hero {
+  background: var(--hero-gradient-dark);
+}
+
+/* ─── Dark Mode Overrides — Premium Refinement ───────────── */
+
 .dark-mode {
-  /* Deepest slate para el fondo */
   --bg-app: #020617;
   --bg-primary: #020617;
   --bg-secondary: #0f172a;
 
-  /* Elevación clara para tarjetas: mejora la jerarquía visual */
   --bg-card: #1e293b;
   --bg-input: #1e293b;
   --bg-modal: #1e293b;
@@ -78,12 +106,10 @@
   --bg-header: rgba(2, 6, 23, 0.92);
   --bg-hover: rgba(255, 255, 255, 0.08);
 
-  /* Crisp white & High contrast gray (WCAG AA pass) */
   --text-primary: #f8fafc;
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
   --text-disabled: #475569;
-  /* Normalizado de HSL a Hex para consistencia */
   --text-placeholder: #64748b;
   --text-nav: #f8fafc;
 
@@ -91,14 +117,15 @@
   --border-input: #334155;
   --border-subtle: rgba(255, 255, 255, 0.04);
 
-  /* Dark mode shadows: Mayor separación para pantallas oscuras */
   --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.6);
   --shadow-md: 0 10px 40px rgba(0, 0, 0, 0.8);
   --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.9);
   --shadow-elevated: 0 35px 80px rgba(0, 0, 0, 0.95);
   --shadow-red: 0 10px 25px rgba(200, 16, 46, 0.5);
 
-  --hero-overlay: linear-gradient(to bottom, rgba(2, 6, 23, 0.4), rgba(2, 6, 23, 0.95));
+  /* Actualización de semantic helpers para reflejar el estado Dark Mode */
+  --gio-dark-text: var(--text-primary);
+  --gio-muted: var(--text-muted);
 }
 
 /* ─── Root layout & Backgrounds ────────────────────────────── */
@@ -408,6 +435,13 @@ body {
   transition: all var(--trans-base);
 }
 
+.gio-header .section-inner {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
 .gio-header.scrolled {
   background: var(--bg-header);
   backdrop-filter: blur(20px) saturate(180%);
@@ -445,6 +479,13 @@ body {
   outline: none !important;
   box-shadow: none !important;
 }
+
+@media (min-width: 992px) {
+  .mobile-menu-toggle {
+    display: none !important;
+  }
+}
+
 
 .mobile-menu-toggle:hover {
   background-color: var(--bg-hover) !important;
@@ -499,6 +540,7 @@ body {
   color: var(--gio-red) !important;
 }
 
+
 /* ─── Floating Elements ──────────────────────────────────── */
 .floating-chat-btn {
   position: fixed;
@@ -512,7 +554,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff !important;
+  color: var(--text-white);
   box-shadow: var(--shadow-red) !important;
   transition: all var(--trans-base) !important;
 }
@@ -521,37 +563,28 @@ body {
   transform: scale(1.1) translateY(-5px) !important;
 }
 
-/* ─── Footer ─────────────────────────────────────────────── */
+/* ─── Footer (CONSOLIDADO Y CORREGIDO) ────────────────────── */
 .gio-footer {
-  background: var(--bg-card);
+  background: var(--bg-card) !important;
+  /* Ahora cambiará con el modo oscuro */
   color: var(--text-secondary);
   padding: 3rem 0 2rem;
   border-top: 1px solid var(--border-color);
 }
 
-/* ─── Universal Overrides (Bootstrap) ────────────────────── */
-.modal-content,
-.offcanvas {
-  background-color: var(--bg-modal) !important;
+/* Arreglo para el teléfono y enlaces del footer */
+.gio-footer a,
+.gio-footer .footer-contact-info,
+.gio-footer p {
   color: var(--text-primary) !important;
-  border: 1px solid var(--border-color) !important;
+  /* Forzamos color claro en modo oscuro */
+  text-decoration: none;
+  transition: color var(--trans-base);
 }
 
-.modal-header,
-.offcanvas-header {
-  border-bottom: 1px solid var(--border-color) !important;
-}
-
-.modal-footer {
-  border-top: 1px solid var(--border-color) !important;
-}
-
-/* ─── Footer ─────────────────────────────────────────────── */
-.gio-footer {
-  background: var(--bg-card);
-  color: var(--text-secondary);
-  padding: 3rem 0 2rem;
-  border-top: 1px solid var(--border-color);
+.gio-footer a:hover {
+  color: var(--gio-red) !important;
+  /* Resalta el teléfono al pasar el mouse */
 }
 
 .gio-footer .social-icon {
@@ -559,6 +592,7 @@ body {
   font-size: 1.5rem;
   margin: 0 0.75rem;
   transition: all var(--trans-base);
+  display: inline-block;
 }
 
 .gio-footer .social-icon:hover {
@@ -585,7 +619,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff !important;
+  color: var(--text-white);
   box-shadow: var(--shadow-red) !important;
   transition: all var(--trans-base) !important;
 }
@@ -645,7 +679,7 @@ body {
   gap: 0.35rem;
   padding: 14px 30px;
   background: linear-gradient(135deg, var(--gio-red), var(--gio-red-dark));
-  color: #fff !important;
+  color: var(--text-white);
   border-radius: var(--radius-md);
   font-weight: 700;
   font-size: 1rem;
@@ -657,9 +691,8 @@ body {
 }
 
 .landing-btn-primary:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(200, 16, 46, 0.35);
-  color: #fff !important;
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: var(--shadow-red);
 }
 
 .landing-btn-ghost {
@@ -698,7 +731,7 @@ body {
 }
 
 .dark-mode .landing-hero {
-  background: linear-gradient(180deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
 }
 
 .landing-hero-content {
@@ -714,7 +747,7 @@ body {
   text-transform: uppercase;
   color: var(--gio-red);
   margin-bottom: 1.5rem;
-  background: rgba(200, 16, 46, 0.07);
+  background: var(--gio-red-soft);
   padding: 5px 14px;
   border-radius: 999px;
 }
@@ -758,7 +791,7 @@ body {
 }
 
 .dark-mode .trust-section {
-  background: #111827;
+  background: var(--bg-trust-dark);
 }
 
 .trust-grid {
@@ -776,7 +809,7 @@ body {
   width: 52px;
   height: 52px;
   border-radius: 14px;
-  background: rgba(200, 16, 46, 0.06);
+  background: var(--gio-red-soft);
   color: var(--gio-red);
   font-size: 1.4rem;
   display: flex;
@@ -812,12 +845,14 @@ body {
 }
 
 .service-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: 2.5rem 2rem;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+
+  border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
-  transition: transform var(--transition), box-shadow var(--transition);
+
+  transition: all var(--trans-base);
 }
 
 .service-card:hover {
@@ -855,7 +890,7 @@ body {
   font-size: 0.9rem;
   font-weight: 700;
   text-decoration: none;
-  transition: gap var(--transition);
+  transition: gap var(--trans-base);
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;
@@ -894,14 +929,18 @@ body {
 }
 
 .review-card {
-  background: #fff;
+  background: var(--bg-card);
   border-radius: var(--radius-lg);
   padding: 1.75rem;
+
   width: 300px;
+  /* opcional según layout */
   flex-shrink: 0;
-  border: 1px solid rgba(0, 0, 0, 0.06);
+
+  border: 1px solid var(--border-color);
   box-shadow: var(--shadow-sm);
-  transition: transform var(--transition), box-shadow var(--transition);
+
+  transition: all var(--trans-base);
 }
 
 .review-card:hover {
@@ -910,7 +949,7 @@ body {
 }
 
 .review-stars {
-  color: #f59e0b;
+  color: var(--rating-star);
   font-size: 0.85rem;
   margin-bottom: 0.85rem;
   display: flex;
@@ -919,7 +958,7 @@ body {
 
 .review-text {
   font-size: 0.9rem;
-  color: #374151;
+  color: var(--text-secondary);
   line-height: 1.65;
   margin-bottom: 1.25rem;
   font-style: italic;
@@ -936,7 +975,7 @@ body {
   height: 38px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--gio-red), var(--gio-red-dark));
-  color: #fff;
+  color: var(--text-white);
   font-size: 0.75rem;
   font-weight: 700;
   display: flex;
@@ -989,7 +1028,7 @@ body {
 
 .st-hero {
   /* Gradiente refinado para mayor profundidad */
-  background: linear-gradient(160deg, #020617 0%, #1e293b 100%);
+  background: linear-gradient(160deg, var(--bg-primary) 0%, var(--bg-card) 100%);
   padding: 6rem 1.5rem 5rem;
   display: flex;
   flex-direction: column;
@@ -1002,7 +1041,7 @@ body {
 .st-hero-title {
   font-size: clamp(2.2rem, 5vw, 3.8rem);
   font-weight: 800;
-  color: var(--text-white);
+  color: var(--text-primary);
   letter-spacing: -0.04em;
   line-height: 1.1;
   margin-bottom: 1.25rem;
@@ -1010,8 +1049,7 @@ body {
 
 .st-hero-sub {
   font-size: 1rem;
-  color: rgba(248, 250, 252, 0.7);
-  /* Usando paleta slate */
+  color: var(--text-secondary);
   margin-bottom: 2.5rem;
   letter-spacing: 0.01em;
 }
@@ -1141,7 +1179,7 @@ body {
   flex-shrink: 0;
   width: 64px;
   height: 64px;
-  background: rgba(34, 197, 94, 0.1);
+  background: var(--brand-green-light);
   border-radius: 16px;
   display: flex;
   align-items: center;
@@ -1207,14 +1245,14 @@ body {
   font-weight: 700;
   font-size: 1.05rem;
   text-decoration: none;
-  box-shadow: 0 6px 20px rgba(34, 197, 94, 0.32);
+  box-shadow: var(--shadow-green);
   transition: transform var(--trans-base), box-shadow var(--trans-base);
   margin-bottom: 1.5rem;
 }
 
 .st-cta-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 10px 28px rgba(34, 197, 94, 0.42);
+  box-shadow: var(--shadow-green-hover);
 }
 
 .st-cta-note {
