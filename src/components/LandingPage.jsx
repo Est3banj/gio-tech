@@ -16,7 +16,7 @@ const trustItems = [
     {
         icon: "bi-tools",
         title: "Servicio técnico",
-        desc: "Reparación profesional con técnicos certificados y repuestos originales.",
+        desc: "Reparación profesional con técnicos certificados y repuestos de la mejor calidad.",
     },
     {
         icon: "bi-headset",
@@ -57,7 +57,7 @@ const reviews = [
         name: "Andrés F.",
         rating: 5,
         text: "Llevo dos compras con ellos y siempre la misma calidad. La asesoría por WhatsApp es rapidísima.",
-        location: "Sibundoy, Putumayo",
+        location: "La hormiga, Putumayo",
         avatar: "AF",
     },
     {

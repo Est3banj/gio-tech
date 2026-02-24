@@ -110,11 +110,13 @@
   --text-secondary: #cbd5e1;
   --text-muted: #94a3b8;
   --text-disabled: #475569;
-  --text-placeholder: #fdfeff;
+  /* CORRECCIÓN: Un gris suave para que se distinga del texto normal */
+  --text-placeholder: #94a3b8;
   --text-nav: #f8fafc;
 
   --border-color: rgba(255, 255, 255, 0.08);
-  --border-input: #334155;
+  --border-input: #475569;
+  /* Un poco más claro para que el borde del buscador se vea mejor */
   --border-subtle: rgba(255, 255, 255, 0.04);
 
   --shadow-sm: 0 4px 20px rgba(0, 0, 0, 0.6);
@@ -123,9 +125,22 @@
   --shadow-elevated: 0 35px 80px rgba(0, 0, 0, 0.95);
   --shadow-red: 0 10px 25px rgba(200, 16, 46, 0.5);
 
-  /* Actualización de semantic helpers para reflejar el estado Dark Mode */
   --gio-dark-text: var(--text-primary);
   --gio-muted: var(--text-muted);
+}
+
+/* Esto hace que el placeholder realmente cambie de color */
+.dark-mode .form-control::placeholder {
+  color: var(--text-placeholder) !important;
+  opacity: 1 !important;
+}
+
+/* Esto asegura que el fondo y borde del input sean los correctos */
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background-color: var(--bg-input) !important;
+  color: var(--text-primary) !important;
+  border: 1px solid var(--border-input) !important;
 }
 
 /* ─── Root layout & Backgrounds ────────────────────────────── */
