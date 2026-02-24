@@ -1301,3 +1301,79 @@ body {
     padding-bottom: 4rem;
   }
 }
+
+/* Botón de acción para reseñas */
+.landing-btn-google {
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 12px 28px;
+  border-radius: 50px;
+  font-weight: 700;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.landing-btn-google:hover {
+  background-color: var(--bg-hover);
+  border-color: #4285F4;
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+  color: #4285F4;
+}
+
+/* Badge de verificación dentro de la card */
+.review-google-verify {
+  position: absolute;
+  top: 15px;
+  right: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.dark-mode .review-card {
+  background-color: var(--bg-secondary) !important;
+  border: 1px solid var(--border-color);
+}
+
+/* Estrellas con el color exacto de Google */
+.bi-star-fill {
+  margin-right: 2px;
+}
+
+/* 1. Evita que el texto de Google aparezca suelto arriba al cargar */
+.review-card {
+  position: relative;
+  min-height: 180px;
+  /* Le damos un tamaño mínimo base */
+  visibility: hidden;
+  /* Lo ocultamos hasta que el CSS cargue por completo */
+}
+
+.landing-wrapper .review-card {
+  visibility: visible;
+}
+
+/* 2. Reserva espacio para el Carrusel para que no demore en "abrirse" */
+.carousel-container,
+.hero-carousel-wrapper {
+  min-height: 400px;
+  /* Ajusta según la altura de tu carrusel en PC */
+  background-color: var(--bg-app);
+  /* Color de fondo mientras carga la imagen */
+}
+
+@media (max-width: 768px) {
+  .carousel-container {
+    min-height: 250px;
+    /* Ajuste para móviles */
+  }
+}

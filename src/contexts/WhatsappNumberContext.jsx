@@ -10,27 +10,27 @@ export const useWhatsappNumber = () => {
 };
 
 export const WhatsappNumberProvider = ({ children }) => {
-  const defaultWhatsappNumber = '573248022632'; // Número general de la tienda
-  const [asesorWhatsappNumber, setAsesorWhatsappNumber] = useState(defaultWhatsappNumber); 
+  const defaultWhatsappNumber = '573223652569'; // Número general de la tienda
+  const [asesorWhatsappNumber, setAsesorWhatsappNumber] = useState(defaultWhatsappNumber);
   const [asesorIdFromUrl, setAsesorIdFromUrl] = useState(null);
 
   // Este useEffect leerá el parámetro 'asesor' de la URL y lo persistirá
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const asesorId = params.get('asesor');
-    
+
     // Si la URL tiene un asesorId, lo usamos y lo guardamos en localStorage
     if (asesorId) {
       setAsesorIdFromUrl(asesorId);
       localStorage.setItem('currentAsesorId', asesorId);
       // console.log("DEBUG [WhatsappContext]: Asesor ID de URL:", asesorId); // DEBUG
-    } 
+    }
     // Si no hay asesorId en la URL, pero estamos en la página principal,
     // debemos asegurarnos de usar el default y limpiar localStorage si no hay asesor.
     else {
       // Solo recupera de localStorage si NO estamos en la ruta raíz para asegurar el default en '/'
       const storedAsesorId = localStorage.getItem('currentAsesorId');
-      if (storedAsesorId && window.location.pathname !== '/') { 
+      if (storedAsesorId && window.location.pathname !== '/') {
         setAsesorIdFromUrl(storedAsesorId);
         // console.log("DEBUG [WhatsappContext]: Asesor ID de localStorage:", storedAsesorId); // DEBUG
       } else {

@@ -3,7 +3,7 @@ import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
 const Footer = () => {
-  const phoneNumber = '573248022632'; // Tu número de WhatsApp aquí
+  const phoneNumber = '573223652569'; // Tu número de WhatsApp aquí
   // Reemplaza con la URL real de tu página de Facebook
   const facebookPageUrl = 'https://www.facebook.com/share/1CUYUF25YF/?mibextid=wwXIfr';
   // Reemplaza con tu dirección física

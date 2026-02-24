@@ -6,172 +6,96 @@ import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import ProductCard from "./ProductCard";
 import HeroCarousel from "./HeroCarousel";
 
-// ─── Trust items ──────────────────────────────────────────────
+// ─── CONSTANTES DEFINIDAS (Para evitar el ReferenceError) ──────────
 const trustItems = [
-    {
-        icon: "bi-shield-check",
-        title: "Garantía real",
-        desc: "Todos nuestros equipos cuentan con garantía respaldada por el proveedor.",
-    },
-    {
-        icon: "bi-tools",
-        title: "Servicio técnico",
-        desc: "Reparación profesional con técnicos certificados y repuestos de la mejor calidad.",
-    },
-    {
-        icon: "bi-headset",
-        title: "Atención personalizada",
-        desc: "Te asesoramos uno a uno para que elijas el equipo perfecto para ti.",
-    },
-    {
-        icon: "bi-box-seam",
-        title: "Envíos seguros",
-        desc: "Despachamos a todo el Departamento del Putumayo con embalaje protegido y seguimiento.",
-    },
+    { icon: "bi-shield-check", title: "Garantía real", desc: "Todos nuestros equipos cuentan con garantía respaldada por el proveedor." },
+    { icon: "bi-tools", title: "Servicio técnico", desc: "Reparación profesional con técnicos certificados y repuestos de la mejor calidad." },
+    { icon: "bi-headset", title: "Atención personalizada", desc: "Te asesoramos uno a uno para que elijas el equipo perfecto para ti." },
+    { icon: "bi-box-seam", title: "Envíos seguros", desc: "Despachamos a todo el Departamento del Putumayo con embalaje protegido y seguimiento." },
 ];
 
-// ─── Static reviews ────────────────────────────────────────────
 const reviews = [
-    {
-        name: "Valentina R.",
-        rating: 5,
-        text: "Excelente atención. Me ayudaron a escoger el celular ideal para mi trabajo y llegó en perfectas condiciones.",
-        location: "Puerto Asís, Putumayo",
-        avatar: "VR",
-    },
-    {
-        name: "Carlos M.",
-        rating: 5,
-        text: "Compré a crédito y el proceso fue muy fácil. El equipo llegó el mismo día. ¡Muy recomendado!",
-        location: "Mocoa, Putumayo",
-        avatar: "CM",
-    },
-    {
-        name: "Laura P.",
-        rating: 5,
-        text: "El servicio técnico resolvió el problema de mi teléfono en pocas horas. Profesionales de verdad.",
-        location: "Orito, Putumayo",
-        avatar: "LP",
-    },
-    {
-        name: "Andrés F.",
-        rating: 5,
-        text: "Llevo dos compras con ellos y siempre la misma calidad. La asesoría por WhatsApp es rapidísima.",
-        location: "La hormiga, Putumayo",
-        avatar: "AF",
-    },
-    {
-        name: "Paula G.",
-        rating: 5,
-        text: "Me garantizaron el precio más bajo de la región. Super satisfecha con mi Samsung.",
-        location: "Puerto Asís, Putumayo",
-        avatar: "PG",
-    },
+    { name: "Valentina R.", rating: 5, text: "Excelente atención. Me ayudaron a escoger el celular ideal para mi trabajo y llegó en perfectas condiciones.", location: "Puerto Asís, Putumayo", avatar: "VR" },
+    { name: "Carlos M.", rating: 5, text: "Compré a crédito y el proceso fue muy fácil. El equipo llegó el mismo día. ¡Muy recomendado!", location: "Mocoa, Putumayo", avatar: "CM" },
+    { name: "Laura P.", rating: 5, text: "El servicio técnico resolvió el problema de mi teléfono en pocas horas. Profesionales de verdad.", location: "Orito, Putumayo", avatar: "LP" },
+    { name: "Andrés F.", rating: 5, text: "Llevo dos compras con ellos y siempre la misma calidad. La asesoría por WhatsApp es rapidísima.", location: "La hormiga, Putumayo", avatar: "AF" },
+    { name: "Paula G.", rating: 5, text: "Me garantizaron el precio más bajo de la región. Super satisfecha con mi Samsung.", location: "Puerto Asís, Putumayo", avatar: "PG" },
 ];
 
-// ─── Service cards ─────────────────────────────────────────────
 const services = [
-    {
-        icon: "bi-phone",
-        title: "Venta de equipos",
-        desc: "Celulares, tablets y accesorios de las mejores marcas. Contado y crédito disponible.",
-        link: "/catalogo",
-        linkText: "Ver catálogo",
-        accent: "var(--gio-red)",
-    },
-    {
-        icon: "bi-tools",
-        title: "Servicio técnico",
-        desc: "Diagnóstico, reparación y mantenimiento profesional. Garantía en cada trabajo.",
-        link: "/servicio-tecnico",
-        linkText: "Conocer más",
-        accent: "var(--brand-blue)",
-    },
-    {
-        icon: "bi-chat-heart",
-        title: "Asesoría personalizada",
-        desc: "Te orientamos sin presión para que tomes la mejor decisión según tu presupuesto.",
-        link: null,
-        linkText: "Hablar con un asesor",
-        accent: "var(--brand-green)",
-        isWA: true,
-    },
+    { icon: "bi-phone", title: "Venta de equipos", desc: "Celulares, tablets y accesorios de las mejores marcas. Contado y crédito disponible.", link: "/catalogo", linkText: "Ver catálogo", accent: "var(--gio-red)" },
+    { icon: "bi-tools", title: "Servicio técnico", desc: "Diagnóstico, reparación y mantenimiento profesional. Garantía en cada trabajo.", link: "/servicio-tecnico", linkText: "Conocer más", accent: "var(--brand-blue)" },
+    { icon: "bi-chat-heart", title: "Asesoría personalizada", desc: "Te orientamos sin presión para que tomes la mejor decisión según tu presupuesto.", link: null, linkText: "Hablar con un asesor", accent: "var(--brand-green)", isWA: true },
 ];
 
-// ─── Component ─────────────────────────────────────────────────
+// ─── COMPONENTE LANDINGPAGE ───────────────────────────────────────
 function LandingPage() {
     const [productos, setProductos] = useState([]);
     const [businessName, setBusinessName] = useState("");
+    const [isLoading, setIsLoading] = useState(true); // OPTIMIZACIÓN: Carga suave
     const phoneNumber = useWhatsappNumber() || "573248022632";
     const navigate = useNavigate();
 
-    // Cargamos productos desde Firestore (solo para sección "Destacados")
-    // Misma suscripción que Catalogo — sin modificar lógica
     useEffect(() => {
-        const unsub = subscribeToProducts(
-            (lista) => setProductos(lista),
-            () => { }
+        const unsubProducts = subscribeToProducts(
+            (lista) => {
+                setProductos(lista);
+                setIsLoading(false);
+            },
+            () => setIsLoading(false)
         );
-        return () => unsub();
-    }, []);
 
-    useEffect(() => {
-        const unsub = subscribeToConfig(
+        const unsubConfig = subscribeToConfig(
             (data) => setBusinessName((data && data.nombre) ? data.nombre : ""),
             () => { }
         );
-        return () => unsub();
+
+        // Seguridad: Si Firebase falla o tarda mucho, liberamos la vista en 2 seg
+        const timer = setTimeout(() => setIsLoading(false), 2000);
+
+        return () => {
+            unsubProducts();
+            unsubConfig();
+            clearTimeout(timer);
+        };
     }, []);
 
-    // Mostramos solo los primeros 4 productos como "destacados"
     const destacados = productos.slice(0, 4);
-
     const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent("Hola GIO TECH, me gustaría recibir asesoría personalizada")}`;
 
     return (
-        <div className="landing-wrapper">
+        <div className="landing-wrapper" style={{ backgroundColor: '#020617', minHeight: '100vh' }}>
 
-            {/* ══════════════════════════════════════════
-          1. HERO CAROUSEL (si hay slides activos)
-      ══════════════════════════════════════════ */}
-            <HeroCarousel />
+            {/* 1. CAROUSEL CON RESERVA DE ESPACIO (Mejora el CLS) */}
+            <div style={{ minHeight: '400px', backgroundColor: '#020617' }}>
+                <HeroCarousel />
+            </div>
 
-            {/* ══════════════════════════════════════════
-          2. HERO MINIMALISTA DE MARCA
-      ══════════════════════════════════════════ */}
+            {/* 2. HERO */}
             <section className="landing-hero section-padding-lg">
-                <div className="section-inner"> {/* Cambiado de landing-hero-content para consistencia */}
+                <div className="section-inner">
                     <span className="landing-hero-eyebrow">Puerto Asís · Putumayo · Colombia</span>
                     <h1 className="landing-hero-title">
                         Tecnología que<br />
                         <span className="landing-hero-accent">mereces.</span>
                     </h1>
                     <p className="landing-hero-sub">
-                        Celulares, servicio técnico y asesoría real.<br className="d-none d-md-block" />
-                        Contado y crédito disponible.
+                        Celulares, servicio técnico y asesoría real.
                     </p>
                     <div className="landing-hero-actions">
-                        <Link to="/catalogo" className="landing-btn-primary">
-                            Ver productos
-                        </Link>
-                        <Link to="/servicio-tecnico" className="landing-btn-ghost">
-                            Servicio técnico
-                        </Link>
+                        <Link to="/catalogo" className="landing-btn-primary">Ver productos</Link>
+                        <Link to="/servicio-tecnico" className="landing-btn-ghost">Servicio técnico</Link>
                     </div>
                 </div>
             </section>
 
-            {/* ══════════════════════════════════════════
-          3. TRUST STRIP
-      ══════════════════════════════════════════ */}
+            {/* 3. TRUST ITEMS (Donde estaba el error) */}
             <section className="trust-section section-padding-lg">
                 <div className="section-inner">
                     <div className="trust-grid">
                         {trustItems.map((item) => (
                             <div key={item.title} className="trust-item">
-                                <div className="trust-icon">
-                                    <i className={`bi ${item.icon}`}></i>
-                                </div>
+                                <div className="trust-icon"><i className={`bi ${item.icon}`}></i></div>
                                 <h3 className="trust-title">{item.title}</h3>
                                 <p className="trust-desc">{item.desc}</p>
                             </div>
@@ -180,14 +104,11 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* ══════════════════════════════════════════
-          4. SERVICIOS
-      ══════════════════════════════════════════ */}
+            {/* 4. SERVICIOS */}
             <section className="services-section section-padding-lg">
                 <div className="section-inner">
                     <div className="section-header">
                         <h2 className="section-title">Nuestros Servicios</h2>
-                        <p className="section-sub">Soluciones integrales para tus necesidades tecnológicas.</p>
                     </div>
                     <div className="services-grid">
                         {services.map((s) => (
@@ -215,32 +136,35 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* ══════════════════════════════════════════
-          5. RESEÑAS
-      ══════════════════════════════════════════ */}
-            <section className="reviews-section">
+            {/* 5. RESEÑAS OPTIMIZADAS (Sin texto flotante arriba) */}
+            <section className="reviews-section" style={{ minHeight: '450px', backgroundColor: '#020617' }}>
                 <div className="landing-container">
                     <div className="section-header">
                         <h2 className="section-title">Lo que dicen nuestros clientes</h2>
-                        <p className="section-sub">Más de 500 familias confían en GIO TECH.</p>
+                        <div className="mt-4">
+                            <a href="https://g.page/r/CUMXzI9Acx9nEAE/review" target="_blank" rel="noopener noreferrer" className="landing-btn-google">
+                                <i className="bi bi-google me-2"></i>Califícanos en Google Maps
+                            </a>
+                        </div>
                     </div>
                 </div>
                 <div className="reviews-scroll-wrapper">
                     <div className="reviews-track">
                         {reviews.map((r, i) => (
-                            <div key={i} className="review-card">
+                            <div key={i} className="review-card" style={{ position: 'relative' }}>
+                                <div className="review-google-verify" style={{ position: 'absolute', top: '15px', right: '15px', display: 'flex', alignItems: 'center' }}>
+                                    <i className="bi bi-patch-check-fill text-primary me-1"></i>
+                                    <span style={{ fontSize: '11px' }}>Google Review</span>
+                                </div>
                                 <div className="review-stars">
                                     {Array.from({ length: r.rating }).map((_, k) => (
-                                        <i key={k} className="bi bi-star-fill"></i>
+                                        <i key={k} className="bi bi-star-fill" style={{ color: '#fbaf08' }}></i>
                                     ))}
                                 </div>
                                 <p className="review-text">"{r.text}"</p>
                                 <div className="review-author">
                                     <div className="review-avatar">{r.avatar}</div>
-                                    <div>
-                                        <div className="review-name">{r.name}</div>
-                                        <div className="review-location">{r.location}</div>
-                                    </div>
+                                    <div className="review-name">{r.name}</div>
                                 </div>
                             </div>
                         ))}
@@ -248,15 +172,12 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* ══════════════════════════════════════════
-          6. PRODUCTOS DESTACADOS
-      ══════════════════════════════════════════ */}
-            {destacados.length > 0 && (
+            {/* 6. PRODUCTOS DESTACADOS */}
+            {!isLoading && destacados.length > 0 && (
                 <section className="featured-section section-padding-lg">
                     <div className="section-inner">
                         <div className="section-header">
                             <h2 className="section-title">Productos Destacados</h2>
-                            <p className="section-sub">Selección exclusiva de tecnología de última generación.</p>
                         </div>
                         <div className="featured-grid">
                             {destacados.map((producto) => (
@@ -265,15 +186,9 @@ function LandingPage() {
                                 </div>
                             ))}
                         </div>
-                        <div className="featured-cta">
-                            <Link to="/catalogo" className="landing-btn-primary">
-                                Ver catálogo completo
-                            </Link>
-                        </div>
                     </div>
                 </section>
             )}
-
         </div>
     );
 }
