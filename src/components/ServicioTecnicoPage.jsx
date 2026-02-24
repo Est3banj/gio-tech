@@ -31,12 +31,12 @@ const pasos = [
     {
         num: "03",
         title: "Aprobás y reparamos",
-        desc: "Si aceptás el presupuesto, nuestro técnico comienza de inmediato con repuestos originales.",
+        desc: "Si aceptás el presupuesto, nuestro técnico comienza de inmediato con repuestos de excelente calidad.",
     },
     {
         num: "04",
         title: "Listo con garantía",
-        desc: "Te entregamos el equipo funcionando al 100% y con garantía escrita de 30 días.",
+        desc: "Te entregamos el equipo funcionando al 100% y con garantía escrita de 15 días.",
     },
 ];
 

@@ -110,6 +110,7 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
   return (
     <>
       <style>{`
+        /* Contenedor de etiquetas */
         .gio-badge-container {
           position: absolute;
           top: 10px;
@@ -143,7 +144,24 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           }
         }
 
-        /* ===== ESTILOS DEL MODAL ===== */
+        /* ===== CORRECCIÓN PARA MODO OSCURO (MODAL) ===== */
+        .modal-content {
+          background-color: var(--bg-secondary) !important;
+          color: var(--text-primary) !important;
+          border: 1px solid var(--border-color) !important;
+        }
+        .modal-header, .modal-footer {
+          border-color: var(--border-color) !important;
+          background-color: transparent !important;
+        }
+        .modal-title {
+          color: var(--text-primary) !important;
+        }
+        /* Esto asegura que la 'X' de cerrar sea blanca en modo oscuro */
+        .btn-close {
+          filter: var(--icon-filter, invert(0)); 
+        }
+
         .modal-body p {
           line-height: 1.7;
           margin-bottom: 1rem;
@@ -156,13 +174,14 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           font-size: 1.05em;
         }
         
-        /* Plan exclusivo 12 meses */
+        /* Cajas de planes adaptables */
         .plan-special-box {
           margin-top: 1.25rem;
           padding: 1.25rem;
           background: var(--bg-hover);
           border-radius: var(--radius-md);
           border: 1.5px solid var(--brand-blue);
+          color: var(--text-primary);
         }
 
         .plan-standard-box {
@@ -171,6 +190,7 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           background: var(--bg-hover);
           border-radius: var(--radius-md);
           border: 1px solid var(--border-subtle);
+          color: var(--text-primary);
         }
       `}</style>
 
@@ -179,10 +199,13 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
         onClick={abrir}
         style={{
           cursor: "pointer",
+          backgroundColor: 'var(--bg-secondary)',
+          color: 'var(--text-primary)',
+          border: `1px solid var(--border-color)`,
           ...(showPromoBadge
             ? {
               border: `2px solid ${highlightColor}`,
-              boxShadow: `0 0 0 4px ${highlightColor} inset, 0 6px 18px rgba(0,0,0,.06)`
+              boxShadow: `0 0 15px ${highlightColor}`
             }
             : {})
         }}
@@ -193,7 +216,7 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
               className="gio-badge"
               style={{
                 backgroundColor: nuevoBadgeBg || '#28a745',
-                color: '#ffffff',
+                color: '#ffffff'
               }}
             >
               {nuevoBadgeText || 'NUEVO'}
@@ -205,7 +228,7 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
               className="gio-badge"
               style={{
                 backgroundColor: promoBadgeBg || badgeBg,
-                color: promoBadgeText || badgeText,
+                color: '#ffffff',
               }}
             >
               {promoLabel || promoBadgeText || 'PROMO'}
@@ -223,7 +246,9 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
         <Card.Body className="text-center d-flex flex-column">
           <div>
             <div className="d-flex justify-content-between align-items-start mb-1">
-              <Card.Title className="product-card-title mb-0">{nombre}</Card.Title>
+              <Card.Title className="product-card-title mb-0" style={{ color: 'var(--text-primary)' }}>
+                {nombre}
+              </Card.Title>
             </div>
 
             {showPromoPrice ? (
@@ -232,14 +257,12 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
                 <Card.Text className="product-card-price fw-bold fs-5 mb-0" style={{ color: 'var(--gio-red)' }}>
                   {pricePromoStr}
                 </Card.Text>
-                <Card.Text className="text-muted small">Precio promocional</Card.Text>
               </>
             ) : (
               <>
-                <Card.Text className="product-card-price fw-bold text-primary fs-5 mb-0">
+                <Card.Text className="product-card-price fw-bold fs-5 mb-0" style={{ color: 'var(--brand-blue)' }}>
                   {priceRegularStr}
                 </Card.Text>
-                <Card.Text className="text-muted small">Precio al contado</Card.Text>
               </>
             )}
           </div>
@@ -253,31 +276,20 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
             style={{
               marginTop: 'auto',
               background: 'linear-gradient(135deg, var(--gio-red), var(--gio-red-dark))',
-              color: 'var(--text-white)',
+              color: '#ffffff',
               border: 'none',
               borderRadius: 'var(--radius-sm)',
               padding: '11px 20px',
               fontSize: '0.9rem',
               fontWeight: '600',
-              letterSpacing: '0.01em',
               cursor: 'pointer',
-              transition: 'all var(--trans-base)',
               width: '100%',
-              fontFamily: 'inherit',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = 'var(--shadow-red)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
             }}
           >
             Ver detalles
           </button>
         </Card.Body>
-      </Card>
+      </Card >
 
       <Modal show={mostrar} onHide={cerrar} centered>
         <Modal.Header closeButton>
@@ -289,7 +301,7 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           {showPromoPrice ? (
             <>
               <p className="mb-2"><strong>Precio regular:</strong> <del>{priceRegularStr}</del></p>
-              <p className="mb-3"><strong>Precio promocional:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{pricePromoStr}</span> {promoLabel ? <span className="badge ms-2" style={{ backgroundColor: promoBadgeBg || badgeBg, color: promoBadgeText || badgeText }}>{promoLabel}</span> : null}</p>
+              <p className="mb-3"><strong>Precio promocional:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{pricePromoStr}</span> {promoLabel ? <span className="badge ms-2" style={{ backgroundColor: promoBadgeBg || badgeBg, color: '#fff' }}>{promoLabel}</span> : null}</p>
             </>
           ) : (
             <p className="mb-3"><strong>Precio contado:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{priceRegularStr}</span></p>
