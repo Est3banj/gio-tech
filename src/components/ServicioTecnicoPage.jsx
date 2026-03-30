@@ -126,8 +126,8 @@ function ServicioTecnicoPage() {
                         <div>
                             <h2 className="st-guarantee-title">Garantía real de 15 días</h2>
                             <p className="st-guarantee-desc">
-                                Cada reparación que hacemos viene respaldada por garantía escrita. Si el mismo problema reaparece dentro de los 30 días, lo resolvemos sin costo adicional.
-                                Trabajamos con repuestos originales o certificados para que tu equipo funcione como el primer día.
+                                Cada reparación que realizamos cuenta con garantía escrita. Si el mismo problema persiste dentro de los 15 días, lo resolvemos sin costo adicional.
+                                Trabajamos con repuestos de alta calidad y rendimiento garantizado, ideales cuando buscas una opción inmediata o más económica frente al componente original, asegurando que tu equipo funcione perfectamente.
                             </p>
                         </div>
                     </div>

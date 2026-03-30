@@ -274,7 +274,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1050;
+  z-index: 1000;
   padding: 1.25rem 2rem;
   background: transparent;
   border-bottom: 1px solid transparent;
@@ -444,7 +444,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1050;
+  z-index: 1000;
   padding: 1.25rem 2rem;
   background: transparent;
   transition: all var(--trans-base);
@@ -1319,10 +1319,11 @@ body {
 
 .landing-btn-google:hover {
   background-color: var(--bg-hover);
-  border-color: #4285F4;
+  /* Usamos un color que sea legible en ambos o una variable */
+  border-color: var(--google-blue, #4285F4);
+  color: var(--google-blue, #4285F4);
   transform: translateY(-3px);
   box-shadow: var(--shadow-md);
-  color: #4285F4;
 }
 
 /* Badge de verificación dentro de la card */
