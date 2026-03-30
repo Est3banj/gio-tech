@@ -1,96 +1,125 @@
-import React, { useState, useEffect } from 'react';
-import { db, auth } from '../firebase';
-import { collection, addDoc, getDocs, doc, updateDoc, deleteDoc, onSnapshot, setDoc } from 'firebase/firestore';
-import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { subscribeToProducts, createProduct, updateProduct, deleteProduct } from '../services/product.service';
-import { subscribeToConfig, updateConfig } from '../services/config.service';
-import { getApp, getApps, initializeApp, deleteApp } from 'firebase/app';
-import { getAuth as getAuthSecondary } from 'firebase/auth';
+import React, { useState, useEffect } from "react";
+import { db, auth } from "../firebase";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot,
+  setDoc,
+} from "firebase/firestore";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import {
+  subscribeToProducts,
+  createProduct,
+  updateProduct,
+  deleteProduct,
+} from "../services/product.service";
+import { subscribeToConfig, updateConfig } from "../services/config.service";
+import { getApp, getApps, initializeApp, deleteApp } from "firebase/app";
+import { getAuth as getAuthSecondary } from "firebase/auth";
 
-import { Container, Row, Col, Form, Button, Card, Table, Alert, Tabs, Tab, InputGroup, Badge } from 'react-bootstrap';
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Card,
+  Table,
+  Alert,
+  Tabs,
+  Tab,
+  InputGroup,
+  Badge,
+} from "react-bootstrap";
 
 function AdminPanel() {
   // ===== Productos =====
-  const [nombreProducto, setNombreProducto] = useState('');
-  const [descripcionProducto, setDescripcionProducto] = useState('');
-  const [contadoProducto, setContadoProducto] = useState('');
-  const [cuotas6Producto, setCuotas6Producto] = useState('');
-  const [cuotas8Producto, setCuotas8Producto] = useState('');
-  const [imagenProducto, setImagenProducto] = useState('');
-  const [cuotaInicialProducto, setCuotaInicialProducto] = useState('');
+  const [nombreProducto, setNombreProducto] = useState("");
+  const [descripcionProducto, setDescripcionProducto] = useState("");
+  const [contadoProducto, setContadoProducto] = useState("");
+  const [cuotas6Producto, setCuotas6Producto] = useState("");
+  const [cuotas8Producto, setCuotas8Producto] = useState("");
+  const [imagenProducto, setImagenProducto] = useState("");
+  const [cuotaInicialProducto, setCuotaInicialProducto] = useState("");
   const [productos, setProductos] = useState([]);
   const [editandoProducto, setEditandoProducto] = useState(null);
-  const [searchProducto, setSearchProducto] = useState(''); // Estado para búsqueda
+  const [searchProducto, setSearchProducto] = useState(""); // Estado para búsqueda
 
   // >>> Campos de PROMO por producto <<<
   const [promoActivo, setPromoActivo] = useState(false);
-  const [promoPrice, setPromoPrice] = useState('');
-  const [promoBadgeText, setPromoBadgeText] = useState('PROMO');
-  const [promoBadgeBg, setPromoBadgeBg] = useState('#d81b60');
-  const [promoHighlight, setPromoHighlight] = useState(''); // rgba(...) o #hex (opcional)
+  const [promoPrice, setPromoPrice] = useState("");
+  const [promoBadgeText, setPromoBadgeText] = useState("PROMO");
+  const [promoBadgeBg, setPromoBadgeBg] = useState("#d81b60");
+  const [promoHighlight, setPromoHighlight] = useState(""); // rgba(...) o #hex (opcional)
 
   // >>> Campos de "Producto Nuevo"
   const [nuevoActivo, setNuevoActivo] = useState(false);
-  const [nuevoBadgeText, setNuevoBadgeText] = useState('NUEVO');
-  const [nuevoBadgeBg, setNuevoBadgeBg] = useState('#28a745'); // verde por defecto
+  const [nuevoBadgeText, setNuevoBadgeText] = useState("NUEVO");
+  const [nuevoBadgeBg, setNuevoBadgeBg] = useState("#28a745"); // verde por defecto
 
   // >>> Modo de badge (controla visualización) - 'none'|'promo'|'nuevo'|'ambos'
-  const [badgeMode, setBadgeMode] = useState('promo');
+  const [badgeMode, setBadgeMode] = useState("promo");
 
   // >>> Financiación exclusiva 12 meses <<<
   const [solo12Meses, setSolo12Meses] = useState(false);
-  const [cuotas12Producto, setCuotas12Producto] = useState('');
+  const [cuotas12Producto, setCuotas12Producto] = useState("");
 
   // ===== Configuración del negocio / tema =====
-  const [nombreNegocio, setNombreNegocio] = useState('');
+  const [nombreNegocio, setNombreNegocio] = useState("");
   const [logoNegocio, setLogoNegocio] = useState(null);
-  const [previewLogo, setPreviewLogo] = useState('');
-  const [configId, setConfigId] = useState('');
+  const [previewLogo, setPreviewLogo] = useState("");
+  const [configId, setConfigId] = useState("");
 
   // >>> Theme (panel sin tocar código) <<<
   const [themeEnabled, setThemeEnabled] = useState(false);
-  const [themeStart, setThemeStart] = useState('');
-  const [themeEnd, setThemeEnd] = useState('');
+  const [themeStart, setThemeStart] = useState("");
+  const [themeEnd, setThemeEnd] = useState("");
   const [themeVars, setThemeVars] = useState({
-    '--promo-badge-bg': '#d81b60',
-    '--promo-badge-text': '#ffffff',
-    '--promo-highlight': 'rgba(216,27,96,.18)',
+    "--promo-badge-bg": "#d81b60",
+    "--promo-badge-text": "#ffffff",
+    "--promo-highlight": "rgba(216,27,96,.18)",
     // Puedes agregar más, ej: '--gio-primary': '#0d6efd'
   });
 
   // ===== Asesores =====
   const [asesores, setAsesores] = useState([]);
-  const [emailAsesor, setEmailAsesor] = useState('');
-  const [passwordAsesor, setPasswordAsesor] = useState('');
-  const [nombreCompletoAsesor, setNombreCompletoAsesor] = useState('');
-  const [whatsappAsesor, setWhatsappAsesor] = useState('');
+  const [emailAsesor, setEmailAsesor] = useState("");
+  const [passwordAsesor, setPasswordAsesor] = useState("");
+  const [nombreCompletoAsesor, setNombreCompletoAsesor] = useState("");
+  const [whatsappAsesor, setWhatsappAsesor] = useState("");
   const [editandoAsesor, setEditandoAsesor] = useState(null);
 
   // ===== Carrusel Hero =====
   const [slides, setSlides] = useState([]);
-  const [urlImagenSlide, setUrlImagenSlide] = useState('');
-  const [tituloSlide, setTituloSlide] = useState('');
-  const [ordenSlide, setOrdenSlide] = useState('');
+  const [urlImagenSlide, setUrlImagenSlide] = useState("");
+  const [tituloSlide, setTituloSlide] = useState("");
+  const [ordenSlide, setOrdenSlide] = useState("");
   const [activoSlide, setActivoSlide] = useState(true);
   const [editandoSlide, setEditandoSlide] = useState(null);
-  const [previewImagenSlide, setPreviewImagenSlide] = useState('');
+  const [previewImagenSlide, setPreviewImagenSlide] = useState("");
 
   // ===== Mensajes / pestañas =====
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [key, setKey] = useState('productos');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
+  const [key, setKey] = useState("productos");
 
   const storage = getStorage();
 
   // --- Specs parser (inlined helper) ---
   function parseDescriptionToSpecs(description = "") {
-    if (!description || typeof description !== 'string') return {};
+    if (!description || typeof description !== "string") return {};
     const text = description.toLowerCase();
 
     const toNum = (v) => {
       if (v === 0 || v) {
-        const s = String(v).replace(/[^0-9.,]/g, "").replace(",", ".");
+        const s = String(v)
+          .replace(/[^0-9.,]/g, "")
+          .replace(",", ".");
         const n = Number(s);
         return Number.isFinite(n) ? n : null;
       }
@@ -99,19 +128,30 @@ function AdminPanel() {
 
     // almacenamiento (GB)
     const almacenamientoMatch = text.match(/\b(\d{2,4})\s?gb\b/);
-    const almacenamiento = almacenamientoMatch ? toNum(almacenamientoMatch[1]) : null;
+    const almacenamiento = almacenamientoMatch
+      ? toNum(almacenamientoMatch[1])
+      : null;
 
     // RAM (GB)
-    const ramMatch = text.match(/\b(\d{1,2})\s?gb\s?de\s?ram\b/) || text.match(/\b(\d{1,2})\s?gb\s?ram\b/) || text.match(/\b(\d{1,2})\s?gb\b/);
+    const ramMatch =
+      text.match(/\b(\d{1,2})\s?gb\s?de\s?ram\b/) ||
+      text.match(/\b(\d{1,2})\s?gb\s?ram\b/) ||
+      text.match(/\b(\d{1,2})\s?gb\b/);
     const ram = ramMatch ? toNum(ramMatch[1]) : null;
 
     // Cámara (MP)
-    const camMatch = text.match(/(\d{2,4})\s?mp\b/) || text.match(/cámara\s?de\s?(\d{2,4})\s?mp/);
+    const camMatch =
+      text.match(/(\d{2,4})\s?mp\b/) ||
+      text.match(/cámara\s?de\s?(\d{2,4})\s?mp/);
     const camara = camMatch ? toNum(camMatch[1] || camMatch[2]) : null;
 
     // Pantalla (pulgadas)
-    const screenMatch = text.match(/(\d{1,2}(?:[.,]\d)?)\s?(?:pulgadas|")/) || text.match(/pantalla.*?(\d{1,2}(?:[.,]\d)?)/);
-    const pantalla = screenMatch ? toNum((screenMatch[1] || screenMatch[2] || "").replace(",", ".")) : null;
+    const screenMatch =
+      text.match(/(\d{1,2}(?:[.,]\d)?)\s?(?:pulgadas|")/) ||
+      text.match(/pantalla.*?(\d{1,2}(?:[.,]\d)?)/);
+    const pantalla = screenMatch
+      ? toNum((screenMatch[1] || screenMatch[2] || "").replace(",", "."))
+      : null;
 
     // Batería (mAh)
     const batMatch = text.match(/(\d{3,5})\s?m(?:ah)?\b/);
@@ -122,15 +162,15 @@ function AdminPanel() {
       ram: ram || null,
       camara: camara || null,
       pantalla: pantalla || null,
-      bateria: bateria || null
+      bateria: bateria || null,
     };
   }
 
   // Helpers tema
   const toTimeInput = (ts) => {
-    if (!ts) return '';
+    if (!ts) return "";
     const ms = ts?.seconds ? ts.seconds * 1000 : Date.parse(ts);
-    return isNaN(ms) ? '' : new Date(ms).toISOString().slice(0, 16);
+    return isNaN(ms) ? "" : new Date(ms).toISOString().slice(0, 16);
   };
   const toDateOrNull = (s) => (s ? new Date(s) : null);
 
@@ -143,10 +183,10 @@ function AdminPanel() {
 
     // configuracion/general
     const unsubConfig = subscribeToConfig((data) => {
-      setNombreNegocio(data.nombre || '');
-      setPreviewLogo(data.logo || '');
-      // setConfigId(docSnap.id); // configId might not be needed if service handles it, or we simply don't use it for reading. 
-      // If we need the ID, the service typically returns data. 
+      setNombreNegocio(data.nombre || "");
+      setPreviewLogo(data.logo || "");
+      // setConfigId(docSnap.id); // configId might not be needed if service handles it, or we simply don't use it for reading.
+      // If we need the ID, the service typically returns data.
       // In the original code, docSnap.id is "general".
       setConfigId("general");
 
@@ -161,13 +201,19 @@ function AdminPanel() {
 
     // asesores
     const unsubAsesores = onSnapshot(collection(db, "usuarios"), (snapshot) => {
-      const listaAsesores = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const listaAsesores = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setAsesores(listaAsesores);
     });
 
     // carrusel
     const unsubCarrusel = onSnapshot(collection(db, "carrusel"), (snapshot) => {
-      const listaSlides = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      const listaSlides = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
       setSlides(listaSlides);
     });
 
@@ -181,46 +227,47 @@ function AdminPanel() {
 
   // ===== Productos: CRUD =====
   const resetProductoForm = () => {
-    setNombreProducto('');
-    setDescripcionProducto('');
-    setContadoProducto('');
-    setCuotas6Producto('');
-    setCuotas8Producto('');
-    setImagenProducto('');
-    setCuotaInicialProducto('');
+    setNombreProducto("");
+    setDescripcionProducto("");
+    setContadoProducto("");
+    setCuotas6Producto("");
+    setCuotas8Producto("");
+    setImagenProducto("");
+    setCuotaInicialProducto("");
 
     // promo
     setPromoActivo(false);
-    setPromoPrice('');
-    setPromoBadgeText('PROMO');
-    setPromoBadgeBg('#d81b60');
-    setPromoHighlight('');
+    setPromoPrice("");
+    setPromoBadgeText("PROMO");
+    setPromoBadgeBg("#d81b60");
+    setPromoHighlight("");
 
     // nuevo
     setNuevoActivo(false);
-    setNuevoBadgeText('NUEVO');
-    setNuevoBadgeBg('#28a745');
+    setNuevoBadgeText("NUEVO");
+    setNuevoBadgeBg("#28a745");
 
     // badge mode
-    setBadgeMode('promo');
+    setBadgeMode("promo");
 
     // 12 meses
     setSolo12Meses(false);
-    setCuotas12Producto('');
+    setCuotas12Producto("");
 
     setEditandoProducto(null);
   };
 
   const handleSubmitProducto = async (e) => {
     e.preventDefault();
-    setError(''); setSuccess('');
-    const specs = parseDescriptionToSpecs(descripcionProducto || '');
+    setError("");
+    setSuccess("");
+    const specs = parseDescriptionToSpecs(descripcionProducto || "");
 
     // Normalizar y convertir a números para evitar inconsistencias
     const parseNumberSafe = (v) => {
-      if (v === '' || v === null || typeof v === 'undefined') return null;
+      if (v === "" || v === null || typeof v === "undefined") return null;
       // Convertir comas a punto y eliminar espacios
-      const s = String(v).replace(/\s+/g, '').replace(/,/, '.');
+      const s = String(v).replace(/\s+/g, "").replace(/,/, ".");
       const n = Number(s);
       return Number.isFinite(n) ? n : null;
     };
@@ -243,26 +290,26 @@ function AdminPanel() {
         // promo fields
         promo: !!promoActivo,
         promoPrice: promoActivo ? Number(promoPrice || 0) : null,
-        promoBadgeText: promoActivo ? (promoBadgeText || 'PROMO') : null,
-        promoBadgeBg: promoActivo ? (promoBadgeBg || null) : null,
-        promoHighlight: promoActivo ? (promoHighlight || null) : null,
+        promoBadgeText: promoActivo ? promoBadgeText || "PROMO" : null,
+        promoBadgeBg: promoActivo ? promoBadgeBg || null : null,
+        promoHighlight: promoActivo ? promoHighlight || null : null,
         // nuevo badge
         nuevo: !!nuevoActivo,
-        nuevoBadgeText: nuevoActivo ? (nuevoBadgeText || 'NUEVO') : null,
-        nuevoBadgeBg: nuevoActivo ? (nuevoBadgeBg || null) : null,
+        nuevoBadgeText: nuevoActivo ? nuevoBadgeText || "NUEVO" : null,
+        nuevoBadgeBg: nuevoActivo ? nuevoBadgeBg || null : null,
         // badge display mode
-        badgeMode: badgeMode || 'promo',
+        badgeMode: badgeMode || "promo",
         // financiación 12 meses
         solo12Meses: !!solo12Meses,
-        cuotas12: solo12Meses ? parseNumberSafe(cuotas12Producto) : null
+        cuotas12: solo12Meses ? parseNumberSafe(cuotas12Producto) : null,
       };
 
       if (editandoProducto) {
         await updateProduct(editandoProducto.id, payload);
-        setSuccess('Producto actualizado exitosamente!');
+        setSuccess("Producto actualizado exitosamente!");
       } else {
         await createProduct(payload);
-        setSuccess('Producto agregado exitosamente!');
+        setSuccess("Producto agregado exitosamente!");
       }
       resetProductoForm();
     } catch (err) {
@@ -274,39 +321,42 @@ function AdminPanel() {
   const handleEditProducto = (producto) => {
     setEditandoProducto(producto);
     setNombreProducto(producto.nombre);
-    setDescripcionProducto(producto.descripcion || '');
-    setContadoProducto(producto.contado || '');
-    setCuotas6Producto(producto.cuotas6 || '');
-    setCuotas8Producto(producto.cuotas8 || '');
-    setImagenProducto(producto.imagen || '');
-    setCuotaInicialProducto(producto.cuotaInicial || '');
+    setDescripcionProducto(producto.descripcion || "");
+    setContadoProducto(producto.contado || "");
+    setCuotas6Producto(producto.cuotas6 || "");
+    setCuotas8Producto(producto.cuotas8 || "");
+    setImagenProducto(producto.imagen || "");
+    setCuotaInicialProducto(producto.cuotaInicial || "");
 
     // promo
     setPromoActivo(!!producto.promo);
-    setPromoPrice(producto.promoPrice ?? '');
-    setPromoBadgeText(producto.promoBadgeText || 'PROMO');
-    setPromoBadgeBg(producto.promoBadgeBg || '#d81b60');
-    setPromoHighlight(producto.promoHighlight || '');
+    setPromoPrice(producto.promoPrice ?? "");
+    setPromoBadgeText(producto.promoBadgeText || "PROMO");
+    setPromoBadgeBg(producto.promoBadgeBg || "#d81b60");
+    setPromoHighlight(producto.promoHighlight || "");
 
     // nuevo
     setNuevoActivo(!!producto.nuevo);
-    setNuevoBadgeText(producto.nuevoBadgeText || 'NUEVO');
-    setNuevoBadgeBg(producto.nuevoBadgeBg || '#28a745');
+    setNuevoBadgeText(producto.nuevoBadgeText || "NUEVO");
+    setNuevoBadgeBg(producto.nuevoBadgeBg || "#28a745");
 
     // badge mode
-    setBadgeMode(producto.badgeMode || 'promo');
+    setBadgeMode(producto.badgeMode || "promo");
 
     // 12 meses
     setSolo12Meses(!!producto.solo12Meses);
-    setCuotas12Producto(producto.cuotas12 || '');
+    setCuotas12Producto(producto.cuotas12 || "");
   };
 
   const handleDeleteProducto = async (id) => {
-    setError(''); setSuccess('');
-    if (window.confirm("¿Estás seguro de que quieres eliminar este producto?")) {
+    setError("");
+    setSuccess("");
+    if (
+      window.confirm("¿Estás seguro de que quieres eliminar este producto?")
+    ) {
       try {
         await deleteProduct(id);
-        setSuccess('Producto eliminado exitosamente!');
+        setSuccess("Producto eliminado exitosamente!");
       } catch (err) {
         console.error("Error al eliminar producto:", err);
         setError(`Error al eliminar producto: ${err.message}`);
@@ -323,7 +373,8 @@ function AdminPanel() {
   };
 
   const handleUpdateConfig = async () => {
-    setError(''); setSuccess('');
+    setError("");
+    setSuccess("");
     try {
       let logoUrl = previewLogo;
       if (logoNegocio) {
@@ -338,10 +389,10 @@ function AdminPanel() {
           enabled: themeEnabled,
           start: toDateOrNull(themeStart),
           end: toDateOrNull(themeEnd),
-          vars: themeVars
-        }
+          vars: themeVars,
+        },
       });
-      setSuccess('Configuración actualizada exitosamente!');
+      setSuccess("Configuración actualizada exitosamente!");
       setLogoNegocio(null);
     } catch (err) {
       console.error("Error al actualizar configuración:", err);
@@ -352,31 +403,40 @@ function AdminPanel() {
   // ===== Asesores =====
   const handleAddAsesor = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
     try {
       const primaryApp = getApp();
       const secondaryApp =
-        getApps().find(a => a.name === 'Secondary') || initializeApp(primaryApp.options, 'Secondary');
+        getApps().find((a) => a.name === "Secondary") ||
+        initializeApp(primaryApp.options, "Secondary");
       const secondaryAuth = getAuthSecondary(secondaryApp);
-      const userCredential = await createUserWithEmailAndPassword(secondaryAuth, emailAsesor, passwordAsesor);
+      const userCredential = await createUserWithEmailAndPassword(
+        secondaryAuth,
+        emailAsesor,
+        passwordAsesor,
+      );
       const user = userCredential.user;
 
       await setDoc(doc(db, "usuarios", user.uid), {
         email: emailAsesor,
         nombreCompleto: nombreCompletoAsesor,
         rol: "asesor",
-        whatsappNumber: whatsappAsesor
+        whatsappNumber: whatsappAsesor,
       });
 
-      try { await secondaryAuth.signOut?.(); } catch (_) { }
-      try { await deleteApp(secondaryApp); } catch (_) { }
+      try {
+        await secondaryAuth.signOut?.();
+      } catch (_) {}
+      try {
+        await deleteApp(secondaryApp);
+      } catch (_) {}
 
-      setSuccess('Asesor registrado exitosamente!');
-      setEmailAsesor('');
-      setPasswordAsesor('');
-      setNombreCompletoAsesor('');
-      setWhatsappAsesor('');
+      setSuccess("Asesor registrado exitosamente!");
+      setEmailAsesor("");
+      setPasswordAsesor("");
+      setNombreCompletoAsesor("");
+      setWhatsappAsesor("");
     } catch (err) {
       console.error("Error al registrar asesor:", err);
       setError(`Error al registrar asesor: ${err.message}`);
@@ -388,26 +448,26 @@ function AdminPanel() {
     setEmailAsesor(asesor.email);
     setNombreCompletoAsesor(asesor.nombreCompleto);
     setWhatsappAsesor(asesor.whatsappNumber);
-    setPasswordAsesor('');
-    setKey('asesores');
+    setPasswordAsesor("");
+    setKey("asesores");
   };
 
   const handleUpdateAsesor = async (e) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
     if (!editandoAsesor) return;
     try {
       await updateDoc(doc(db, "usuarios", editandoAsesor.id), {
         nombreCompleto: nombreCompletoAsesor,
-        whatsappNumber: whatsappAsesor
+        whatsappNumber: whatsappAsesor,
       });
-      setSuccess('Asesor actualizado exitosamente!');
+      setSuccess("Asesor actualizado exitosamente!");
       setEditandoAsesor(null);
-      setEmailAsesor('');
-      setNombreCompletoAsesor('');
-      setWhatsappAsesor('');
-      setPasswordAsesor('');
+      setEmailAsesor("");
+      setNombreCompletoAsesor("");
+      setWhatsappAsesor("");
+      setPasswordAsesor("");
     } catch (err) {
       console.error("Error al actualizar asesor:", err);
       setError(`Error al actualizar asesor: ${err.message}`);
@@ -415,12 +475,16 @@ function AdminPanel() {
   };
 
   const handleDeleteAsesor = async (id) => {
-    setError('');
-    setSuccess('');
-    if (window.confirm("¿Eliminar asesor? Esto lo elimina del listado y su acceso.")) {
+    setError("");
+    setSuccess("");
+    if (
+      window.confirm(
+        "¿Eliminar asesor? Esto lo elimina del listado y su acceso.",
+      )
+    ) {
       try {
         await deleteDoc(doc(db, "usuarios", id));
-        setSuccess('Asesor eliminado exitosamente del listado.');
+        setSuccess("Asesor eliminado exitosamente del listado.");
       } catch (err) {
         console.error("Error al eliminar asesor:", err);
         setError(`Error al eliminar asesor: ${err.message}`);
@@ -430,49 +494,56 @@ function AdminPanel() {
 
   // ===== Carrusel Hero: CRUD =====
   const resetSlideForm = () => {
-    setUrlImagenSlide('');
-    setTituloSlide('');
-    setOrdenSlide('');
+    setUrlImagenSlide("");
+    setTituloSlide("");
+    setOrdenSlide("");
     setActivoSlide(true);
     setEditandoSlide(null);
-    setPreviewImagenSlide('');
+    setPreviewImagenSlide("");
   };
 
   const handleUrlImagenChange = (url) => {
     setUrlImagenSlide(url);
     // Actualizar preview si la URL parece válida
-    if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+    if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
       setPreviewImagenSlide(url);
     } else {
-      setPreviewImagenSlide('');
+      setPreviewImagenSlide("");
     }
   };
 
   const handleSubmitSlide = async (e) => {
     e.preventDefault();
-    setError(''); setSuccess('');
+    setError("");
+    setSuccess("");
 
     // Validación básica de URL
-    if (!urlImagenSlide || (!urlImagenSlide.startsWith('http://') && !urlImagenSlide.startsWith('https://'))) {
-      setError('Por favor ingresa una URL válida para la imagen (debe comenzar con http:// o https://)');
+    if (
+      !urlImagenSlide ||
+      (!urlImagenSlide.startsWith("http://") &&
+        !urlImagenSlide.startsWith("https://"))
+    ) {
+      setError(
+        "Por favor ingresa una URL válida para la imagen (debe comenzar con http:// o https://)",
+      );
       return;
     }
 
     try {
       const payload = {
         url_imagen: urlImagenSlide,
-        titulo: tituloSlide || '',
+        titulo: tituloSlide || "",
         orden: parseInt(ordenSlide) || 0,
         activo: activoSlide,
-        createdAt: editandoSlide ? editandoSlide.createdAt : new Date()
+        createdAt: editandoSlide ? editandoSlide.createdAt : new Date(),
       };
 
       if (editandoSlide) {
         await updateDoc(doc(db, "carrusel", editandoSlide.id), payload);
-        setSuccess('Slide actualizado exitosamente!');
+        setSuccess("Slide actualizado exitosamente!");
       } else {
         await addDoc(collection(db, "carrusel"), payload);
-        setSuccess('Slide agregado exitosamente!');
+        setSuccess("Slide agregado exitosamente!");
       }
       resetSlideForm();
     } catch (err) {
@@ -483,20 +554,21 @@ function AdminPanel() {
 
   const handleEditSlide = (slide) => {
     setEditandoSlide(slide);
-    setUrlImagenSlide(slide.url_imagen || '');
-    setTituloSlide(slide.titulo || '');
-    setOrdenSlide(slide.orden || '');
+    setUrlImagenSlide(slide.url_imagen || "");
+    setTituloSlide(slide.titulo || "");
+    setOrdenSlide(slide.orden || "");
     setActivoSlide(slide.activo !== false);
-    setPreviewImagenSlide(slide.url_imagen || '');
-    setKey('carrusel'); // Cambiar a la pestaña de carrusel
+    setPreviewImagenSlide(slide.url_imagen || "");
+    setKey("carrusel"); // Cambiar a la pestaña de carrusel
   };
 
   const handleDeleteSlide = async (id) => {
-    setError(''); setSuccess('');
+    setError("");
+    setSuccess("");
     if (window.confirm("¿Estás seguro de que quieres eliminar este slide?")) {
       try {
         await deleteDoc(doc(db, "carrusel", id));
-        setSuccess('Slide eliminado exitosamente!');
+        setSuccess("Slide eliminado exitosamente!");
       } catch (err) {
         console.error("Error al eliminar slide:", err);
         setError(`Error al eliminar slide: ${err.message}`);
@@ -507,9 +579,11 @@ function AdminPanel() {
   const handleToggleActivoSlide = async (slide) => {
     try {
       await updateDoc(doc(db, "carrusel", slide.id), {
-        activo: !slide.activo
+        activo: !slide.activo,
       });
-      setSuccess(`Slide ${!slide.activo ? 'activado' : 'desactivado'} exitosamente!`);
+      setSuccess(
+        `Slide ${!slide.activo ? "activado" : "desactivado"} exitosamente!`,
+      );
     } catch (err) {
       console.error("Error al cambiar estado del slide:", err);
       setError(`Error al cambiar estado: ${err.message}`);
@@ -524,25 +598,47 @@ function AdminPanel() {
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
 
-      <Tabs id="admin-panel-tabs" activeKey={key} onSelect={(k) => setKey(k)} className="mb-3">
+      <Tabs
+        id="admin-panel-tabs"
+        activeKey={key}
+        onSelect={(k) => setKey(k)}
+        className="mb-3"
+      >
         {/* === Productos === */}
         <Tab eventKey="productos" title="Gestionar Productos">
           <Card className="p-4 mb-4 shadow-sm">
-            <h3 className="mb-3">{editandoProducto ? 'Editar Producto' : 'Agregar Nuevo Producto'}</h3>
+            <h3 className="mb-3">
+              {editandoProducto ? "Editar Producto" : "Agregar Nuevo Producto"}
+            </h3>
             <Form onSubmit={handleSubmitProducto}>
               <Form.Group className="mb-3">
                 <Form.Label>Nombre</Form.Label>
-                <Form.Control type="text" value={nombreProducto} onChange={e => setNombreProducto(e.target.value)} required />
+                <Form.Control
+                  type="text"
+                  value={nombreProducto}
+                  onChange={(e) => setNombreProducto(e.target.value)}
+                  required
+                />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Descripción</Form.Label>
-                <Form.Control as="textarea" rows={3} value={descripcionProducto} onChange={e => setDescripcionProducto(e.target.value)} />
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  value={descripcionProducto}
+                  onChange={(e) => setDescripcionProducto(e.target.value)}
+                />
               </Form.Group>
               <Row className="g-3">
                 <Col md={4}>
                   <Form.Group className="mb-3">
                     <Form.Label>Precio Contado</Form.Label>
-                    <Form.Control type="number" value={contadoProducto} onChange={e => setContadoProducto(e.target.value)} required />
+                    <Form.Control
+                      type="number"
+                      value={contadoProducto}
+                      onChange={(e) => setContadoProducto(e.target.value)}
+                      required
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={4}>
@@ -552,25 +648,42 @@ function AdminPanel() {
                       type="number"
                       value={cuotas6Producto}
                       disabled={solo12Meses}
-                      onChange={e => {
+                      onChange={(e) => {
                         const v = e.target.value;
                         setCuotas6Producto(v);
-                        if (v === '' || v === null) {
-                          setCuotas8Producto('');
+                        if (v === "" || v === null) {
+                          setCuotas8Producto("");
                         } else {
-                          const n = Number(String(v).replace(/\s+/g, '').replace(/,/, '.'));
-                          setCuotas8Producto(Number.isFinite(n) ? String(n * 2) : '');
+                          const n = Number(
+                            String(v).replace(/\s+/g, "").replace(/,/, "."),
+                          );
+                          setCuotas8Producto(
+                            Number.isFinite(n) ? String(n * 2) : "",
+                          );
                         }
                       }}
                     />
-                    {solo12Meses && <Form.Text className="text-muted">Deshabilitado (modo 12 meses activo)</Form.Text>}
+                    {solo12Meses && (
+                      <Form.Text className="text-muted">
+                        Deshabilitado (modo 12 meses activo)
+                      </Form.Text>
+                    )}
                   </Form.Group>
                 </Col>
                 <Col md={4}>
                   <Form.Group className="mb-3">
                     <Form.Label>8 Cuotas Mensuales</Form.Label>
-                    <Form.Control type="number" value={cuotas8Producto} disabled={solo12Meses} onChange={e => setCuotas8Producto(e.target.value)} />
-                    <Form.Text className="text-muted">{solo12Meses ? 'Deshabilitado (modo 12 meses activo)' : 'Se completa automáticamente como el doble de las 16 quincenas (editable).'}</Form.Text>
+                    <Form.Control
+                      type="number"
+                      value={cuotas8Producto}
+                      disabled={solo12Meses}
+                      onChange={(e) => setCuotas8Producto(e.target.value)}
+                    />
+                    <Form.Text className="text-muted">
+                      {solo12Meses
+                        ? "Deshabilitado (modo 12 meses activo)"
+                        : "Se completa automáticamente como el doble de las 16 quincenas (editable)."}
+                    </Form.Text>
                   </Form.Group>
                 </Col>
               </Row>
@@ -579,13 +692,24 @@ function AdminPanel() {
                 <Col md={4}>
                   <Form.Group className="mb-3">
                     <Form.Label>Cuota Inicial (opcional)</Form.Label>
-                    <Form.Control type="number" value={cuotaInicialProducto} onChange={e => setCuotaInicialProducto(e.target.value)} min={0} placeholder="0" />
+                    <Form.Control
+                      type="number"
+                      value={cuotaInicialProducto}
+                      onChange={(e) => setCuotaInicialProducto(e.target.value)}
+                      min={0}
+                      placeholder="0"
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={8}>
                   <Form.Group className="mb-3">
                     <Form.Label>URL Imagen</Form.Label>
-                    <Form.Control type="text" value={imagenProducto} onChange={e => setImagenProducto(e.target.value)} placeholder="https://…" />
+                    <Form.Control
+                      type="text"
+                      value={imagenProducto}
+                      onChange={(e) => setImagenProducto(e.target.value)}
+                      placeholder="https://…"
+                    />
                   </Form.Group>
                 </Col>
               </Row>
@@ -595,41 +719,77 @@ function AdminPanel() {
                 <div className="d-flex align-items-center justify-content-between">
                   <h5 className="mb-0">
                     Promoción
-                    {promoActivo && <Badge bg="danger" className="ms-2">ACTIVA</Badge>}
+                    {promoActivo && (
+                      <Badge bg="danger" className="ms-2">
+                        ACTIVA
+                      </Badge>
+                    )}
                   </h5>
-                  <Form.Check type="switch" id="promo-switch" label={promoActivo ? "Promo activa" : "Promo inactiva"}
-                    checked={promoActivo} onChange={(e) => setPromoActivo(e.target.checked)} />
+                  <Form.Check
+                    type="switch"
+                    id="promo-switch"
+                    label={promoActivo ? "Promo activa" : "Promo inactiva"}
+                    checked={promoActivo}
+                    onChange={(e) => setPromoActivo(e.target.checked)}
+                  />
                 </div>
 
                 <Row className="mt-2 g-3">
                   <Col md={3}>
                     <Form.Label>Precio promo</Form.Label>
-                    <Form.Control type="number" value={promoPrice} disabled={!promoActivo} onChange={(e) => setPromoPrice(e.target.value)} placeholder="ej. 899000" />
+                    <Form.Control
+                      type="number"
+                      value={promoPrice}
+                      disabled={!promoActivo}
+                      onChange={(e) => setPromoPrice(e.target.value)}
+                      placeholder="ej. 899000"
+                    />
                   </Col>
                   <Col md={3}>
                     <Form.Label>Texto del badge</Form.Label>
-                    <Form.Control value={promoBadgeText} disabled={!promoActivo} onChange={(e) => setPromoBadgeText(e.target.value)} placeholder="PROMO" />
+                    <Form.Control
+                      value={promoBadgeText}
+                      disabled={!promoActivo}
+                      onChange={(e) => setPromoBadgeText(e.target.value)}
+                      placeholder="PROMO"
+                    />
                   </Col>
                   <Col md={3}>
                     <Form.Label>Color badge</Form.Label>
-                    <Form.Control type="color" value={promoBadgeBg} disabled={!promoActivo} onChange={(e) => setPromoBadgeBg(e.target.value)} />
+                    <Form.Control
+                      type="color"
+                      value={promoBadgeBg}
+                      disabled={!promoActivo}
+                      onChange={(e) => setPromoBadgeBg(e.target.value)}
+                    />
                   </Col>
                   <Col md={3}>
                     <Form.Label>Highlight tarjeta</Form.Label>
-                    <Form.Control value={promoHighlight} disabled={!promoActivo} onChange={(e) => setPromoHighlight(e.target.value)} placeholder="rgba(...) o #hex (opcional)" />
+                    <Form.Control
+                      value={promoHighlight}
+                      disabled={!promoActivo}
+                      onChange={(e) => setPromoHighlight(e.target.value)}
+                      placeholder="rgba(...) o #hex (opcional)"
+                    />
                   </Col>
                 </Row>
 
                 <Row className="mt-2 g-3 align-items-center">
                   <Col md={6}>
                     <Form.Label>Tipo de etiqueta</Form.Label>
-                    <Form.Select value={badgeMode} onChange={(e) => setBadgeMode(e.target.value)}>
+                    <Form.Select
+                      value={badgeMode}
+                      onChange={(e) => setBadgeMode(e.target.value)}
+                    >
                       <option value="none">Ninguna</option>
                       <option value="promo">Sólo Promo</option>
                       <option value="nuevo">Sólo Nuevo</option>
                       <option value="ambos">Promo + Nuevo</option>
                     </Form.Select>
-                    <Form.Text className="text-muted">Selecciona qué etiqueta(es) deben mostrarse en el catálogo.</Form.Text>
+                    <Form.Text className="text-muted">
+                      Selecciona qué etiqueta(es) deben mostrarse en el
+                      catálogo.
+                    </Form.Text>
                   </Col>
                 </Row>
 
@@ -669,16 +829,24 @@ function AdminPanel() {
                 </Row>
 
                 <Form.Text className="text-muted">
-                  Si dejas colores vacíos, se usarán los del <strong>tema de temporada</strong> (si está activo).
+                  Si dejas colores vacíos, se usarán los del{" "}
+                  <strong>tema de temporada</strong> (si está activo).
                 </Form.Text>
               </Card>
 
               {/* === BLOQUE FINANCIACIÓN 12 MESES === */}
-              <Card className="p-3 mb-3" style={{ borderLeft: '4px solid #2196f3' }}>
+              <Card
+                className="p-3 mb-3"
+                style={{ borderLeft: "4px solid #2196f3" }}
+              >
                 <div className="d-flex align-items-center justify-content-between">
                   <h5 className="mb-0">
                     Financiación Exclusiva 12 Meses
-                    {solo12Meses && <Badge bg="info" className="ms-2">ACTIVA</Badge>}
+                    {solo12Meses && (
+                      <Badge bg="info" className="ms-2">
+                        ACTIVA
+                      </Badge>
+                    )}
                   </h5>
                   <Form.Check
                     type="switch"
@@ -700,17 +868,23 @@ function AdminPanel() {
                       placeholder="ej. 150000"
                     />
                     <Form.Text className="text-muted">
-                      <strong>Importante:</strong> Cuando se active esta opción, el producto mostrará <strong>ÚNICAMENTE</strong> el plan de 12 cuotas mensuales en el catálogo. Los campos de 16 quincenas y 8 meses se deshabilitarán pero sus valores se conservarán.
+                      <strong>Importante:</strong> Cuando se active esta opción,
+                      el producto mostrará <strong>ÚNICAMENTE</strong> el plan
+                      de 12 cuotas mensuales en el catálogo. Los campos de 16
+                      quincenas y 8 meses se deshabilitarán pero sus valores se
+                      conservarán.
                     </Form.Text>
                   </Col>
                 </Row>
               </Card>
 
               <Button variant="primary" type="submit" className="me-2">
-                {editandoProducto ? 'Actualizar Producto' : 'Agregar Producto'}
+                {editandoProducto ? "Actualizar Producto" : "Agregar Producto"}
               </Button>
               {editandoProducto && (
-                <Button variant="secondary" onClick={resetProductoForm}>Cancelar Edición</Button>
+                <Button variant="secondary" onClick={resetProductoForm}>
+                  Cancelar Edición
+                </Button>
               )}
             </Form>
           </Card>
@@ -732,7 +906,7 @@ function AdminPanel() {
               {searchProducto && (
                 <Button
                   variant="outline-secondary"
-                  onClick={() => setSearchProducto('')}
+                  onClick={() => setSearchProducto("")}
                 >
                   Limpiar
                 </Button>
@@ -744,35 +918,43 @@ function AdminPanel() {
               <Table striped bordered hover>
                 <thead className="table-dark">
                   <tr>
-                    <th style={{ width: '80px' }}>Imagen</th>
+                    <th style={{ width: "80px" }}>Imagen</th>
                     <th>Nombre</th>
-                    <th style={{ width: '130px' }}>Precio Contado</th>
-                    <th style={{ width: '130px' }}>Precio Crédito</th>
-                    <th style={{ width: '120px' }}>Etiquetas</th>
-                    <th style={{ width: '180px' }}>Acciones</th>
+                    <th style={{ width: "130px" }}>Precio Contado</th>
+                    <th style={{ width: "130px" }}>Precio Crédito</th>
+                    <th style={{ width: "120px" }}>Etiquetas</th>
+                    <th style={{ width: "180px" }}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {productos
-                    .filter(producto => {
+                    .filter((producto) => {
                       if (!searchProducto) return true;
                       const searchLower = searchProducto.toLowerCase();
-                      const nombre = (producto.nombre || '').toLowerCase();
-                      const descripcion = (producto.descripcion || '').toLowerCase();
-                      return nombre.includes(searchLower) || descripcion.includes(searchLower);
+                      const nombre = (producto.nombre || "").toLowerCase();
+                      const descripcion = (
+                        producto.descripcion || ""
+                      ).toLowerCase();
+                      return (
+                        nombre.includes(searchLower) ||
+                        descripcion.includes(searchLower)
+                      );
                     })
-                    .map(producto => (
+                    .map((producto) => (
                       <tr key={producto.id}>
                         {/* Imagen miniatura */}
                         <td className="text-center align-middle">
                           <img
-                            src={producto.imagen || "https://via.placeholder.com/60"}
+                            src={
+                              producto.imagen ||
+                              "https://via.placeholder.com/60"
+                            }
                             alt={producto.nombre}
                             style={{
-                              width: '60px',
-                              height: '60px',
-                              objectFit: 'contain',
-                              borderRadius: '4px'
+                              width: "60px",
+                              height: "60px",
+                              objectFit: "contain",
+                              borderRadius: "4px",
                             }}
                           />
                         </td>
@@ -781,12 +963,15 @@ function AdminPanel() {
                         <td className="align-middle">
                           <strong>{producto.nombre}</strong>
                           {producto.descripcion && (
-                            <div className="text-muted small" style={{
-                              maxWidth: '300px',
-                              overflow: 'hidden',
-                              textOverflow: 'ellipsis',
-                              whiteSpace: 'nowrap'
-                            }}>
+                            <div
+                              className="text-muted small"
+                              style={{
+                                maxWidth: "300px",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
                               {producto.descripcion}
                             </div>
                           )}
@@ -796,16 +981,27 @@ function AdminPanel() {
                         <td className="align-middle">
                           {producto.promo && producto.promoPrice ? (
                             <>
-                              <div className="text-muted small" style={{ textDecoration: 'line-through' }}>
-                                ${parseFloat(producto.contado).toLocaleString('es-CO')}
+                              <div
+                                className="text-muted small"
+                                style={{ textDecoration: "line-through" }}
+                              >
+                                $
+                                {parseFloat(producto.contado).toLocaleString(
+                                  "es-CO",
+                                )}
                               </div>
                               <strong className="text-danger">
-                                ${parseFloat(producto.promoPrice).toLocaleString('es-CO')}
+                                $
+                                {parseFloat(producto.promoPrice).toLocaleString(
+                                  "es-CO",
+                                )}
                               </strong>
                             </>
                           ) : (
                             <strong>
-                              {producto.contado ? `$${parseFloat(producto.contado).toLocaleString('es-CO')}` : 'N/A'}
+                              {producto.contado
+                                ? `$${parseFloat(producto.contado).toLocaleString("es-CO")}`
+                                : "N/A"}
                             </strong>
                           )}
                         </td>
@@ -814,21 +1010,41 @@ function AdminPanel() {
                         <td className="align-middle">
                           {producto.solo12Meses && producto.cuotas12 ? (
                             <div className="small">
-                              <Badge bg="info" className="mb-1 d-block" style={{ fontSize: '0.65rem' }}>12 MESES</Badge>
+                              <Badge
+                                bg="info"
+                                className="mb-1 d-block"
+                                style={{ fontSize: "0.65rem" }}
+                              >
+                                12 MESES
+                              </Badge>
                               <div>
-                                <strong>${parseFloat(producto.cuotas12).toLocaleString('es-CO')}</strong>
+                                <strong>
+                                  $
+                                  {parseFloat(producto.cuotas12).toLocaleString(
+                                    "es-CO",
+                                  )}
+                                </strong>
                                 <span className="text-muted"> /mes</span>
                               </div>
                             </div>
                           ) : producto.cuotas6 ? (
                             <>
                               <div className="small">
-                                <strong>${parseFloat(producto.cuotas6).toLocaleString('es-CO')}</strong>
+                                <strong>
+                                  $
+                                  {parseFloat(producto.cuotas6).toLocaleString(
+                                    "es-CO",
+                                  )}
+                                </strong>
                                 <span className="text-muted"> /quinc.</span>
                               </div>
                               {producto.cuotas8 && (
                                 <div className="small text-muted">
-                                  ${parseFloat(producto.cuotas8).toLocaleString('es-CO')} /mes
+                                  $
+                                  {parseFloat(producto.cuotas8).toLocaleString(
+                                    "es-CO",
+                                  )}{" "}
+                                  /mes
                                 </div>
                               )}
                             </>
@@ -840,29 +1056,36 @@ function AdminPanel() {
                         {/* Badges/Etiquetas */}
                         <td className="align-middle">
                           <div className="d-flex flex-column gap-1">
-                            {producto.promo && (producto.badgeMode === 'promo' || producto.badgeMode === 'ambos') && (
-                              <Badge
-                                bg="danger"
-                                style={{
-                                  backgroundColor: producto.promoBadgeBg || '#d81b60',
-                                  fontSize: '0.7rem'
-                                }}
-                              >
-                                {producto.promoBadgeText || 'PROMO'}
-                              </Badge>
-                            )}
-                            {producto.nuevo && (producto.badgeMode === 'nuevo' || producto.badgeMode === 'ambos') && (
-                              <Badge
-                                bg="success"
-                                style={{
-                                  backgroundColor: producto.nuevoBadgeBg || '#28a745',
-                                  fontSize: '0.7rem'
-                                }}
-                              >
-                                {producto.nuevoBadgeText || 'NUEVO'}
-                              </Badge>
-                            )}
-                            {(!producto.promo && !producto.nuevo) || producto.badgeMode === 'none' ? (
+                            {producto.promo &&
+                              (producto.badgeMode === "promo" ||
+                                producto.badgeMode === "ambos") && (
+                                <Badge
+                                  bg="danger"
+                                  style={{
+                                    backgroundColor:
+                                      producto.promoBadgeBg || "#d81b60",
+                                    fontSize: "0.7rem",
+                                  }}
+                                >
+                                  {producto.promoBadgeText || "PROMO"}
+                                </Badge>
+                              )}
+                            {producto.nuevo &&
+                              (producto.badgeMode === "nuevo" ||
+                                producto.badgeMode === "ambos") && (
+                                <Badge
+                                  bg="success"
+                                  style={{
+                                    backgroundColor:
+                                      producto.nuevoBadgeBg || "#28a745",
+                                    fontSize: "0.7rem",
+                                  }}
+                                >
+                                  {producto.nuevoBadgeText || "NUEVO"}
+                                </Badge>
+                              )}
+                            {(!producto.promo && !producto.nuevo) ||
+                            producto.badgeMode === "none" ? (
                               <span className="text-muted small">-</span>
                             ) : null}
                           </div>
@@ -875,7 +1098,7 @@ function AdminPanel() {
                               variant="warning"
                               size="sm"
                               onClick={() => handleEditProducto(producto)}
-                              style={{ minWidth: '70px' }}
+                              style={{ minWidth: "70px" }}
                             >
                               ✏️ Editar
                             </Button>
@@ -883,7 +1106,7 @@ function AdminPanel() {
                               variant="danger"
                               size="sm"
                               onClick={() => handleDeleteProducto(producto.id)}
-                              style={{ minWidth: '80px' }}
+                              style={{ minWidth: "80px" }}
                             >
                               🗑️ Eliminar
                             </Button>
@@ -895,22 +1118,24 @@ function AdminPanel() {
               </Table>
 
               {/* Mensaje cuando no hay resultados */}
-              {productos.filter(producto => {
+              {productos.filter((producto) => {
                 if (!searchProducto) return true;
                 const searchLower = searchProducto.toLowerCase();
-                const nombre = (producto.nombre || '').toLowerCase();
-                const descripcion = (producto.descripcion || '').toLowerCase();
-                return nombre.includes(searchLower) || descripcion.includes(searchLower);
+                const nombre = (producto.nombre || "").toLowerCase();
+                const descripcion = (producto.descripcion || "").toLowerCase();
+                return (
+                  nombre.includes(searchLower) ||
+                  descripcion.includes(searchLower)
+                );
               }).length === 0 && (
-                  <div className="text-center py-4 text-muted">
-                    <p className="mb-0">
-                      {searchProducto
-                        ? `No se encontraron productos que coincidan con "${searchProducto}"`
-                        : 'No hay productos registrados'
-                      }
-                    </p>
-                  </div>
-                )}
+                <div className="text-center py-4 text-muted">
+                  <p className="mb-0">
+                    {searchProducto
+                      ? `No se encontraron productos que coincidan con "${searchProducto}"`
+                      : "No hay productos registrados"}
+                  </p>
+                </div>
+              )}
             </div>
           </Card>
         </Tab>
@@ -919,19 +1144,47 @@ function AdminPanel() {
         <Tab eventKey="negocio" title="Configuración del Negocio">
           <Card className="p-4 mb-4 shadow-sm">
             <h3 className="mb-3">Configuración del Negocio</h3>
-            <Form onSubmit={(e) => { e.preventDefault(); handleUpdateConfig(); }}>
+            <Form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleUpdateConfig();
+              }}
+            >
               <Row className="g-3">
                 <Col md={6}>
                   <Form.Group className="mb-3">
                     <Form.Label>Nombre del Negocio</Form.Label>
-                    <Form.Control type="text" value={nombreNegocio} onChange={e => setNombreNegocio(e.target.value)} />
+                    <Form.Control
+                      type="text"
+                      value={nombreNegocio}
+                      onChange={(e) => setNombreNegocio(e.target.value)}
+                    />
                   </Form.Group>
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Logo del Negocio</Form.Label>
-                    <Form.Control type="file" onChange={handleLogoChange} />
-                    {previewLogo && <img src={previewLogo} alt="Preview Logo" style={{ height: '80px', marginTop: '10px' }} className="d-block" />}
+                    <Form.Label>Logo del Negocio (URL)</Form.Label>
+                    <Form.Control
+                      type="text"
+                      value={previewLogo}
+                      onChange={(e) => {
+                        setLogoNegocio(null); //清除文件上传
+                        setPreviewLogo(e.target.value);
+                      }}
+                      placeholder="https://ejemplo.com/logo.png"
+                    />
+                    {previewLogo && (
+                      <img
+                        src={previewLogo}
+                        alt="Preview Logo"
+                        style={{ height: "80px", marginTop: "10px" }}
+                        className="d-block"
+                      />
+                    )}
+                    <Form.Text className="text-muted">
+                      Pega la URL de tu logo (ej: desde Firebase Storage, Imgur,
+                      etc.)
+                    </Form.Text>
                   </Form.Group>
                 </Col>
               </Row>
@@ -951,69 +1204,116 @@ function AdminPanel() {
                 <Row className="mt-2 g-3">
                   <Col md={6}>
                     <Form.Label>Inicio (opcional)</Form.Label>
-                    <Form.Control type="datetime-local" value={themeStart} onChange={(e) => setThemeStart(e.target.value)} />
+                    <Form.Control
+                      type="datetime-local"
+                      value={themeStart}
+                      onChange={(e) => setThemeStart(e.target.value)}
+                    />
                   </Col>
                   <Col md={6}>
                     <Form.Label>Fin (opcional)</Form.Label>
-                    <Form.Control type="datetime-local" value={themeEnd} onChange={(e) => setThemeEnd(e.target.value)} />
+                    <Form.Control
+                      type="datetime-local"
+                      value={themeEnd}
+                      onChange={(e) => setThemeEnd(e.target.value)}
+                    />
                   </Col>
 
                   {/* Variables CSS clave para promos */}
                   <Col md={4}>
                     <Form.Label>Color badge promo</Form.Label>
-                    <Form.Control type="color"
-                      value={themeVars['--promo-badge-bg'] || '#d81b60'}
-                      onChange={(e) => setThemeVars(v => ({ ...v, ['--promo-badge-bg']: e.target.value }))}
+                    <Form.Control
+                      type="color"
+                      value={themeVars["--promo-badge-bg"] || "#d81b60"}
+                      onChange={(e) =>
+                        setThemeVars((v) => ({
+                          ...v,
+                          ["--promo-badge-bg"]: e.target.value,
+                        }))
+                      }
                     />
                   </Col>
                   <Col md={4}>
                     <Form.Label>Texto badge promo</Form.Label>
-                    <Form.Control type="color"
-                      value={themeVars['--promo-badge-text'] || '#ffffff'}
-                      onChange={(e) => setThemeVars(v => ({ ...v, ['--promo-badge-text']: e.target.value }))}
+                    <Form.Control
+                      type="color"
+                      value={themeVars["--promo-badge-text"] || "#ffffff"}
+                      onChange={(e) =>
+                        setThemeVars((v) => ({
+                          ...v,
+                          ["--promo-badge-text"]: e.target.value,
+                        }))
+                      }
                     />
                   </Col>
                   <Col md={4}>
                     <Form.Label>Resaltado tarjetas</Form.Label>
                     <Form.Control
-                      value={themeVars['--promo-highlight'] || 'rgba(216,27,96,.18)'}
-                      onChange={(e) => setThemeVars(v => ({ ...v, ['--promo-highlight']: e.target.value }))}
+                      value={
+                        themeVars["--promo-highlight"] || "rgba(216,27,96,.18)"
+                      }
+                      onChange={(e) =>
+                        setThemeVars((v) => ({
+                          ...v,
+                          ["--promo-highlight"]: e.target.value,
+                        }))
+                      }
                     />
                   </Col>
                 </Row>
 
                 <div className="d-flex gap-2 mt-3">
-                  <Button size="sm" variant="secondary" onClick={() => setThemeVars(v => ({
-                    ...v,
-                    '--promo-badge-bg': '#d81b60',
-                    '--promo-badge-text': '#ffffff',
-                    '--promo-highlight': 'rgba(216,27,96,.18)',
-                    '--theme-name': 'valentine'
-                  }))}>
+                  <Button
+                    size="sm"
+                    variant="secondary"
+                    onClick={() =>
+                      setThemeVars((v) => ({
+                        ...v,
+                        "--promo-badge-bg": "#d81b60",
+                        "--promo-badge-text": "#ffffff",
+                        "--promo-highlight": "rgba(216,27,96,.18)",
+                        "--theme-name": "valentine",
+                      }))
+                    }
+                  >
                     💘 Amor y Amistad
                   </Button>
-                  <Button size="sm" variant="success" onClick={() => setThemeVars(v => ({
-                    ...v,
-                    '--promo-badge-bg': '#2e7d32',
-                    '--promo-badge-text': '#ffffff',
-                    '--promo-highlight': 'rgba(46,125,50,.18)',
-                    '--theme-name': 'christmas'
-                  }))}>
+                  <Button
+                    size="sm"
+                    variant="success"
+                    onClick={() =>
+                      setThemeVars((v) => ({
+                        ...v,
+                        "--promo-badge-bg": "#2e7d32",
+                        "--promo-badge-text": "#ffffff",
+                        "--promo-highlight": "rgba(46,125,50,.18)",
+                        "--theme-name": "christmas",
+                      }))
+                    }
+                  >
                     🎄 Navidad
                   </Button>
-                  <Button size="sm" variant="warning" onClick={() => setThemeVars(v => ({
-                    ...v,
-                    '--promo-badge-bg': '#ff6d00',
-                    '--promo-badge-text': '#1b1b1b',
-                    '--promo-highlight': 'rgba(255,109,0,.18)',
-                    '--theme-name': 'halloween'
-                  }))}>
+                  <Button
+                    size="sm"
+                    variant="warning"
+                    onClick={() =>
+                      setThemeVars((v) => ({
+                        ...v,
+                        "--promo-badge-bg": "#ff6d00",
+                        "--promo-badge-text": "#1b1b1b",
+                        "--promo-highlight": "rgba(255,109,0,.18)",
+                        "--theme-name": "halloween",
+                      }))
+                    }
+                  >
                     🎃 Halloween
                   </Button>
                 </div>
               </Card>
 
-              <Button variant="primary" type="submit">Actualizar Configuración</Button>
+              <Button variant="primary" type="submit">
+                Actualizar Configuración
+              </Button>
             </Form>
           </Card>
         </Tab>
@@ -1021,37 +1321,66 @@ function AdminPanel() {
         {/* === Asesores === */}
         <Tab eventKey="asesores" title="Gestionar Asesores">
           <Card className="p-4 mb-4 shadow-sm">
-            <h3 className="mb-3">{editandoAsesor ? 'Editar Asesor' : 'Registrar Nuevo Asesor'}</h3>
-            <Form onSubmit={editandoAsesor ? handleUpdateAsesor : handleAddAsesor}>
+            <h3 className="mb-3">
+              {editandoAsesor ? "Editar Asesor" : "Registrar Nuevo Asesor"}
+            </h3>
+            <Form
+              onSubmit={editandoAsesor ? handleUpdateAsesor : handleAddAsesor}
+            >
               <Form.Group className="mb-3">
                 <Form.Label>Nombre Completo</Form.Label>
-                <Form.Control type="text" value={nombreCompletoAsesor} onChange={e => setNombreCompletoAsesor(e.target.value)} required />
+                <Form.Control
+                  type="text"
+                  value={nombreCompletoAsesor}
+                  onChange={(e) => setNombreCompletoAsesor(e.target.value)}
+                  required
+                />
               </Form.Group>
               <Form.Group className="mb-3">
                 <Form.Label>Email</Form.Label>
-                <Form.Control type="email" value={emailAsesor} onChange={e => setEmailAsesor(e.target.value)} required disabled={!!editandoAsesor} />
+                <Form.Control
+                  type="email"
+                  value={emailAsesor}
+                  onChange={(e) => setEmailAsesor(e.target.value)}
+                  required
+                  disabled={!!editandoAsesor}
+                />
               </Form.Group>
               {!editandoAsesor && (
                 <Form.Group className="mb-3">
                   <Form.Label>Contraseña</Form.Label>
-                  <Form.Control type="password" value={passwordAsesor} onChange={e => setPasswordAsesor(e.target.value)} required />
+                  <Form.Control
+                    type="password"
+                    value={passwordAsesor}
+                    onChange={(e) => setPasswordAsesor(e.target.value)}
+                    required
+                  />
                 </Form.Group>
               )}
               <Form.Group className="mb-3">
                 <Form.Label>Número de WhatsApp</Form.Label>
-                <Form.Control type="text" value={whatsappAsesor} onChange={e => setWhatsappAsesor(e.target.value)} placeholder="Ej: 573XXYYYYYYY" required />
+                <Form.Control
+                  type="text"
+                  value={whatsappAsesor}
+                  onChange={(e) => setWhatsappAsesor(e.target.value)}
+                  placeholder="Ej: 573XXYYYYYYY"
+                  required
+                />
               </Form.Group>
               <Button variant="primary" type="submit" className="me-2">
-                {editandoAsesor ? 'Actualizar Asesor' : 'Registrar Asesor'}
+                {editandoAsesor ? "Actualizar Asesor" : "Registrar Asesor"}
               </Button>
               {editandoAsesor && (
-                <Button variant="secondary" onClick={() => {
-                  setEditandoAsesor(null);
-                  setEmailAsesor('');
-                  setNombreCompletoAsesor('');
-                  setWhatsappAsesor('');
-                  setPasswordAsesor('');
-                }}>
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    setEditandoAsesor(null);
+                    setEmailAsesor("");
+                    setNombreCompletoAsesor("");
+                    setWhatsappAsesor("");
+                    setPasswordAsesor("");
+                  }}
+                >
                   Cancelar Edición
                 </Button>
               )}
@@ -1071,15 +1400,28 @@ function AdminPanel() {
                 </tr>
               </thead>
               <tbody>
-                {asesores.map(asesor => (
+                {asesores.map((asesor) => (
                   <tr key={asesor.id}>
                     <td>{asesor.nombreCompleto}</td>
                     <td>{asesor.email}</td>
                     <td>{asesor.whatsappNumber}</td>
                     <td>{asesor.rol}</td>
                     <td>
-                      <Button variant="warning" size="sm" className="me-2" onClick={() => handleEditAsesor(asesor)}>Editar</Button>
-                      <Button variant="danger" size="sm" onClick={() => handleDeleteAsesor(asesor.id)}>Eliminar</Button>
+                      <Button
+                        variant="warning"
+                        size="sm"
+                        className="me-2"
+                        onClick={() => handleEditAsesor(asesor)}
+                      >
+                        Editar
+                      </Button>
+                      <Button
+                        variant="danger"
+                        size="sm"
+                        onClick={() => handleDeleteAsesor(asesor.id)}
+                      >
+                        Eliminar
+                      </Button>
                     </td>
                   </tr>
                 ))}
@@ -1091,19 +1433,22 @@ function AdminPanel() {
         {/* === Carrusel Hero === */}
         <Tab eventKey="carrusel" title="Carrusel Hero">
           <Card className="p-4 mb-4 shadow-sm">
-            <h3 className="mb-3">{editandoSlide ? 'Editar Slide' : 'Agregar Nuevo Slide'}</h3>
+            <h3 className="mb-3">
+              {editandoSlide ? "Editar Slide" : "Agregar Nuevo Slide"}
+            </h3>
             <Form onSubmit={handleSubmitSlide}>
               <Form.Group className="mb-3">
                 <Form.Label>URL de la Imagen</Form.Label>
                 <Form.Control
                   type="text"
                   value={urlImagenSlide}
-                  onChange={e => handleUrlImagenChange(e.target.value)}
+                  onChange={(e) => handleUrlImagenChange(e.target.value)}
                   placeholder="https://ejemplo.com/imagen.jpg"
                   required
                 />
                 <Form.Text className="text-muted">
-                  Ingresa la URL completa de la imagen (debe comenzar con http:// o https://)
+                  Ingresa la URL completa de la imagen (debe comenzar con
+                  http:// o https://)
                 </Form.Text>
               </Form.Group>
 
@@ -1111,25 +1456,28 @@ function AdminPanel() {
               {previewImagenSlide && (
                 <div className="mb-3">
                   <Form.Label>Vista Previa</Form.Label>
-                  <div style={{
-                    width: '100%',
-                    maxWidth: '400px',
-                    height: '200px',
-                    overflow: 'hidden',
-                    borderRadius: '8px',
-                    border: '1px solid #dee2e6'
-                  }}>
+                  <div
+                    style={{
+                      width: "100%",
+                      maxWidth: "400px",
+                      height: "200px",
+                      overflow: "hidden",
+                      borderRadius: "8px",
+                      border: "1px solid #dee2e6",
+                    }}
+                  >
                     <img
                       src={previewImagenSlide}
                       alt="Preview"
                       style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover'
+                        width: "100%",
+                        height: "100%",
+                        objectFit: "cover",
                       }}
                       onError={(e) => {
-                        e.target.style.display = 'none';
-                        e.target.parentElement.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6c757d;">Error al cargar la imagen</div>';
+                        e.target.style.display = "none";
+                        e.target.parentElement.innerHTML =
+                          '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6c757d;">Error al cargar la imagen</div>';
                       }}
                     />
                   </div>
@@ -1141,11 +1489,12 @@ function AdminPanel() {
                 <Form.Control
                   type="text"
                   value={tituloSlide}
-                  onChange={e => setTituloSlide(e.target.value)}
+                  onChange={(e) => setTituloSlide(e.target.value)}
                   placeholder="Ej: ¡Ofertas Especiales!"
                 />
                 <Form.Text className="text-muted">
-                  Este texto se mostrará sobre la imagen con fondo oscuro para mejor legibilidad
+                  Este texto se mostrará sobre la imagen con fondo oscuro para
+                  mejor legibilidad
                 </Form.Text>
               </Form.Group>
 
@@ -1156,7 +1505,7 @@ function AdminPanel() {
                     <Form.Control
                       type="number"
                       value={ordenSlide}
-                      onChange={e => setOrdenSlide(e.target.value)}
+                      onChange={(e) => setOrdenSlide(e.target.value)}
                       placeholder="1, 2, 3..."
                       min="0"
                       required
@@ -1184,10 +1533,12 @@ function AdminPanel() {
               </Row>
 
               <Button variant="primary" type="submit" className="me-2">
-                {editandoSlide ? 'Actualizar Slide' : 'Agregar Slide'}
+                {editandoSlide ? "Actualizar Slide" : "Agregar Slide"}
               </Button>
               {editandoSlide && (
-                <Button variant="secondary" onClick={resetSlideForm}>Cancelar Edición</Button>
+                <Button variant="secondary" onClick={resetSlideForm}>
+                  Cancelar Edición
+                </Button>
               )}
             </Form>
           </Card>
@@ -1198,32 +1549,37 @@ function AdminPanel() {
               <Table striped bordered hover>
                 <thead className="table-dark">
                   <tr>
-                    <th style={{ width: '100px' }}>Imagen</th>
+                    <th style={{ width: "100px" }}>Imagen</th>
                     <th>Título</th>
-                    <th style={{ width: '80px' }}>Orden</th>
-                    <th style={{ width: '100px' }}>Estado</th>
-                    <th style={{ width: '250px' }}>Acciones</th>
+                    <th style={{ width: "80px" }}>Orden</th>
+                    <th style={{ width: "100px" }}>Estado</th>
+                    <th style={{ width: "250px" }}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
                   {slides
                     .sort((a, b) => (a.orden || 0) - (b.orden || 0))
-                    .map(slide => (
+                    .map((slide) => (
                       <tr key={slide.id}>
                         <td className="text-center align-middle">
                           <img
-                            src={slide.url_imagen || "https://via.placeholder.com/80"}
+                            src={
+                              slide.url_imagen ||
+                              "https://via.placeholder.com/80"
+                            }
                             alt={slide.titulo || "Slide"}
                             style={{
-                              width: '80px',
-                              height: '60px',
-                              objectFit: 'cover',
-                              borderRadius: '4px'
+                              width: "80px",
+                              height: "60px",
+                              objectFit: "cover",
+                              borderRadius: "4px",
                             }}
                           />
                         </td>
                         <td className="align-middle">
-                          {slide.titulo || <span className="text-muted">Sin título</span>}
+                          {slide.titulo || (
+                            <span className="text-muted">Sin título</span>
+                          )}
                         </td>
                         <td className="align-middle text-center">
                           <Badge bg="secondary">{slide.orden || 0}</Badge>
@@ -1265,7 +1621,9 @@ function AdminPanel() {
 
               {slides.length === 0 && (
                 <div className="text-center py-4 text-muted">
-                  <p className="mb-0">No hay slides registrados. Agrega el primero arriba.</p>
+                  <p className="mb-0">
+                    No hay slides registrados. Agrega el primero arriba.
+                  </p>
                 </div>
               )}
             </div>
