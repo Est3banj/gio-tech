@@ -117,7 +117,7 @@ function App() {
 
   // Lógica para decidir si mostrar el Header y el Footer de la aplicación
   // Se ocultan solo en la página de login para una experiencia minimalista
-  const showHeaderAndFooter = location.pathname !== "/login";
+  const showHeaderAndFooter = location.pathname !== "/login" && !location.pathname.startsWith("/panel");
 
   return (
     // Envuelve toda la aplicación con los Context Providers
