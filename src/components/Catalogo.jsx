@@ -16,10 +16,21 @@ function Catalogo() {
   const [productos, setProductos] = useState([]);
   const [busqueda, setBusqueda] = useState("");
   const [filtroMarca, setFiltroMarca] = useState("");
+  const [filtroPrecio, setFiltroPrecio] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [ordenamiento, setOrdenamiento] = useState("default");
   const [showWelcome, setShowWelcome] = useState(false);
   const [businessName, setBusinessName] = useState("");
+
+  // Rangos de precio predefinidos
+  const rangosPrecio = [
+    { value: "", label: "Todos los precios" },
+    { value: "0-500000", label: "Hasta $500.000" },
+    { value: "500000-1000000", label: "$500.000 - $1.000.000" },
+    { value: "1000000-2000000", label: "$1.000.000 - $2.000.000" },
+    { value: "2000000-4000000", label: "$2.000.000 - $4.000.000" },
+    { value: "4000000-999999999", label: "Más de $4.000.000" },
+  ];
 
   // === Asistente de recomendaciones (estado y helpers) ===
   const [showAgent, setShowAgent] = useState(false);
@@ -191,7 +202,15 @@ function Catalogo() {
       nombreNormalizado.includes(marcaFiltrada) ||
       descripcionNormalizada.includes(marcaFiltrada);
 
-    return coincideBusqueda && coincideMarca;
+    // Filtro por rango de precio
+    let coincidePrecio = true;
+    if (filtroPrecio) {
+      const [min, max] = filtroPrecio.split('-').map(Number);
+      const precio = parseFloat(producto.contado) || 0;
+      coincidePrecio = precio >= min && precio <= max;
+    }
+
+    return coincideBusqueda && coincideMarca && coincidePrecio;
   });
 
   const productosOrdenados = [...productosFiltrados].sort((a, b) => {
@@ -204,6 +223,12 @@ function Catalogo() {
       const priceA = parseFloat(a.contado) || 0;
       const priceB = parseFloat(b.contado) || 0;
       return priceB - priceA;
+    }
+    if (ordenamiento === "name_asc") {
+      return (a.nombre || '').localeCompare(b.nombre || '');
+    }
+    if (ordenamiento === "name_desc") {
+      return (b.nombre || '').localeCompare(a.nombre || '');
     }
     return 0;
   });
@@ -248,9 +273,9 @@ function Catalogo() {
             </p>
           </Col>
           <Col xs={12} md={10} lg={8}>
-            <Card className="search-card p-4">
-              <Row className="g-3 align-items-center">
-                <Col md={6} lg={5}>
+            <Card className="search-card p-3 p-md-4">
+              <Row className="g-2 g-md-3 align-items-center">
+                <Col xs={12}>
                   <Form.Control
                     type="text"
                     placeholder="Buscar por nombre o descripción..."
@@ -259,11 +284,11 @@ function Catalogo() {
                     size="lg"
                   />
                 </Col>
-                <Col md={3} lg={3}>
+                <Col xs={6} md={4}>
                   <Form.Select
                     value={filtroMarca}
                     onChange={(e) => setFiltroMarca(e.target.value)}
-                    size="lg"
+                    size="sm"
                   >
                     <option value="">Todas las marcas</option>
                     <option value="samsung">Samsung</option>
@@ -275,15 +300,28 @@ function Catalogo() {
                     <option value="huawei">Huawei</option>
                   </Form.Select>
                 </Col>
-                <Col md={3} lg={4}>
+                <Col xs={6} md={4}>
+                  <Form.Select
+                    value={filtroPrecio}
+                    onChange={(e) => setFiltroPrecio(e.target.value)}
+                    size="sm"
+                  >
+                    {rangosPrecio.map((rango) => (
+                      <option key={rango.value} value={rango.value}>{rango.label}</option>
+                    ))}
+                  </Form.Select>
+                </Col>
+                <Col xs={12} md={4}>
                   <Form.Select
                     value={ordenamiento}
                     onChange={(e) => setOrdenamiento(e.target.value)}
-                    size="lg"
+                    size="sm"
                   >
                     <option value="default">Ordenar por...</option>
                     <option value="price_asc">Precio: Menor a Mayor</option>
                     <option value="price_desc">Precio: Mayor a Menor</option>
+                    <option value="name_asc">Nombre: A - Z</option>
+                    <option value="name_desc">Nombre: Z - A</option>
                   </Form.Select>
                 </Col>
               </Row>
