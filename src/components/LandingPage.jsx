@@ -115,7 +115,7 @@ function LandingPage() {
             </section>
 
             {/* 5. RESEÑAS OPTIMIZADAS (Sin texto flotante arriba) */}
-            <section className="reviews-section" style={{ minHeight: '450px', backgroundColor: '#020617' }}>
+            <section className="reviews-section" style={{ minHeight: '450px' }}>
                 <div className="landing-container">
                     <div className="section-header">
                         <h2 className="section-title">Lo que dicen nuestros clientes</h2>
