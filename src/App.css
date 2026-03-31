@@ -588,6 +588,14 @@ body {
   transform: scale(1.1) translateY(-5px) !important;
 }
 
+.floating-gemini-btn {
+  transition: all var(--trans-base) !important;
+}
+
+.floating-gemini-btn:hover {
+  transform: scale(1.1) translateY(-5px) !important;
+}
+
 /* ─── Footer (CONSOLIDADO Y CORREGIDO) ────────────────────── */
 .gio-footer {
   background: var(--bg-card) !important;

@@ -7,6 +7,7 @@ import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { useCart } from "../contexts/CartContext";
 // import CompareModal from "./CompareModal"; // Removed for lazy loading
 import HeroCarousel from "./HeroCarousel";
+import GeminiChat from "./GeminiChat";
 
 // Lazy loading modals
 const WelcomeModal = React.lazy(() => import('./WelcomeModal'));
@@ -39,6 +40,9 @@ function Catalogo() {
   const [customBudget, setCustomBudget] = useState(false);
   const [customMin, setCustomMin] = useState("");
   const [customMax, setCustomMax] = useState("");
+
+  // === Asistente IA Gemini ===
+  const [showGeminiChat, setShowGeminiChat] = useState(false);
 
   // Persistencia + Comparación
   const PERSIST_ANS_KEY = 'assistant_answers_v1';
@@ -356,145 +360,80 @@ function Catalogo() {
           </Row>
         )}
 
-        {/* Asistente de recomendaciones */}
-        <Offcanvas show={showAgent} onHide={() => setShowAgent(false)} placement="end" scroll backdrop>
-          <Offcanvas.Header closeButton>
-            <Offcanvas.Title>
-              <i className="bi bi-chat-dots me-2"></i>
-              Asistente de recomendaciones
-            </Offcanvas.Title>
-          </Offcanvas.Header>
-          <Offcanvas.Body className="d-flex flex-column">
-            {stepIndex < steps.length ? (
-              <>
-                <p className="text-muted mb-2">Te haré unas preguntas rápidas para sugerirte el mejor equipo.</p>
-                <h6 className="mb-3">{currentStep.q}</h6>
-
-                {currentStep.key === "presupuesto" && customBudget ? (
-                  <div className="mb-3">
-                    <div className="d-flex gap-2">
-                      <Form.Control type="number" placeholder="Mín (COP)" value={customMin} onChange={(e) => setCustomMin(e.target.value)} />
-                      <Form.Control type="number" placeholder="Máx (COP)" value={customMax} onChange={(e) => setCustomMax(e.target.value)} />
-                    </div>
-                    <Button className="mt-2" onClick={() => {
-                      const min = parseInt(customMin, 10) || "";
-                      const max = parseInt(customMax, 10) || "";
-                      if (!min && !max) return;
-                      setAnswers((prev) => ({ ...prev, presupuesto: `personal:${min || ''}-${max || ''}` }));
-                      setStepIndex((i) => i + 1);
-                    }}>Confirmar rango</Button>
-                    <Button variant="link" className="mt-2" onClick={() => { setCustomBudget(false); setCustomMin(""); setCustomMax(""); }}>Volver</Button>
-                  </div>
-                ) : (
-                  <div className="d-flex flex-wrap gap-2">
-                    {currentStep.options.map((opt) => (
-                      <Button key={opt} variant="outline-primary" onClick={() => handlePick(opt)}>
-                        {opt}
-                      </Button>
-                    ))}
-                    {currentStep.key === "presupuesto" && (
-                      <Button variant="outline-secondary" onClick={() => setCustomBudget(true)}>
-                        Personalizado…
-                      </Button>
-                    )}
-                  </div>
-                )}
-
-                {stepIndex > 0 && (
-                  <div className="mt-3">
-                    {Object.entries(answers).map(([k, v]) => (
-                      <Badge key={k} bg="light" text="dark" className="me-2">{v}</Badge>
-                    ))}
-                    <Button variant="link" className="ms-1" onClick={resetFlow}>Cambiar respuestas</Button>
-                  </div>
-                )}
-              </>
-            ) : (
-              <>
-                <div className="d-flex justify-content-between align-items-center mb-2">
-                  <h6 className="mb-0">Resultados {agentResults?.length ? `(${agentResults.length})` : ''}</h6>
-                  <Button size="sm" variant="link" onClick={resetFlow}>Volver a preguntas</Button>
-                </div>
-
-                {compareIds.length > 0 && (
-                  <div className="d-flex align-items-center gap-2 mb-2">
-                    <small className="text-muted">Seleccionados para comparar: {compareIds.length}/3</small>
-                    <Button size="sm" variant="warning" onClick={() => setShowCompare(true)}>
-                      <i className="bi bi-columns-gap me-1"></i> Ver comparación
-                    </Button>
-                    <Button size="sm" variant="link" onClick={() => setCompareIds([])}>Limpiar</Button>
-                  </div>
-                )}
-
-                {agentResults.length === 0 ? (
-                  <p className="text-muted">No encontré equipos con esos criterios. Prueba ajustando el presupuesto o la marca.</p>
-                ) : (
-                  agentResults.map((p) => (
-                    <Card key={p.id} className="mb-3">
-                      <Card.Body>
-                        <div className="d-flex justify-content-between align-items-start">
-                          <div>
-                            <Card.Title className="mb-1">{p.nombre}</Card.Title>
-                            <Card.Text className="mb-1">Contado: {(Number(p.contado) || 0).toLocaleString('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 })}</Card.Text>
-                            {p.solo12Meses && p.cuotas12 ? (
-                              <Card.Text className="mb-0">
-                                <Badge bg="info">12 meses</Badge> {Number(p.cuotas12).toLocaleString('es-CO')}/mes
-                              </Card.Text>
-                            ) : (
-                              <>
-                                {p.cuotas6 && <Card.Text className="mb-0">16 quincenales: {Number(p.cuotas6).toLocaleString('es-CO')}</Card.Text>}
-                                {p.cuotas8 && <Card.Text>8 mensuales: {Number(p.cuotas8).toLocaleString('es-CO')}</Card.Text>}
-                              </>
-                            )}
-                          </div>
-                          {p.imagen && (
-                            <img src={p.imagen} alt={p.nombre} style={{ width: 64, height: 64, objectFit: 'cover', borderRadius: 'var(--radius-sm)' }} loading="lazy" />
-                          )}
-                        </div>
-
-                        {/* Acciones rápidas */}
-                        <div className="mt-2 d-flex flex-wrap gap-2">
-                          {addToCart && (
-                            <Button size="sm" variant="outline-primary" onClick={() => addToCart(p)}>
-                              <i className="bi bi-bag-plus me-1"></i> Agregar al carrito
-                            </Button>
-                          )}
-                          <Button size="sm" variant={isCompared(p.id) ? 'warning' : 'outline-secondary'} onClick={() => toggleCompare(p)}>
-                            <i className="bi bi-columns-gap me-1"></i> {isCompared(p.id) ? 'Quitar de comparación' : 'Comparar'}
-                          </Button>
-                          {currentWhatsappNumber && (
-                            <Button size="sm" variant="success" onClick={() => window.open(waLink(currentWhatsappNumber, p), "_blank", "noopener,noreferrer")}>
-                              <i className="bi bi-whatsapp me-1"></i> Cotizar
-                            </Button>
-                          )}
-                        </div>
-                      </Card.Body>
-                    </Card>
-                  ))
-                )}
-              </>
-            )}
-          </Offcanvas.Body>
-
-          {/* Modal de comparación */}
-          <React.Suspense fallback={null}>
-            <CompareModal
-              show={showCompare}
-              onHide={() => setShowCompare(false)}
-              items={agentResults.filter(r => compareIds.includes(r.id)).slice(0, 3)}
-            />
-          </React.Suspense>
-        </Offcanvas>
-
-        {/* Botón flotante del asistente (estilo/posición igual al carrito) */}
+        {/* Botón flotante del asistente IA - Diseño mejorado */}
         <Button
           variant="primary"
-          className="floating-chat-btn rounded-circle"
-          onClick={() => setShowAgent(true)}
-          aria-label="Abrir asistente de recomendaciones"
+          className="floating-gemini-btn rounded-circle"
+          onClick={() => setShowGeminiChat(true)}
+          aria-label="Abrir chat con IA"
+          title="🤖 Chatea con nuestro asistente IA - Te ayudamos a encontrar el celular perfecto"
+          style={{
+            position: 'fixed',
+            bottom: '100px',
+            right: '20px',
+            width: '65px',
+            height: '65px',
+            fontSize: '1.8rem',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 1050,
+            background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+            border: '3px solid white',
+            borderRadius: '50%',
+            boxShadow: '0 8px 25px rgba(102, 126, 234, 0.5), 0 0 0 0 rgba(102, 126, 234, 0.5)',
+            animation: 'pulse-glow 2s infinite',
+          }}
         >
-          <i className="bi bi-chat-dots"></i>
+          <span style={{ animation: 'bounce 2s infinite' }}>🤖</span>
         </Button>
+
+        {/* Mensaje flotante junto al botón IA */}
+        <div
+          onClick={() => setShowGeminiChat(true)}
+          style={{
+            position: 'fixed',
+            bottom: '115px',
+            right: '95px',
+            background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+            color: 'white',
+            padding: '8px 14px',
+            borderRadius: '20px',
+            fontSize: '0.85rem',
+            fontWeight: '500',
+            boxShadow: '0 4px 15px rgba(14, 165, 233, 0.4)',
+            cursor: 'pointer',
+            animation: 'float-tip 3s ease-in-out infinite',
+            zIndex: 1049,
+            whiteSpace: 'nowrap'
+          }}
+        >
+          💬 Te ayudo a elegir
+        </div>
+
+        <style>{`
+          @keyframes pulse-glow {
+            0% { box-shadow: 0 8px 25px rgba(14, 165, 233, 0.5), 0 0 0 0 rgba(14, 165, 233, 0.4); }
+            50% { box-shadow: 0 8px 25px rgba(14, 165, 233, 0.5), 0 0 0 10px rgba(14, 165, 233, 0); }
+            100% { box-shadow: 0 8px 25px rgba(14, 165, 233, 0.5), 0 0 0 0 rgba(14, 165, 233, 0); }
+          }
+          @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+          }
+          @keyframes float-tip {
+            0%, 100% { transform: translateX(0); }
+            50% { transform: translateX(-5px); }
+          }
+        `}</style>
+
+        {/* Chat de Gemini IA */}
+        {showGeminiChat && (
+          <GeminiChat 
+            productos={productos} 
+            onClose={() => setShowGeminiChat(false)} 
+          />
+        )}
       </div>
     </>
   );
