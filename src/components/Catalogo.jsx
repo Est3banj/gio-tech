@@ -2,16 +2,12 @@ import React, { useState, useEffect } from "react";
 import { subscribeToProducts } from "../services/product.service";
 import { subscribeToConfig } from "../services/config.service";
 import ProductCard from "./ProductCard";
-import { Container, Row, Col, Form, Spinner, Card, Button, Offcanvas, Badge } from 'react-bootstrap';
-import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
-import { useCart } from "../contexts/CartContext";
-// import CompareModal from "./CompareModal"; // Removed for lazy loading
+import { Container, Row, Col, Form, Spinner, Card, Button } from 'react-bootstrap';
 import HeroCarousel from "./HeroCarousel";
 import GeminiChat from "./GeminiChat";
 
 // Lazy loading modals
 const WelcomeModal = React.lazy(() => import('./WelcomeModal'));
-const CompareModal = React.lazy(() => import('./CompareModal'));
 
 function Catalogo() {
   const [productos, setProductos] = useState([]);
@@ -33,98 +29,8 @@ function Catalogo() {
     { value: "4000000-999999999", label: "Más de $4.000.000" },
   ];
 
-  // === Asistente de recomendaciones (estado y helpers) ===
-  const [showAgent, setShowAgent] = useState(false);
-  const [answers, setAnswers] = useState({});
-  const [stepIndex, setStepIndex] = useState(0);       // ✅ corregido
-  const [customBudget, setCustomBudget] = useState(false);
-  const [customMin, setCustomMin] = useState("");
-  const [customMax, setCustomMax] = useState("");
-
   // === Asistente IA Gemini ===
   const [showGeminiChat, setShowGeminiChat] = useState(false);
-
-  // Persistencia + Comparación
-  const PERSIST_ANS_KEY = 'assistant_answers_v1';
-  const PERSIST_STEP_KEY = 'assistant_step_v1';
-  const [compareIds, setCompareIds] = useState([]); // max 3
-  const [showCompare, setShowCompare] = useState(false);
-
-  const steps = [
-    { key: "presupuesto", q: "¿Cuál es tu presupuesto aproximado?", options: ["< 800.000", "800.000 - 1.200.000", "1.200.000 - 2.000.000", "> 2.000.000", "Personalizado…"] },
-    { key: "marca", q: "¿Alguna marca preferida?", options: ["Cualquiera", "Samsung", "Xiaomi/Redmi", "Motorola", "iPhone", "Tecno", "Infinix", "Huawei"] },
-  ];
-
-  const currentStep = steps[stepIndex];
-
-  const normalizeBudget = (sel) => {
-    if (!sel) return {};
-    if (typeof sel === "string" && sel.startsWith("personal:")) {
-      const [, range] = sel.split(":");
-      const [a, b] = (range || "").split("-");
-      const min = parseInt(a, 10) || undefined;
-      const max = parseInt(b, 10) || undefined;
-      return { min, max };
-    }
-    if (sel.includes("<")) return { max: 800000 };
-    if (sel.includes(">")) return { min: 2000000 };
-    if (sel.includes("800.000")) return { min: 800000, max: 1200000 };
-    if (sel.includes("1.200.000")) return { min: 1200000, max: 2000000 };
-    return {};
-  };
-
-  const handlePick = (opt) => {
-    const key = currentStep.key;
-    if (key === "presupuesto" && opt.startsWith("Personalizado")) {
-      setCustomBudget(true);
-      return;
-    }
-    const next = { ...answers, [key]: opt };
-    setAnswers(next);
-    setStepIndex((i) => i + 1);
-  };
-
-  const resetFlow = () => {
-    setAnswers({});
-    setStepIndex(0);
-    setCustomBudget(false);
-    setCustomMin("");
-    setCustomMax("");
-    setCompareIds([]);
-    try {
-      sessionStorage.removeItem(PERSIST_ANS_KEY);
-      sessionStorage.removeItem(PERSIST_STEP_KEY);
-    } catch (_) { }
-  };
-
-  // Comparación helpers
-  const isCompared = (id) => compareIds.includes(id);
-  const toggleCompare = (item) => {
-    setCompareIds((curr) => {
-      const exists = curr.includes(item.id);
-      if (exists) return curr.filter((x) => x !== item.id);
-      if (curr.length >= 3) return curr; // máximo 3
-      return [...curr, item.id];
-    });
-  };
-
-  const currentWhatsappNumber = useWhatsappNumber();
-  const { addToCart } = (typeof useCart === 'function' ? useCart() : { addToCart: null });
-
-  const toCOP = (n) => (Number(n || 0)).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
-  const waLink = (number, p) => {
-    if (!number) return null;
-    const cuotas = p?.solo12Meses && p?.cuotas12
-      ? `\n12 cuotas mensuales: ${Number(p.cuotas12).toLocaleString("es-CO")}`
-      : (p?.cuotas6 ? `\n16 quincenales: ${Number(p.cuotas6).toLocaleString("es-CO")}` : "") +
-      (p?.cuotas8 ? `\n8 mensuales: ${Number(p.cuotas8).toLocaleString("es-CO")}` : "");
-    const pref = [];
-    if (answers?.presupuesto) pref.push(`Presupuesto: ${answers.presupuesto.startsWith('personal:') ? answers.presupuesto.replace('personal:', '').replace('-', ' a ') : answers.presupuesto}`);
-    if (answers?.marca) pref.push(`Marca: ${answers.marca}`);
-    const prefText = pref.length ? `\nPreferencias: ${pref.join(' | ')}` : '';
-    const msg = encodeURIComponent(`Hola 👋, me interesa el ${p?.nombre} (Contado: ${toCOP(p?.contado)}).${cuotas}${prefText}\n¿Me ayudas con una cotización?`);
-    return `https://wa.me/${number}?text=${msg}`;
-  };
 
   const normalizarTexto = (texto) => {
     if (typeof texto !== 'string') return '';
@@ -143,8 +49,7 @@ function Catalogo() {
         setProductos(lista);
         setIsLoading(false);
       },
-      (error) => {
-        // Error handling is already logged in service, but we can stop loading
+      () => {
         setIsLoading(false);
       }
     );
@@ -155,7 +60,7 @@ function Catalogo() {
     try {
       const seen = sessionStorage.getItem('gio_welcome_seen_sess_v1');
       setShowWelcome(!seen);
-    } catch (e) {
+    } catch {
       setShowWelcome(true);
     }
   }, []);
@@ -165,36 +70,17 @@ function Catalogo() {
       (data) => {
         setBusinessName((data && data.nombre) ? data.nombre : "");
       },
-      (err) => {
+      () => {
         setBusinessName("");
       }
     );
     return () => unsubscribe();
   }, []);
 
-
-  // Persistencia del asistente
-  useEffect(() => {
-    try {
-      const a = sessionStorage.getItem(PERSIST_ANS_KEY);
-      const s = sessionStorage.getItem(PERSIST_STEP_KEY);
-      if (a) setAnswers(JSON.parse(a));
-      if (s) setStepIndex(parseInt(s, 10) || 0);
-    } catch (_) { }
-  }, []);
-
-  useEffect(() => {
-    try { sessionStorage.setItem(PERSIST_ANS_KEY, JSON.stringify(answers)); } catch (_) { }
-  }, [answers]);
-
-  useEffect(() => {
-    try { sessionStorage.setItem(PERSIST_STEP_KEY, String(stepIndex)); } catch (_) { }
-  }, [stepIndex]);
-
   const productosFiltrados = productos.filter((producto) => {
     const nombreNormalizado = normalizarTexto(producto.nombre);
     const descripcionNormalizada = normalizarTexto(producto.descripcion || "");
-    const busquedaNormalizada = normalizarTexto(busqueda); // ✅ corregido
+    const busquedaNormalizada = normalizarTexto(busqueda);
     const marcaFiltrada = filtroMarca ? normalizarTexto(filtroMarca) : "";
 
     const coincideBusqueda =
@@ -237,23 +123,6 @@ function Catalogo() {
     return 0;
   });
 
-  // Resultados del asistente
-  const agentResults = (() => {
-    if (stepIndex < steps.length) return [];
-    const budget = normalizeBudget(answers.presupuesto);
-    return productosOrdenados.filter((p) => {
-      const price = parseFloat(p.contado) || 0;
-      const okMin = budget.min ? price >= budget.min : true;
-      const okMax = budget.max ? price <= budget.max : true;
-      let okBrand = true;
-      if (answers.marca && answers.marca !== "Cualquiera") {
-        const text = `${p.nombre} ${p.descripcion || ""}`.toLowerCase();
-        okBrand = text.includes(answers.marca.toLowerCase().split("/")[0]);
-      }
-      return okMin && okMax && okBrand;
-    }).slice(0, 20);
-  })();
-
   return (
     <>
       <React.Suspense fallback={null}>
@@ -273,7 +142,7 @@ function Catalogo() {
             <h2 className="display-5 fw-bold mb-3 text-primary">Nuestros Productos</h2>
             <p className="lead text-muted mb-4">
               Explora nuestra selección de los mejores celulares y otros dispositivos tecnológicos.
-              ¡Cotiza directamente por WhatsApp y estrena hoy mismo!
+              ¡Cotiza directamente por WhatsApp y estreno hoy mismo!
             </p>
           </Col>
           <Col xs={12} md={10} lg={8}>

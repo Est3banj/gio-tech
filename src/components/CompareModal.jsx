@@ -18,7 +18,7 @@ const fmtOneDecimal = (n) => {
 };
 
 // Lee y normaliza valores desde specs o desde claves sueltas
-const readSpec = (item, fallbacks = [], { as = 'number' } = {}) => {
+const readSpec = (item, fallbacks = []) => {
   // Permite que algunas tiendas ya tengan los valores al nivel raíz
   for (const key of fallbacks) {
     const parts = key.split('.');
@@ -118,11 +118,11 @@ export default function CompareModal({ show, onHide, items = [] }) {
     const parsed = parseDescriptionToSpecs(p.descripcion || p.description || '');
     const source = { ...p, specs: { ...(p.specs || {}), ...parsed } };
 
-    const ram = readSpec(source, ['specs.ram', 'specs.ramGB', 'ram', 'ramGB']) ?? undefined;
-    const storage = readSpec(source, ['specs.almacenamiento', 'specs.almacenamientoGB', 'almacenamiento', 'almacenamientoGB']) ?? undefined;
-    const battery = readSpec(source, ['specs.bateria', 'specs.bateriaMAh', 'bateria', 'bateria_mAh', 'specs.bateria.mAh']) ?? undefined;
-    const camera = readSpec(source, ['specs.camara', 'specs.camaraMP', 'camara', 'camara_MP', 'specs.camaras.principalMP']) ?? undefined;
-    const screen = readSpec(source, ['specs.pantalla', 'specs.pantallaIn', 'pantalla_pulgadas', 'specs.pantalla.pulgadas']) ?? undefined;
+    const ram = readSpec(source, ['specs.ram', 'specs.ramGB', 'ram', 'ramGB']);
+    const storage = readSpec(source, ['specs.almacenamiento', 'specs.almacenamientoGB', 'almacenamiento', 'almacenamientoGB']);
+    const battery = readSpec(source, ['specs.bateria', 'specs.bateriaMAh', 'bateria', 'bateria_mAh', 'specs.bateria.mAh']);
+    const camera = readSpec(source, ['specs.camara', 'specs.camaraMP', 'camara', 'camara_MP', 'specs.camaras.principalMP']);
+    const screen = readSpec(source, ['specs.pantalla', 'specs.pantallaIn', 'pantalla_pulgadas', 'specs.pantalla.pulgadas']);
 
     const safe = sanitizeSpecs({
       ram,
@@ -156,7 +156,7 @@ export default function CompareModal({ show, onHide, items = [] }) {
     { key: 'almacenamientoGB', label: 'Almacenamiento (GB)' },
     { key: 'bateria_mAh', label: 'Batería (mAh)' },
     { key: 'camara_MP', label: 'Cámara (MP)' },
-    { key: 'pantallaIn', label: 'Pantalla (\")' },
+    { key: 'pantallaIn', label: 'Pantalla (")' },
   ];
 
   const headers = hasImage ? [{ key: '__image', label: '' }, ...baseHeaders] : baseHeaders;

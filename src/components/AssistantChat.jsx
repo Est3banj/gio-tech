@@ -1,5 +1,5 @@
 // src/components/AssistantChat.jsx
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Offcanvas, Button, Badge, Card, Spinner, ProgressBar, Form } from "react-bootstrap";
 import { searchProducts } from "../services/product.service";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
@@ -57,7 +57,7 @@ export default function AssistantChat({ show, onHide }) {
   const [customMax, setCustomMax] = useState("");
 
   const whatsappNumber = useWhatsappNumber();
-  const { addToCart } = (typeof useCart === 'function' ? useCart() : { addToCart: null });
+  const { addToCart } = useCart();
 
   const progress = (stepIndex / steps.length) * 100;
   const canSearch = stepIndex >= steps.length;

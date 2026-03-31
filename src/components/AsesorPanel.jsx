@@ -1,7 +1,7 @@
 // src/components/AsesorPanel.jsx
 import React, { useState, useEffect } from 'react';
 import { db } from '../firebase'; // Asume que 'db' está exportado desde firebase.js
-import { doc, getDoc, updateDoc, setDoc } from 'firebase/firestore'; // setDoc necesario para usuarios
+import { doc, getDoc, updateDoc } from 'firebase/firestore'; // setDoc necesario para usuarios
 import { getAuth } from 'firebase/auth'; // Importar getAuth para obtener el usuario actual
 
 import { Container, Form, Button, Card, Alert } from 'react-bootstrap';

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { subscribeToProducts } from "../services/product.service";
-import { subscribeToConfig } from "../services/config.service";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import ProductCard from "./ProductCard";
 import HeroCarousel from "./HeroCarousel";
@@ -31,10 +30,8 @@ const services = [
 // ─── COMPONENTE LANDINGPAGE ───────────────────────────────────────
 function LandingPage() {
     const [productos, setProductos] = useState([]);
-    const [businessName, setBusinessName] = useState("");
     const [isLoading, setIsLoading] = useState(true); // OPTIMIZACIÓN: Carga suave
     const phoneNumber = useWhatsappNumber() || "573248022632";
-    const navigate = useNavigate();
 
     useEffect(() => {
         const unsubProducts = subscribeToProducts(
@@ -42,12 +39,7 @@ function LandingPage() {
                 setProductos(lista);
                 setIsLoading(false);
             },
-            () => setIsLoading(false)
-        );
-
-        const unsubConfig = subscribeToConfig(
-            (data) => setBusinessName((data && data.nombre) ? data.nombre : ""),
-            () => { }
+                () => setIsLoading(false)
         );
 
         // Seguridad: Si Firebase falla o tarda mucho, liberamos la vista en 2 seg
@@ -55,7 +47,6 @@ function LandingPage() {
 
         return () => {
             unsubProducts();
-            unsubConfig();
             clearTimeout(timer);
         };
     }, []);

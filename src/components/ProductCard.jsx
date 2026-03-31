@@ -7,26 +7,12 @@ import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, no se pasa como prop
   const [mostrar, setMostrar] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null); // null, 'comprar', 'carrito'
-  const { addToCart, cartItems } = useCart();
-  const safeCartItems = Array.isArray(cartItems) ? cartItems : [];
+  const { addToCart } = useCart();
   const rawPhoneNumber = useWhatsappNumber();
   const phoneNumber = rawPhoneNumber || '573248022632'; // Asegura un número por defecto
 
   const abrir = () => { setMostrar(true); setTipoSeleccionado(null); };
-  const cerrar = () => { setMostrar(false); setTipoSeleccionado(null); };
-
-  // Función para manejar la selección de tipo (contado o crédito)
-  const handleSeleccionTipo = (tipo) => {
-    if (tipoSeleccionado === 'comprar') {
-      // WhatsApp
-      const mensaje = tipo === 'contado' ? mensajeWhatsAppContadoDirecto : mensajeWhatsAppCreditoDirecto;
-      phoneNumber && window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, "_blank");
-    } else if (tipoSeleccionado === 'carrito') {
-      // Añadir al carrito
-      addToCart(producto, tipo);
-      cerrar();
-    }
-  };
+  const cerrar = () => { setMostrar(false), setTipoSeleccionado(null); };
 
   // Helper de formato de precio
   function formatoPrecio(valor) {
@@ -51,12 +37,10 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
     cuotas8,
     imagen,
     // promo
-    promoActive,
     promoPrice,
     promoLabel,
     promoStart,
     promoEnd,
-    promoPriority,
     promoBadgeBg,
     promoBadgeText,
     promoHighlight,
@@ -105,7 +89,6 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
   const pricePromoStr = formatoPrecio(promoPrice);
 
   const badgeBg = promoBadgeBg || 'var(--promo-badge-bg, #ff5722)';
-  const badgeText = promoBadgeText || 'var(--promo-badge-text, #ffffff)';
   const highlightColor = (promoHighlight && String(promoHighlight).trim()) || 'var(--promo-highlight, rgba(255,87,34,.25))';
 
   const cuotaInicial = Number(producto?.cuotaInicial || 0);
@@ -118,8 +101,16 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
     ? `Hola, estoy interesado en el ${nombre} con el plan especial de 12 meses.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatoPrecio(cuotaInicial)}\n12 cuotas mensuales: ${formatoPrecio(cuotas12)}\n¿Me pueden dar más información?`
     : `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatoPrecio(cuotaInicial)}\n16 cuotas quincenales: ${formatoPrecio(cuotas6)}\n8 cuotas mensuales: ${formatoPrecio(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
 
-  const isInCartContado = safeCartItems.some(item => (item.productId === producto.id || item.itemId === producto.id) && item.cotizacionType === 'contado');
-  const isInCartCredito = safeCartItems.some(item => (item.productId === producto.id || item.itemId === producto.id) && item.cotizacionType === 'credito');
+  // Función para manejar la selección de tipo (contado o crédito)
+  const handleSeleccionTipo = (tipo) => {
+    if (tipoSeleccionado === 'comprar') {
+      const mensaje = tipo === 'contado' ? mensajeWhatsAppContadoDirecto : mensajeWhatsAppCreditoDirecto;
+      phoneNumber && window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, "_blank");
+    } else if (tipoSeleccionado === 'carrito') {
+      addToCart(producto, tipo);
+      cerrar();
+    }
+  };
 
   return (
     <>

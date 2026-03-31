@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { db, auth } from "../firebase";
+import { db } from "../firebase";
 import {
   collection,
   addDoc,
-  getDocs,
   doc,
   updateDoc,
   deleteDoc,
@@ -73,7 +72,6 @@ function AdminPanel() {
   const [nombreNegocio, setNombreNegocio] = useState("");
   const [logoNegocio, setLogoNegocio] = useState(null);
   const [previewLogo, setPreviewLogo] = useState("");
-  const [configId, setConfigId] = useState("");
 
   // >>> Theme (panel sin tocar código) <<<
   const [themeEnabled, setThemeEnabled] = useState(false);
@@ -185,10 +183,8 @@ function AdminPanel() {
     const unsubConfig = subscribeToConfig((data) => {
       setNombreNegocio(data.nombre || "");
       setPreviewLogo(data.logo || "");
-      // setConfigId(docSnap.id); // configId might not be needed if service handles it, or we simply don't use it for reading.
       // If we need the ID, the service typically returns data.
       // In the original code, docSnap.id is "general".
-      setConfigId("general");
 
       const theme = data.theme || null;
       if (theme) {
@@ -365,12 +361,6 @@ function AdminPanel() {
   };
 
   // ===== Configuración del negocio =====
-  const handleLogoChange = (e) => {
-    if (e.target.files[0]) {
-      setLogoNegocio(e.target.files[0]);
-      setPreviewLogo(URL.createObjectURL(e.target.files[0]));
-    }
-  };
 
   const handleUpdateConfig = async () => {
     setError("");
@@ -427,10 +417,10 @@ function AdminPanel() {
 
       try {
         await secondaryAuth.signOut?.();
-      } catch (_) {}
+      } catch { /* ignore logout errors */ }
       try {
         await deleteApp(secondaryApp);
-      } catch (_) {}
+      } catch { /* ignore delete errors */ }
 
       setSuccess("Asesor registrado exitosamente!");
       setEmailAsesor("");

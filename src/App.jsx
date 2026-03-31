@@ -52,8 +52,8 @@ function App() {
   useEffect(() => {
     // Listener de autenticación de Firebase: se activa cuando el estado de autenticación cambia
     const unsubAuth = onAuthStateChanged(auth, (currentUser) => {
-      if (currentUser) {
-        if (userUnsub) { try { userUnsub(); } catch (_) { } userUnsub = null; }
+        if (currentUser) {
+        if (userUnsub) { try { userUnsub(); } catch { userUnsub = null; } }
         // Si hay un usuario logueado, obtenemos sus datos adicionales (rol, nombre) de Firestore
         setUsuario({ uid: currentUser.uid, email: currentUser.email, rol: "cargando..." }); // Rol inicial 'cargando'
         const userDocRef = doc(db, "usuarios", currentUser.uid);
@@ -71,7 +71,7 @@ function App() {
           setIsLoadingAuth(false); // La autenticación ha terminado de verificar
         });
       } else {
-        if (userUnsub) { try { userUnsub(); } catch (_) { } userUnsub = null; }
+        if (userUnsub) { try { userUnsub(); } catch { userUnsub = null; } }
         setUsuario(null); // No hay usuario logueado
         setIsLoadingAuth(false); // La autenticación ha terminado de verificar
       }
@@ -93,7 +93,7 @@ function App() {
 
     // Función de limpieza: se ejecutan al desmontar el componente App para evitar fugas de memoria
     return () => {
-      if (userUnsub) { try { userUnsub(); } catch (_) { } userUnsub = null; }
+      if (userUnsub) { try { userUnsub(); } catch { userUnsub = null; } }
       unsubAuth();
       unsubConfig();
     };

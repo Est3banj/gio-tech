@@ -21,7 +21,7 @@ export default function WelcomeModal({ show, onClose, businessName }) {
       if (dontShowAgain) {
         sessionStorage.setItem('gio_welcome_seen_sess_v1', '1');
       }
-    } catch (_) {
+    } catch {
       // Si el navegador bloquea localStorage, simplemente ignoramos
     }
     onClose?.();
