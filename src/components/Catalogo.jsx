@@ -202,10 +202,9 @@ function Catalogo() {
           </Row>
         )}
 
-        {/* Botón flotante del asistente IA - Diseño mejorado */}
-        <Button
-          variant="primary"
-          className="floating-gemini-btn rounded-circle"
+        {/* Botón flotante del asistente IA */}
+        <button
+          type="button"
           onClick={() => setShowGeminiChat(true)}
           aria-label="Abrir chat con IA"
           title="🤖 Chatea con nuestro asistente IA - Te ayudamos a encontrar el celular perfecto"
@@ -213,22 +212,25 @@ function Catalogo() {
             position: 'fixed',
             bottom: '100px',
             right: '20px',
-            width: '65px',
-            height: '65px',
-            fontSize: '1.8rem',
+            width: '60px',
+            height: '60px',
+            padding: 0,
+            fontSize: '1.6rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 1050,
-            background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
-            border: '3px solid white',
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
             borderRadius: '50%',
-            boxShadow: '0 8px 25px rgba(102, 126, 234, 0.5), 0 0 0 0 rgba(102, 126, 234, 0.5)',
+            border: 'none',
+            boxShadow: '0 4px 15px rgba(30, 58, 138, 0.4)',
+            cursor: 'pointer',
             animation: 'pulse-glow 2s infinite',
+            color: 'white',
           }}
         >
-          <span style={{ animation: 'bounce 2s infinite' }}>🤖</span>
-        </Button>
+          🤖
+        </button>
 
         {/* Mensaje flotante junto al botón IA */}
         <div
@@ -237,13 +239,13 @@ function Catalogo() {
             position: 'fixed',
             bottom: '115px',
             right: '95px',
-            background: 'linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%)',
+            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
             color: 'white',
             padding: '8px 14px',
             borderRadius: '20px',
             fontSize: '0.85rem',
             fontWeight: '500',
-            boxShadow: '0 4px 15px rgba(14, 165, 233, 0.4)',
+            boxShadow: '0 4px 15px rgba(30, 58, 138, 0.4)',
             cursor: 'pointer',
             animation: 'float-tip 3s ease-in-out infinite',
             zIndex: 1049,
@@ -255,9 +257,9 @@ function Catalogo() {
 
         <style>{`
           @keyframes pulse-glow {
-            0% { box-shadow: 0 8px 25px rgba(14, 165, 233, 0.5), 0 0 0 0 rgba(14, 165, 233, 0.4); }
-            50% { box-shadow: 0 8px 25px rgba(14, 165, 233, 0.5), 0 0 0 10px rgba(14, 165, 233, 0); }
-            100% { box-shadow: 0 8px 25px rgba(14, 165, 233, 0.5), 0 0 0 0 rgba(14, 165, 233, 0); }
+            0% { box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5), 0 0 0 0 rgba(30, 58, 138, 0.4); }
+            50% { box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5), 0 0 0 10px rgba(30, 58, 138, 0); }
+            100% { box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5), 0 0 0 0 rgba(30, 58, 138, 0); }
           }
           @keyframes bounce {
             0%, 100% { transform: translateY(0); }
