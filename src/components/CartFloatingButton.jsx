@@ -12,11 +12,12 @@ const CartFloatingButton = () => {
   const handleShow = () => setShow(true);
 
   const formatoPrecio = (valor) => {
-    const numero = typeof valor === "string" ? parseFloat(valor) : valor;
-    if (!isNaN(numero)) {
-      return numero.toLocaleString("es-CO", { style: "currency", currency: "COP" });
+    if (valor === null || valor === undefined || valor === '') return '—';
+    const numero = typeof valor === "string" ? parseFloat(valor.replace(/\s+/g, '').replace(/,/, '.')) : valor;
+    if (!isNaN(numero) && numero > 0) {
+      return numero.toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
     }
-    return "No disponible";
+    return '—';
   };
 
   const generarMensajeLista = () => {
