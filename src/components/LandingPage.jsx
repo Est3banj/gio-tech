@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
-import { subscribeToProducts } from "../services/product.service";
+import { useProducts } from "../hooks/useProducts";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import ProductCard from "./ProductCard";
 import HeroCarousel from "./HeroCarousel";
@@ -29,27 +29,8 @@ const services = [
 
 // ─── COMPONENTE LANDINGPAGE ───────────────────────────────────────
 function LandingPage() {
-    const [productos, setProductos] = useState([]);
-    const [isLoading, setIsLoading] = useState(true); // OPTIMIZACIÓN: Carga suave
+    const { products: productos, isLoading } = useProducts();
     const phoneNumber = useWhatsappNumber() || "573248022632";
-
-    useEffect(() => {
-        const unsubProducts = subscribeToProducts(
-            (lista) => {
-                setProductos(lista);
-                setIsLoading(false);
-            },
-                () => setIsLoading(false)
-        );
-
-        // Seguridad: Si Firebase falla o tarda mucho, liberamos la vista en 2 seg
-        const timer = setTimeout(() => setIsLoading(false), 2000);
-
-        return () => {
-            unsubProducts();
-            clearTimeout(timer);
-        };
-    }, []);
 
     const destacados = productos.slice(0, 4);
     const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent("Hola GIO TECH, me gustaría recibir asesoría personalizada")}`;

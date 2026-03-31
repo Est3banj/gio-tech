@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { subscribeToProducts } from "../services/product.service";
-import { subscribeToConfig } from "../services/config.service";
+import { useProducts } from "../hooks/useProducts";
+import { useConfig } from "../hooks/useConfig";
 import ProductCard from "./ProductCard";
 import { Container, Row, Col, Form, Spinner, Card, Button } from 'react-bootstrap';
 import HeroCarousel from "./HeroCarousel";
@@ -10,11 +10,11 @@ import GeminiChat from "./GeminiChat";
 const WelcomeModal = React.lazy(() => import('./WelcomeModal'));
 
 function Catalogo() {
-  const [productos, setProductos] = useState([]);
+  const { products: productos, isLoading } = useProducts();
+  const { config } = useConfig();
   const [busqueda, setBusqueda] = useState("");
   const [filtroMarca, setFiltroMarca] = useState("");
   const [filtroPrecio, setFiltroPrecio] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
   const [ordenamiento, setOrdenamiento] = useState("default");
   const [showWelcome, setShowWelcome] = useState(false);
   const [businessName, setBusinessName] = useState("");
@@ -32,30 +32,14 @@ function Catalogo() {
   // === Asistente IA Gemini ===
   const [showGeminiChat, setShowGeminiChat] = useState(false);
 
-  const normalizarTexto = (texto) => {
-    if (typeof texto !== 'string') return '';
-    return texto
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^\x20-\x7E]/g, "")
-      .trim();
-  };
-
+  // businessName del hook
   useEffect(() => {
-    setIsLoading(true);
-    const unsubscribe = subscribeToProducts(
-      (lista) => {
-        setProductos(lista);
-        setIsLoading(false);
-      },
-      () => {
-        setIsLoading(false);
-      }
-    );
-    return () => unsubscribe();
-  }, []);
+    if (config?.nombre) {
+      setBusinessName(config.nombre);
+    }
+  }, [config]);
 
+  // Mostrar WelcomeModal solo una vez por sesión
   useEffect(() => {
     try {
       const seen = sessionStorage.getItem('gio_welcome_seen_sess_v1');
@@ -65,17 +49,15 @@ function Catalogo() {
     }
   }, []);
 
-  useEffect(() => {
-    const unsubscribe = subscribeToConfig(
-      (data) => {
-        setBusinessName((data && data.nombre) ? data.nombre : "");
-      },
-      () => {
-        setBusinessName("");
-      }
-    );
-    return () => unsubscribe();
-  }, []);
+  const normalizarTexto = (texto) => {
+    if (typeof texto !== 'string') return '';
+    return texto
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .replace(/[^\x20-\x7E]/g, "")
+      .trim();
+  };
 
   const productosFiltrados = productos.filter((producto) => {
     const nombreNormalizado = normalizarTexto(producto.nombre);
@@ -142,7 +124,7 @@ function Catalogo() {
             <h2 className="display-5 fw-bold mb-3 text-primary">Nuestros Productos</h2>
             <p className="lead text-muted mb-4">
               Explora nuestra selección de los mejores celulares y otros dispositivos tecnológicos.
-              ¡Cotiza directamente por WhatsApp y estreno hoy mismo!
+              ¡Cotiza directamente por WhatsApp y estrena hoy mismo!
             </p>
           </Col>
           <Col xs={12} md={10} lg={8}>
