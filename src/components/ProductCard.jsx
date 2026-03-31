@@ -6,13 +6,27 @@ import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 
 function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, no se pasa como prop
   const [mostrar, setMostrar] = useState(false);
+  const [tipoSeleccionado, setTipoSeleccionado] = useState(null); // null, 'comprar', 'carrito'
   const { addToCart, cartItems } = useCart();
   const safeCartItems = Array.isArray(cartItems) ? cartItems : [];
   const rawPhoneNumber = useWhatsappNumber();
   const phoneNumber = rawPhoneNumber || '573248022632'; // Asegura un número por defecto
 
-  const abrir = () => setMostrar(true);
-  const cerrar = () => setMostrar(false);
+  const abrir = () => { setMostrar(true); setTipoSeleccionado(null); };
+  const cerrar = () => { setMostrar(false); setTipoSeleccionado(null); };
+
+  // Función para manejar la selección de tipo (contado o crédito)
+  const handleSeleccionTipo = (tipo) => {
+    if (tipoSeleccionado === 'comprar') {
+      // WhatsApp
+      const mensaje = tipo === 'contado' ? mensajeWhatsAppContadoDirecto : mensajeWhatsAppCreditoDirecto;
+      phoneNumber && window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, "_blank");
+    } else if (tipoSeleccionado === 'carrito') {
+      // Añadir al carrito
+      addToCart(producto, tipo);
+      cerrar();
+    }
+  };
 
   // Helper de formato de precio
   function formatoPrecio(valor) {
@@ -110,6 +124,15 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
   return (
     <>
       <style>{`
+        /* Título del modal */
+        .modal-section-title {
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin-bottom: 1rem;
+          text-align: center;
+          color: var(--text-primary);
+        }
+        
         /* Contenedor de etiquetas */
         .gio-badge-container {
           position: absolute;
@@ -134,6 +157,21 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           font-size: 0.85rem;
           display: inline-block;
           box-shadow: var(--shadow-sm);
+        }
+
+        /* Animación shimmer para botón de comprar */
+        @keyframes shimmer {
+          0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
+          70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
+          100% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0); }
+        }
+        .btn-comprar-animate {
+          animation: shimmer 2s infinite;
+          cursor: pointer;
+        }
+        .btn-comprar-animate:hover {
+          animation: none;
+          transform: scale(1.05);
         }
 
         @media (max-width: 480px) {
@@ -275,18 +313,22 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
             }}
             style={{
               marginTop: 'auto',
-              background: 'linear-gradient(135deg, var(--gio-red), var(--gio-red-dark))',
-              color: '#ffffff',
-              border: 'none',
+              background: 'var(--bg-hover)',
+              color: 'var(--text-primary)',
+              border: '1px solid var(--border-color)',
               borderRadius: 'var(--radius-sm)',
               padding: '11px 20px',
               fontSize: '0.9rem',
               fontWeight: '600',
               cursor: 'pointer',
               width: '100%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
             }}
           >
-            Ver detalles
+            <i className="bi bi-cart-plus"></i> Ver detalles
           </button>
         </Card.Body>
       </Card >
@@ -330,51 +372,67 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           )}
         </Modal.Body>
         <Modal.Footer className="d-flex flex-column">
-          <h6 className="modal-section-title">💬 Asesoría Directa por WhatsApp</h6>
-          <Row className="g-3 w-100 mb-4">
-            <Col xs={12} md={6}>
-              <Button
-                onClick={() => phoneNumber && window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensajeWhatsAppContadoDirecto)}`, "_blank")}
-                className="w-100 btn-whatsapp-primary"
-              >
-                <i className="bi bi-whatsapp me-2"></i> Comprar Contado
+          {!tipoSeleccionado ? (
+            <>
+              <h6 className="modal-section-title">¿Qué quieres hacer?</h6>
+              <Row className="g-3 w-100 mb-4">
+                <Col xs={12} md={6}>
+                  <Button
+                    variant=""
+                    onClick={() => setTipoSeleccionado('comprar')}
+                    className="w-100 btn-comprar-animate"
+                    style={{ background: '#28a745', borderColor: '#28a745', color: '#fff', padding: '15px' }}
+                  >
+                    <i className="bi bi-whatsapp me-2"></i> Comprar Ahora
+                  </Button>
+                </Col>
+                <Col xs={12} md={6}>
+                  <Button
+                    variant=""
+                    onClick={() => setTipoSeleccionado('carrito')}
+                    className="w-100"
+                    style={{ background: '#0d6efd', borderColor: '#0d6efd', color: '#fff', padding: '15px' }}
+                  >
+                    <i className="bi bi-cart-plus me-2"></i> Añadir al Carrito
+                  </Button>
+                </Col>
+              </Row>
+              <Button variant="outline-secondary" onClick={cerrar} className="mt-2 w-100" style={{ borderColor: '#6c757d', color: '#6c757d' }}>
+                Cerrar
               </Button>
-            </Col>
-            <Col xs={12} md={6}>
-              <Button
-                onClick={() => phoneNumber && window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensajeWhatsAppCreditoDirecto)}`, "_blank")}
-                className="w-100 btn-whatsapp-secondary"
-              >
-                <i className="bi bi-whatsapp me-2"></i> Cotizar Crédito
+            </>
+          ) : (
+            <>
+              <h6 className="modal-section-title">
+                {tipoSeleccionado === 'comprar' ? '💬 Elige cómo pagar:' : '🛒 Elige cómo pagar:'}
+              </h6>
+              <Row className="g-3 w-100 mb-4">
+                <Col xs={12} md={6}>
+                  <Button
+                    variant=""
+                    onClick={() => handleSeleccionTipo('contado')}
+                    className="w-100"
+                    style={{ background: '#28a745', borderColor: '#28a745', color: '#fff', padding: '15px' }}
+                  >
+                    <i className="bi bi-cash me-2"></i> Contado
+                  </Button>
+                </Col>
+                <Col xs={12} md={6}>
+                  <Button
+                    variant=""
+                    onClick={() => handleSeleccionTipo('credito')}
+                    className="w-100"
+                    style={{ background: '#0d6efd', borderColor: '#0d6efd', color: '#fff', padding: '15px' }}
+                  >
+                    <i className="bi bi-credit-card me-2"></i> Crédito
+                  </Button>
+                </Col>
+              </Row>
+              <Button variant="outline-secondary" onClick={() => setTipoSeleccionado(null)} className="mt-2 w-100">
+                ← Volver
               </Button>
-            </Col>
-          </Row>
-
-          <p className="modal-section-subtitle">O añade al carrito para comparar después:</p>
-          <Row className="g-2 w-100 mb-3">
-            <Col xs={12} md={6}>
-              <Button
-                onClick={() => { addToCart(producto, 'contado'); cerrar(); }}
-                className="w-100 btn-cart-outline"
-                disabled={isInCartContado}
-              >
-                {isInCartContado ? '✓ Añadido (Contado)' : <><i className="bi bi-cart-plus me-2"></i> Añadir (Contado)</>}
-              </Button>
-            </Col>
-            <Col xs={12} md={6}>
-              <Button
-                onClick={() => { addToCart(producto, 'credito'); cerrar(); }}
-                className="w-100 btn-cart-outline"
-                disabled={isInCartCredito}
-              >
-                {isInCartCredito ? '✓ Añadido (Crédito)' : <><i className="bi bi-credit-card me-2"></i> Añadir (Crédito)</>}
-              </Button>
-            </Col>
-          </Row>
-
-          <Button variant="secondary" onClick={cerrar} className="mt-3 w-100">
-            Cerrar
-          </Button>
+            </>
+          )}
         </Modal.Footer>
       </Modal>
     </>
