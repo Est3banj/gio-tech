@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useProducts } from "../hooks/useProducts";
 import { useConfig } from "../hooks/useConfig";
+import { normalizeText } from "../utils/formatters";
 import ProductCard from "./ProductCard";
 import { Container, Row, Col, Form, Spinner, Card, Button } from 'react-bootstrap';
 import HeroCarousel from "./HeroCarousel";
@@ -49,21 +50,11 @@ function Catalogo() {
     }
   }, []);
 
-  const normalizarTexto = (texto) => {
-    if (typeof texto !== 'string') return '';
-    return texto
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "")
-      .replace(/[^\x20-\x7E]/g, "")
-      .trim();
-  };
-
   const productosFiltrados = productos.filter((producto) => {
-    const nombreNormalizado = normalizarTexto(producto.nombre);
-    const descripcionNormalizada = normalizarTexto(producto.descripcion || "");
-    const busquedaNormalizada = normalizarTexto(busqueda);
-    const marcaFiltrada = filtroMarca ? normalizarTexto(filtroMarca) : "";
+    const nombreNormalizado = normalizeText(producto.nombre);
+    const descripcionNormalizada = normalizeText(producto.descripcion || "");
+    const busquedaNormalizada = normalizeText(busqueda);
+    const marcaFiltrada = filtroMarca ? normalizeText(filtroMarca) : "";
 
     const coincideBusqueda =
       nombreNormalizado.includes(busquedaNormalizada) ||

@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { Modal, Button, Card, Row, Col, Badge } from "react-bootstrap";
 import { useCart } from "../contexts/CartContext";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
+import { formatPrice } from "../utils/formatters";
 
 function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, no se pasa como prop
   const [mostrar, setMostrar] = useState(false);
@@ -13,20 +14,6 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
 
   const abrir = () => { setMostrar(true); setTipoSeleccionado(null); };
   const cerrar = () => { setMostrar(false), setTipoSeleccionado(null); };
-
-  // Helper de formato de precio
-  function formatoPrecio(valor) {
-    if (valor === null || typeof valor === 'undefined' || valor === '') return '—';
-    const numero = typeof valor === "string" ? parseFloat(valor.replace(/\s+/g, '').replace(/,/, '.')) : Number(valor);
-    if (!isNaN(numero) && Number.isFinite(numero)) {
-      return numero.toLocaleString("es-CO", {
-        style: "currency",
-        currency: "COP",
-        maximumFractionDigits: 0,
-      });
-    }
-    return '—';
-  }
 
   // Desestructuración del producto
   const {
@@ -85,8 +72,8 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
   // Si hay precio promo válido, mostrar precio promo en UI
   const showPromoPrice = hasPromoPrice && inWindow && !!effectivePromoActive;
 
-  const priceRegularStr = formatoPrecio(contado);
-  const pricePromoStr = formatoPrecio(promoPrice);
+  const priceRegularStr = formatPrice(contado);
+  const pricePromoStr = formatPrice(promoPrice);
 
   const badgeBg = promoBadgeBg || 'var(--promo-badge-bg, #ff5722)';
   const highlightColor = (promoHighlight && String(promoHighlight).trim()) || 'var(--promo-highlight, rgba(255,87,34,.25))';
@@ -98,8 +85,8 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
     : `Hola, estoy interesado en comprar al contado el ${nombre}.\nPrecio: ${priceRegularStr}.\n¿Está disponible para entrega inmediata?`;
 
   const mensajeWhatsAppCreditoDirecto = solo12Meses && cuotas12
-    ? `Hola, estoy interesado en el ${nombre} con el plan especial de 12 meses.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatoPrecio(cuotaInicial)}\n12 cuotas mensuales: ${formatoPrecio(cuotas12)}\n¿Me pueden dar más información?`
-    : `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatoPrecio(cuotaInicial)}\n16 cuotas quincenales: ${formatoPrecio(cuotas6)}\n8 cuotas mensuales: ${formatoPrecio(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
+    ? `Hola, estoy interesado en el ${nombre} con el plan especial de 12 meses.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatPrice(cuotaInicial)}\n12 cuotas mensuales: ${formatPrice(cuotas12)}\n¿Me pueden dar más información?`
+    : `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatPrice(cuotaInicial)}\n16 cuotas quincenales: ${formatPrice(cuotas6)}\n8 cuotas mensuales: ${formatPrice(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
 
   // Función para manejar la selección de tipo (contado o crédito)
   const handleSeleccionTipo = (tipo) => {
@@ -341,7 +328,7 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
           )}
 
           {cuotaInicial > 0 && (
-            <p className="mb-2"><strong>Cuota inicial:</strong> {formatoPrecio(cuotaInicial)}</p>
+            <p className="mb-2"><strong>Cuota inicial:</strong> {formatPrice(cuotaInicial)}</p>
           )}
 
           {solo12Meses && cuotas12 ? (
@@ -352,13 +339,13 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
                 </Badge>
               </div>
               <p className="mb-0 text-center" style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--brand-blue)' }}>
-                12 cuotas mensuales de {formatoPrecio(cuotas12)}
+                12 cuotas mensuales de {formatPrice(cuotas12)}
               </p>
             </div>
           ) : (
             <div className="plan-standard-box">
-              <p className="mb-2"><strong>16 cuotas quincenales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatoPrecio(cuotas6)}</span></p>
-              <p className="mb-0"><strong>8 cuotas mensuales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatoPrecio(cuotas8)}</span></p>
+              <p className="mb-2"><strong>16 cuotas quincenales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatPrice(cuotas6)}</span></p>
+              <p className="mb-0"><strong>8 cuotas mensuales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatPrice(cuotas8)}</span></p>
             </div>
           )}
         </Modal.Body>

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Button, Offcanvas, ListGroup } from 'react-bootstrap';
 import { useCart } from '../contexts/CartContext';
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
+import { formatPrice } from '../utils/formatters';
 
 const CartFloatingButton = () => {
   const { cartItems, removeFromCart, clearCart, cartCount } = useCart();
@@ -10,15 +11,6 @@ const CartFloatingButton = () => {
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-  const formatoPrecio = (valor) => {
-    if (valor === null || valor === undefined || valor === '') return '—';
-    const numero = typeof valor === "string" ? parseFloat(valor.replace(/\s+/g, '').replace(/,/, '.')) : valor;
-    if (!isNaN(numero) && numero > 0) {
-      return numero.toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
-    }
-    return '—';
-  };
 
   const generarMensajeLista = () => {
     if (cartItems.length === 0) {
@@ -28,8 +20,8 @@ const CartFloatingButton = () => {
     let mensaje = "Hola, estoy interesado en los siguientes productos de GIO TECH:\n\n";
     cartItems.forEach((item, index) => {
       const precioInfo = item.cotizacionType === 'contado'
-        ? `Precio al contado: ${formatoPrecio(item.contado)}`
-        : `Cotizar a crédito (Cuotas: Q${formatoPrecio(item.cuotas6)} / M${formatoPrecio(item.cuotas8)})`;
+        ? `Precio al contado: ${formatPrice(item.contado)}`
+        : `Cotizar a crédito (Cuotas: Q${formatPrice(item.cuotas6)} / M${formatPrice(item.cuotas8)})`;
 
       mensaje += `${index + 1}. ${item.nombre} - ${precioInfo}\n`;
     });
@@ -86,8 +78,8 @@ const CartFloatingButton = () => {
                       <h6 className="mb-0">{item.nombre}</h6>
                       <small className="text-muted">
                         {item.cotizacionType === 'contado'
-                          ? `Opción: Contado (${formatoPrecio(item.contado)})`
-                          : `Opción: Crédito (Cuotas: Q${formatoPrecio(item.cuotas6)} / M${formatoPrecio(item.cuotas8)})`}
+                          ? `Opción: Contado (${formatPrice(item.contado)})`
+                          : `Opción: Crédito (Cuotas: Q${formatPrice(item.cuotas6)} / M${formatPrice(item.cuotas8)})`}
                       </small>
                     </div>
                     <Button variant="outline-danger" size="sm" onClick={() => removeFromCart(item.itemId)}>

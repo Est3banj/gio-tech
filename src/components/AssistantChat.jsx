@@ -4,6 +4,7 @@ import { Offcanvas, Button, Badge, Card, Spinner, ProgressBar, Form } from "reac
 import { searchProducts } from "../services/product.service";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { useCart } from "../contexts/CartContext";
+import { formatPrice } from "../utils/formatters";
 import CompareModal from "./CompareModal";
 
 const steps = [
@@ -28,7 +29,7 @@ function normalizeBudget(sel) {
 }
 
 function whatsAppLink(number, producto, answers) {
-  const precio = Number(producto?.contado || 0).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 });
+  const precio = formatPrice(producto?.contado);
   const text = `Hola GIO TECH 👋, el asistente me recomendó el *${producto.nombre}*.
   
 *Detalles del equipo:*
@@ -204,7 +205,7 @@ export default function AssistantChat({ show, onHide }) {
                     <Card.Body className="p-2 d-flex flex-column justify-content-center">
                       <h6 className="fw-bold mb-1 small">{p.nombre}</h6>
                       <div className="text-primary fw-bold mb-2 small">
-                        {Number(p.contado).toLocaleString("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 })}
+                        {formatPrice(p.contado)}
                       </div>
                       <div className="d-flex gap-2">
                         <Button size="sm" variant="success" onClick={() => window.open(whatsAppLink(whatsappNumber, p, answers), "_blank")}>
