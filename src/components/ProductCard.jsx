@@ -4,6 +4,7 @@ import { Modal, Button, Card, Row, Col, Badge } from "react-bootstrap";
 import { useCart } from "../contexts/CartContext";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { formatPrice } from "../utils/formatters";
+import OptimizedImage from "./OptimizedImage";
 
 function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, no se pasa como prop
   const [mostrar, setMostrar] = useState(false);

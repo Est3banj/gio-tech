@@ -5,6 +5,7 @@ import { searchProducts } from "../services/product.service";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { useCart } from "../contexts/CartContext";
 import { formatPrice } from "../utils/formatters";
+import OptimizedImage from "./OptimizedImage";
 import CompareModal from "./CompareModal";
 
 const steps = [
