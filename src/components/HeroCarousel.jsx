@@ -42,11 +42,42 @@ function HeroCarousel() {
 
   // Si no hay slides, no ocupamos espacio innecesario
   if (isLoading || slides.length === 0) {
-    return <div style={{ height: '80vh', backgroundColor: '#f8f9fa' }} />; // Placeholder mientras carga para evitar saltos
+    return (
+      <div 
+        className="hero-carousel-placeholder"
+        style={{ 
+          width: '100%', 
+          backgroundColor: '#0f172a',
+          position: 'relative',
+          margin: 0,
+          padding: 0,
+          overflow: 'hidden'
+        }} 
+      >
+        <style>{`
+          .hero-carousel-placeholder {
+            height: 80vh;
+            min-height: 500px;
+          }
+          @media (max-width: 768px) {
+            .hero-carousel-placeholder {
+              height: 50vh;
+              min-height: 300px;
+            }
+          }
+          @media (max-width: 480px) {
+            .hero-carousel-placeholder {
+              height: 45vh;
+              min-height: 250px;
+            }
+          }
+        `}</style>
+      </div>
+    );
   }
 
   return (
-    <div className="hero-carousel-wrapper full-width-carousel mb-5">
+    <div className="hero-carousel-wrapper full-width-carousel" style={{ marginBottom: 0 }}>
       <Swiper
         modules={[Navigation, Pagination, Autoplay, EffectFade]}
         spaceBetween={0}
@@ -104,7 +135,7 @@ function HeroCarousel() {
           margin: 0;
           padding: 0;
           overflow: hidden;
-          background-color: #000; /* Fondo negro mientras carga la imagen */
+          background-color: #000;
         }
 
         .hero-swiper {
@@ -112,6 +143,11 @@ function HeroCarousel() {
           height: 80vh;
           min-height: 500px;
           padding-top: 80px;
+          background-color: transparent;
+        }
+
+        .hero-slide {
+          background-color: #000;
         }
 
         @media (max-width: 991px) {
@@ -120,8 +156,20 @@ function HeroCarousel() {
 
         @media (max-width: 768px) {
           .hero-swiper {
-            height: 60vh;
-            min-height: 400px;
+            height: 50vh;
+            min-height: 300px;
+            padding-top: 60px;
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-swiper {
+            height: 45vh;
+            min-height: 250px;
+            padding-top: 50px;
+          }
+          .hero-title {
+            font-size: clamp(1.5rem, 6vw, 2.5rem);
           }
         }
 
@@ -140,9 +188,48 @@ function HeroCarousel() {
           width: 100%;
           height: 100%;
           object-fit: cover;
-          object-position: center;
+          object-position: center center;
           transition: transform 10s ease-out;
           z-index: 0;
+        }
+
+        /* En mobile: asegurar queCubra todo el espacio */
+        @media (max-width: 768px) {
+          .hero-slide-image-element {
+            object-fit: cover !important;
+            object-position: center !important;
+          }
+          .swiper-slide-active .hero-slide-image-element {
+            transform: scale(1) !important;
+          }
+          .hero-title {
+            font-size: clamp(1.8rem, 7vw, 3rem);
+          }
+          .hero-content {
+            bottom: 20%;
+          }
+          .hero-overlay-gradient {
+            background: linear-gradient(0deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+          }
+        }
+
+        @media (max-width: 480px) {
+          .hero-content {
+            bottom: 15%;
+            padding: 0 1rem;
+          }
+          .hero-title {
+            font-size: clamp(1.4rem, 6vw, 2rem);
+          }
+          .hero-swiper .swiper-button-next,
+          .hero-swiper .swiper-button-prev {
+            width: 36px;
+            height: 36px;
+          }
+          .hero-swiper .swiper-button-next:after,
+          .hero-swiper .swiper-button-prev:after {
+            font-size: 0.9rem;
+          }
         }
 
         .swiper-slide-active .hero-slide-image-element {

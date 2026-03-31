@@ -1,17 +1,26 @@
 // src/components/ProductCard.jsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Card, Row, Col, Badge } from "react-bootstrap";
 import { useCart } from "../contexts/CartContext";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { formatPrice } from "../utils/formatters";
 import OptimizedImage from "./OptimizedImage";
+import { recordProductView } from "../services/productStats.service";
 
-function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, no se pasa como prop
+function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obtiene del contexto, no se pasa como prop
   const [mostrar, setMostrar] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState(null); // null, 'comprar', 'carrito'
   const { addToCart } = useCart();
   const rawPhoneNumber = useWhatsappNumber();
   const phoneNumber = rawPhoneNumber || '573248022632'; // Asegura un número por defecto
+
+  // Registrar vista del producto
+  useEffect(() => {
+    if (producto?.id) {
+      console.log('🔍 Registrando vista para:', producto.id);
+      recordProductView(producto.id);
+    }
+  }, [producto?.id]);
 
   const abrir = () => { setMostrar(true); setTipoSeleccionado(null); };
   const cerrar = () => { setMostrar(false), setTipoSeleccionado(null); };
@@ -251,6 +260,21 @@ function ProductCard({ producto }) { // `phoneNumber` se obtiene del contexto, n
               {promoLabel || promoBadgeText || 'PROMO'}
             </span>
           </div>
+
+          {/* Badge de producto popular */}
+          {isPopular && (
+            <div className="gio-badge-wrapper">
+              <span
+                className="gio-badge"
+                style={{
+                  backgroundColor: '#ff6b35',
+                  color: '#ffffff',
+                }}
+              >
+                🔥 HOT
+              </span>
+            </div>
+          )}
         </div>
 
         <Card.Img

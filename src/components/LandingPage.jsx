@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
+import { usePopularProducts } from "../hooks/usePopularProducts";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import ProductCard from "./ProductCard";
 import HeroCarousel from "./HeroCarousel";
@@ -30,9 +31,14 @@ const services = [
 // ─── COMPONENTE LANDINGPAGE ───────────────────────────────────────
 function LandingPage() {
     const { products: productos, isLoading } = useProducts();
+    const { popularIds } = usePopularProducts();
     const phoneNumber = useWhatsappNumber() || "573248022632";
 
-    const destacados = productos.slice(0, 4);
+    // Los productos destacados son los más populares (los que tienen más vistas)
+    const productosDestacados = popularIds.length > 0 
+        ? productos.filter(p => popularIds.includes(p.id)).slice(0, 4)
+        : productos.slice(0, 4);
+    
     const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent("Hola GIO TECH, me gustaría recibir asesoría personalizada")}`;
 
     return (
@@ -144,17 +150,17 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* 6. PRODUCTOS DESTACADOS */}
-            {!isLoading && destacados.length > 0 && (
+            {/* 6. PRODUCTOS DESTACADOS (con badge HOT si son populares) */}
+            {!isLoading && productosDestacados.length > 0 && (
                 <section className="featured-section section-padding-lg">
                     <div className="section-inner">
                         <div className="section-header">
                             <h2 className="section-title">Productos Destacados</h2>
                         </div>
                         <div className="featured-grid">
-                            {destacados.map((producto) => (
+                            {productosDestacados.map((producto) => (
                                 <div key={producto.id} className="featured-card-wrap">
-                                    <ProductCard producto={producto} />
+                                    <ProductCard producto={producto} isPopular={producto.isPopular} />
                                 </div>
                             ))}
                         </div>
