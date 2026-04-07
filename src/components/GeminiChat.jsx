@@ -35,9 +35,12 @@ function GeminiChat({ productos, onClose }) {
     setMensajes(prev => [...prev, { rol: 'usuario', texto: pregunta }]);
     setCargando(true);
 
+    // Construir historial (últimos 6 mensajes para mantener contexto)
+    const historial = mensajes.slice(-6);
+
     try {
-      // Obtener respuesta de Gemini
-      const respuesta = await askGeminiAssistant(pregunta, productos);
+      // Obtener respuesta de Gemini con historial
+      const respuesta = await askGeminiAssistant(pregunta, productos, historial);
       
       // Agregar respuesta del asistente
       setMensajes(prev => [...prev, { rol: 'asistente', texto: respuesta }]);
