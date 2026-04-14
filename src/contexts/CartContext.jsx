@@ -1,5 +1,6 @@
 // src/contexts/CartContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { trackAddToCart, trackPurchase } from '../utils/metaPixel';
 
 const CartContext = createContext();
 
@@ -44,7 +45,7 @@ export const CartProvider = ({ children }) => {
         return prevItems;
       } else {
         // Añadir el nuevo ítem al carrito con su tipo de cotización
-        return [...prevItems, { 
+        const newItem = { 
           itemId, // ID único del ítem en el carrito
           productId: product.id, // ID del producto de Firebase
           nombre: product.nombre,
@@ -53,7 +54,12 @@ export const CartProvider = ({ children }) => {
           cuotas6: product.cuotas6,
           cuotas8: product.cuotas8,
           cotizacionType: type // 'contado' o 'credito'
-        }];
+        };
+        
+        // Track del evento AddToCart a Meta Pixel
+        trackAddToCart(product, type);
+        
+        return [...prevItems, newItem];
       }
     });
   };

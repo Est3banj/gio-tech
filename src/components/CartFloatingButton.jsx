@@ -4,6 +4,7 @@ import { Button, Offcanvas, ListGroup } from 'react-bootstrap';
 import { useCart } from '../contexts/CartContext';
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { formatPrice } from '../utils/formatters';
+import { trackPurchase, trackLead } from '../utils/metaPixel';
 
 const CartFloatingButton = () => {
   const { cartItems, removeFromCart, clearCart, cartCount } = useCart();
@@ -27,6 +28,16 @@ const CartFloatingButton = () => {
     });
     mensaje += "\n¿Podrían darme más información y opciones de compra para estos productos?";
     return encodeURIComponent(mensaje);
+  };
+
+  const handleSendToWhatsapp = () => {
+    // Track de Purchase (el usuario inicia el proceso de compra)
+    if (cartItems.length > 0) {
+      trackPurchase(cartItems);
+    }
+    // Track de Lead (contacto por WhatsApp)
+    trackLead();
+    handleClose();
   };
 
   return (
@@ -95,7 +106,7 @@ const CartFloatingButton = () => {
                   href={phoneNumber ? `https://wa.me/${phoneNumber}?text=${generarMensajeLista()}` : '#'}
                   target="_blank"
                   rel="noopener noreferrer"
-                  onClick={handleClose}
+                  onClick={handleSendToWhatsapp}
                   className="fw-bold py-2"
                   style={{ backgroundColor: 'var(--brand-green)', borderColor: 'var(--brand-green)' }}
                   disabled={!phoneNumber}
