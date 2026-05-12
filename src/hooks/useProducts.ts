@@ -1,29 +1,34 @@
 import { useState, useEffect, useSyncExternalStore } from 'react';
 import { subscribeToProducts } from '../services/product.service';
+import type { Product } from '../types';
 
 // Store externo para compartir estado entre componentes (singleton pattern)
-let productsStore = [];
-let productsListeners = new Set();
+let productsStore: Product[] = [];
+let productsListeners = new Set<() => void>();
 
-function notifyProductsListeners() {
+function notifyProductsListeners(): void {
   productsListeners.forEach((listener) => listener());
 }
 
-const productsSubscribe = (listener) => {
+const productsSubscribe = (listener: () => void): (() => boolean) => {
   productsListeners.add(listener);
   return () => productsListeners.delete(listener);
 };
 
+interface UseProductsReturn {
+  products: Product[];
+  isLoading: boolean;
+  error: Error | null;
+}
+
 /**
  * Hook personalizado para suscribirse a la lista de productos desde Firestore.
  * Usa store externo para evitar suscripciones duplicadas.
- * 
- * @returns {{ products: object[], isLoading: boolean, error: Error | null }}
  */
-export function useProducts() {
-  const [products, setProducts] = useState(productsStore);
+export function useProducts(): UseProductsReturn {
+  const [products, setProducts] = useState<Product[]>(productsStore);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   // Sincronizar con store externo
   useSyncExternalStore(productsSubscribe, () => productsStore);

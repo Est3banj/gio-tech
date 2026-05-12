@@ -38,19 +38,25 @@ export interface User {
 // ---------------------------------------------------------------------
 // 🛒 CARRITO
 // ---------------------------------------------------------------------
+export type CotizacionType = 'contado' | 'credito';
+
 export interface CartItem {
-  product: Product;
-  cantidad: number;
+  itemId: string;           // ID único: productId-cotizacionType
+  productId: string;        // ID del producto en Firebase
+  nombre: string;
+  imagen: string;
+  contado: number;
+  cuotas6: number;
+  cuotas8: number;
+  cotizacionType: CotizacionType;
 }
 
 export interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (product: Product, cantidad?: number) => void;
-  removeFromCart: (productId: string) => void;
-  updateQuantity: (productId: string, cantidad: number) => void;
+  addToCart: (product: Product, type: CotizacionType) => void;
+  removeFromCart: (itemId: string) => void;
   clearCart: () => void;
-  getCartTotal: () => number;
-  getCartCount: () => number;
+  cartCount: number;
 }
 
 // ---------------------------------------------------------------------

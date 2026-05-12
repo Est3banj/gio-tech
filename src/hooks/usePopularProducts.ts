@@ -1,15 +1,20 @@
 import { useState, useEffect } from 'react';
 import { getPopularProductsStats } from '../services/productStats.service';
 import { useProducts } from '../hooks/useProducts';
+import type { Product } from '../types';
+
+interface UsePopularProductsReturn {
+  popularIds: string[];
+  isLoading: boolean;
+}
 
 /**
  * Hook para obtener los productos más vistos.
- * @returns {object} - { popularIds: string[], isLoading: boolean }
  */
-export function usePopularProducts() {
-  const [popularIds, setPopularIds] = useState([]);
+export function usePopularProducts(): UsePopularProductsReturn {
+  const [popularIds, setPopularIds] = useState<string[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const { products } = useProducts();
+  const { products } = useProducts() as { products: Product[] | null };
 
   useEffect(() => {
     const fetchPopular = async () => {

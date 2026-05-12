@@ -1,29 +1,34 @@
 import { useState, useEffect, useSyncExternalStore } from 'react';
 import { subscribeToConfig } from '../services/config.service';
+import type { StoreConfig } from '../types';
 
 // Store externo para compartir estado entre componentes (singleton pattern)
-let configStore = {};
-let configListeners = new Set();
+let configStore: StoreConfig = {};
+let configListeners = new Set<() => void>();
 
-function notifyConfigListeners() {
+function notifyConfigListeners(): void {
   configListeners.forEach((listener) => listener());
 }
 
-const configSubscribe = (listener) => {
+const configSubscribe = (listener: () => void): (() => boolean) => {
   configListeners.add(listener);
   return () => configListeners.delete(listener);
 };
 
+interface UseConfigReturn {
+  config: StoreConfig;
+  isLoading: boolean;
+  error: Error | null;
+}
+
 /**
  * Hook personalizado para suscribirse a la configuración general desde Firestore.
  * Usa store externo para evitar suscripciones duplicadas.
- * 
- * @returns {{ config: object, isLoading: boolean, error: Error | null }}
  */
-export function useConfig() {
-  const [config, setConfig] = useState(configStore);
+export function useConfig(): UseConfigReturn {
+  const [config, setConfig] = useState<StoreConfig>(configStore);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<Error | null>(null);
 
   // Sincronizar con store externo
   useSyncExternalStore(configSubscribe, () => configStore);

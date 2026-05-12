@@ -1,23 +1,33 @@
-// src/contexts/CartContext.jsx
-import React, { createContext, useState, useContext, useEffect } from 'react';
+// src/contexts/CartContext.tsx
+import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import type { CartContextType, CartItem, CotizacionType } from '../types';
+import type { Product } from '../types';
 import { trackAddToCart } from '../utils/metaPixel';
 
-const CartContext = createContext();
+const CartContext = createContext<CartContextType | null>(null);
 
 // Hook personalizado para usar el carrito
-export const useCart = () => {
-  return useContext(CartContext);
+export const useCart = (): CartContextType => {
+  const context = useContext(CartContext);
+  if (!context) {
+    throw new Error('useCart must be used within CartProvider');
+  }
+  return context;
 };
 
+// Props para el Provider
+interface CartProviderProps {
+  children: ReactNode;
+}
+
 // Proveedor del Contexto del Carrito
-export const CartProvider = ({ children }) => {
+export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   // Estado del carrito, inicializado desde localStorage (si hay datos guardados)
-  const [cartItems, setCartItems] = useState(() => {
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
       const localData = localStorage.getItem('gio-tech-cart');
       return localData ? JSON.parse(localData) : [];
-    } catch (error) {
-      console.error("Error al cargar el carrito de localStorage:", error);
+    } catch {
       return [];
     }
   });
@@ -26,13 +36,13 @@ export const CartProvider = ({ children }) => {
   useEffect(() => {
     try {
       localStorage.setItem('gio-tech-cart', JSON.stringify(cartItems));
-    } catch (error) {
-      console.error("Error al guardar el carrito en localStorage:", error);
+    } catch {
+      // Silent fail for localStorage errors
     }
-  }, [cartItems]); // Se ejecuta cada vez que cartItems cambia
+  }, [cartItems]);
 
   // Función para añadir un producto al carrito
-  const addToCart = (product, type) => { // 'type' será 'contado' o 'credito'
+  const addToCart = (product: Product, type: CotizacionType) => {
     setCartItems(prevItems => {
       // Crear un ID único para el ítem en el carrito (producto ID + tipo de cotización)
       const itemId = `${product.id}-${type}`;
@@ -41,19 +51,19 @@ export const CartProvider = ({ children }) => {
       const exists = prevItems.find(item => item.itemId === itemId);
 
       if (exists) {
-        // Si ya existe, no lo añadimos de nuevo (puedes añadir lógica para incrementar cantidad si lo prefieres)
+        // Si ya existe, no lo añadimos de nuevo
         return prevItems;
       } else {
         // Añadir el nuevo ítem al carrito con su tipo de cotización
-        const newItem = { 
-          itemId, // ID único del ítem en el carrito
-          productId: product.id, // ID del producto de Firebase
+        const newItem: CartItem = { 
+          itemId,
+          productId: product.id,
           nombre: product.nombre,
           imagen: product.imagen,
-          contado: product.contado, // Almacenamos ambos precios para el mensaje final
+          contado: product.contado,
           cuotas6: product.cuotas6,
           cuotas8: product.cuotas8,
-          cotizacionType: type // 'contado' o 'credito'
+          cotizacionType: type
         };
         
         // Track del evento AddToCart a Meta Pixel
@@ -65,7 +75,7 @@ export const CartProvider = ({ children }) => {
   };
 
   // Función para eliminar un ítem del carrito por su itemId
-  const removeFromCart = (itemId) => {
+  const removeFromCart = (itemId: string) => {
     setCartItems(prevItems => prevItems.filter(item => item.itemId !== itemId));
   };
 
