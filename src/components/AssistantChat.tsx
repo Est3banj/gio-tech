@@ -1,21 +1,39 @@
-// src/components/AssistantChat.jsx
+// src/components/AssistantChat.tsx
 import { useEffect, useState } from "react";
 import { Offcanvas, Button, Badge, Card, Spinner, ProgressBar, Form } from "react-bootstrap";
 import { searchProducts } from "../services/product.service";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { useCart } from "../contexts/CartContext";
 import { formatPrice } from "../utils/formatters";
-import OptimizedImage from "./OptimizedImage";
 import CompareModal from "./CompareModal";
+import type { Product } from "../types";
 
-const steps = [
+interface Step {
+  key: string;
+  q: string;
+  options: string[];
+}
+
+interface Answers {
+  presupuesto?: string;
+  marca?: string;
+  camara?: string;
+  memoria?: string;
+}
+
+const steps: Step[] = [
   { key: "presupuesto", q: "¿Cuál es tu presupuesto aproximado?", options: ["< 800.000", "800.000 - 1.200.000", "1.200.000 - 2.000.000", "> 2.000.000", "Personalizado…"] },
   { key: "marca", q: "¿Alguna marca preferida?", options: ["Cualquiera", "Samsung", "Xiaomi/Redmi", "Motorola", "iPhone", "Tecno", "Infinix"] },
   { key: "camara", q: "¿Prioridad de cámara?", options: ["Básica", "Buena (50MP+)", "Muy buena (Gama Alta)"] },
   { key: "memoria", q: "¿Memoria mínima?", options: ["4/64 GB", "6/128 GB", "8/256 GB", "Me da igual"] },
 ];
 
-function normalizeBudget(sel) {
+interface BudgetRange {
+  min?: number;
+  max?: number;
+}
+
+const normalizeBudget = (sel: string | undefined): BudgetRange => {
   if (!sel) return {};
   if (typeof sel === "string" && sel.startsWith("personal:")) {
     const range = sel.split(":")[1];
@@ -27,9 +45,9 @@ function normalizeBudget(sel) {
   if (sel.includes("800.000")) return { min: 800000, max: 1200000 };
   if (sel.includes("1.200.000")) return { min: 1200000, max: 2000000 };
   return {};
-}
+};
 
-function whatsAppLink(number, producto, answers) {
+const whatsAppLink = (number: string, producto: Product, answers: Answers): string => {
   const precio = formatPrice(producto?.contado);
   const text = `Hola GIO TECH 👋, el asistente me recomendó el *${producto.nombre}*.
   
@@ -45,14 +63,19 @@ function whatsAppLink(number, producto, answers) {
 ¿Tienen disponibilidad inmediata?`;
 
   return `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
+};
+
+interface AssistantChatProps {
+  show: boolean;
+  onHide: () => void;
 }
 
-export default function AssistantChat({ show, onHide }) {
-  const [answers, setAnswers] = useState({});
+const AssistantChat: React.FC<AssistantChatProps> = ({ show, onHide }) => {
+  const [answers, setAnswers] = useState<Answers>({});
   const [stepIndex, setStepIndex] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [results, setResults] = useState([]);
-  const [compareIds, setCompareIds] = useState([]);
+  const [results, setResults] = useState<Product[]>([]);
+  const [compareIds, setCompareIds] = useState<string[]>([]);
   const [showCompare, setShowCompare] = useState(false);
   const [customBudget, setCustomBudget] = useState(false);
   const [customMin, setCustomMin] = useState("");
@@ -65,7 +88,7 @@ export default function AssistantChat({ show, onHide }) {
   const canSearch = stepIndex >= steps.length;
   const currentStep = steps[stepIndex];
 
-  const handlePick = (opt) => {
+  const handlePick = (opt: string) => {
     if (currentStep.key === "presupuesto" && opt.startsWith("Personalizado")) {
       setCustomBudget(true);
       return;
@@ -89,8 +112,8 @@ export default function AssistantChat({ show, onHide }) {
       try {
         const budget = normalizeBudget(answers.presupuesto);
         const filters = [];
-        if (budget.min) filters.push({ field: "contado", op: ">=", value: budget.min });
-        if (budget.max) filters.push({ field: "contado", op: "<=", value: budget.max });
+        if (budget.min) filters.push({ field: "contado", op: ">=" as const, value: budget.min });
+        if (budget.max) filters.push({ field: "contado", op: "<=" as const, value: budget.max });
 
         const items = await searchProducts(filters);
 
@@ -99,21 +122,18 @@ export default function AssistantChat({ show, onHide }) {
           const descLower = (p.descripcion || "").toLowerCase();
           const marcaLower = (p.marca || "").toLowerCase();
 
-          // 1. Validar Marca
           const matchMarca = !answers.marca ||
             answers.marca === "Cualquiera" ||
             marcaLower === answers.marca.toLowerCase() ||
             nombreLower.includes(answers.marca.toLowerCase());
 
-          // 2. Validar Memoria
-          const memNumber = answers.memoria.match(/\d+/);
+          const memNumber = answers.memoria?.match(/\d+/);
           const matchMem = !memNumber ||
             descLower.includes(memNumber[0]) ||
             nombreLower.includes(memNumber[0]);
 
-          // 3. Validar Cámara
           let matchCam = true;
-          if (answers.camara.includes("Muy buena")) {
+          if (answers.camara?.includes("Muy buena")) {
             matchCam = descLower.includes("50mp") || descLower.includes("108mp") || descLower.includes("gama alta") || descLower.includes("pro");
           }
 
@@ -138,7 +158,6 @@ export default function AssistantChat({ show, onHide }) {
         </Offcanvas.Title>
       </Offcanvas.Header>
 
-      {/* BARRA DE PROGRESO VISIBLE */}
       <div className="px-3 pt-2 bg-white">
         <ProgressBar now={progress} variant="success" style={{ height: '6px' }} />
         <small className="text-muted d-block mt-1">
@@ -212,7 +231,7 @@ export default function AssistantChat({ show, onHide }) {
                         <Button size="sm" variant="success" onClick={() => window.open(whatsAppLink(whatsappNumber, p, answers), "_blank")}>
                           <i className="bi bi-whatsapp"></i>
                         </Button>
-                        <Button size="sm" variant="outline-primary" onClick={() => addToCart && addToCart(p)}>
+                        <Button size="sm" variant="outline-primary" onClick={() => addToCart && addToCart(p, 'contado')}>
                           <i className="bi bi-cart-plus"></i>
                         </Button>
                         <Button
@@ -246,4 +265,6 @@ export default function AssistantChat({ show, onHide }) {
       />
     </Offcanvas>
   );
-}
+};
+
+export default AssistantChat;

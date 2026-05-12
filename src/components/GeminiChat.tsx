@@ -1,13 +1,17 @@
-// src/components/GeminiChat.jsx
-// Componente de chat con IA para el asistente de ventas
-
+// src/components/GeminiChat.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Form, Card, Badge } from 'react-bootstrap';
 import { askGeminiAssistant, generateWhatsAppMessage } from '../services/gemini.service';
 import { useWhatsappNumber } from '../contexts/WhatsappNumberContext';
+import type { Product, ChatMessage } from '../types';
 
-function GeminiChat({ productos, onClose }) {
-  const [mensajes, setMensajes] = useState([
+interface GeminiChatProps {
+  productos: Product[];
+  onClose: () => void;
+}
+
+const GeminiChat: React.FC<GeminiChatProps> = ({ productos, onClose }) => {
+  const [mensajes, setMensajes] = useState<ChatMessage[]>([
     {
       rol: 'asistente',
       texto: '¡Hola! 👋 Soy el asistente de GIO TECH. ¿Qué celular estás buscando? puedo ayudarte a encontrar el perfecto según tu presupuesto o necesidades.'
@@ -15,10 +19,9 @@ function GeminiChat({ productos, onClose }) {
   ]);
   const [inputUsuario, setInputUsuario] = useState('');
   const [cargando, setCargando] = useState(false);
-  const chatRef = useRef(null);
+  const chatRef = useRef<HTMLDivElement>(null);
   const phoneNumber = useWhatsappNumber();
 
-  // Auto-scroll al final cuando hay nuevos mensajes
   useEffect(() => {
     if (chatRef.current) {
       chatRef.current.scrollTop = chatRef.current.scrollHeight;
@@ -31,18 +34,13 @@ function GeminiChat({ productos, onClose }) {
     const pregunta = inputUsuario.trim();
     setInputUsuario('');
     
-    // Agregar mensaje del usuario
     setMensajes(prev => [...prev, { rol: 'usuario', texto: pregunta }]);
     setCargando(true);
 
-    // Construir historial (últimos 6 mensajes para mantener contexto)
     const historial = mensajes.slice(-6);
 
     try {
-      // Obtener respuesta de Gemini con historial
       const respuesta = await askGeminiAssistant(pregunta, productos, historial);
-      
-      // Agregar respuesta del asistente
       setMensajes(prev => [...prev, { rol: 'asistente', texto: respuesta }]);
     } catch (error) {
       console.error("Error en chat:", error);
@@ -55,7 +53,7 @@ function GeminiChat({ productos, onClose }) {
     }
   };
 
-  const handleKeyPress = (e) => {
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleEnviar();
@@ -81,7 +79,6 @@ function GeminiChat({ productos, onClose }) {
       borderRadius: '16px',
       overflow: 'hidden'
     }}>
-      {/* Header */}
       <Card.Header style={{ 
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         color: 'white',
@@ -107,7 +104,6 @@ function GeminiChat({ productos, onClose }) {
         </Button>
       </Card.Header>
 
-      {/* Mensajes */}
       <div 
         ref={chatRef}
         style={{ 
@@ -158,7 +154,6 @@ function GeminiChat({ productos, onClose }) {
         )}
       </div>
 
-      {/* Input */}
       <Card.Footer style={{ padding: '12px', background: 'var(--bg-card)', borderTop: '1px solid var(--border-color)' }}>
         <Form onSubmit={(e) => { e.preventDefault(); handleEnviar(); }}>
           <div className="d-flex gap-2">
@@ -201,6 +196,6 @@ function GeminiChat({ productos, onClose }) {
       </Card.Footer>
     </Card>
   );
-}
+};
 
 export default GeminiChat;

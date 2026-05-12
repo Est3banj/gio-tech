@@ -1,15 +1,15 @@
+// src/components/Header.tsx
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { subscribeToConfig } from "../services/config.service";
+import type { StoreConfig } from "../types";
 
-function Header() {
-  const [config, setConfig] = useState({});
+const Header: React.FC = () => {
+  const [config, setConfig] = useState<StoreConfig>({});
   const location = useLocation();
 
-  // Estado del Menú Móvil Independiente
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Lógica de Modo Oscuro
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) return savedTheme === "dark";
@@ -27,15 +27,13 @@ function Header() {
   }, [isDarkMode]);
 
   useEffect(() => {
-    // Listener para la configuración del negocio desde Firestore
     const unsub = subscribeToConfig(
       (data) => setConfig(data),
       (error) => console.error("Header config error:", error)
     );
-    return () => unsub(); // Limpiar el listener al desmontar el componente
+    return () => unsub();
   }, []);
 
-  // Bloquear scroll del body cuando el menú móvil está abierto
   useEffect(() => {
     if (isMobileMenuOpen) {
       document.body.style.overflow = 'hidden';
@@ -51,7 +49,6 @@ function Header() {
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
-  // Lógica para Header Transparente -> Sólido en Scroll
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -59,16 +56,11 @@ function Header() {
       setScrolled(window.scrollY > 20);
     };
     window.addEventListener("scroll", handleScroll);
-    handleScroll(); // Inicializar
+    handleScroll();
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Determinar si la página actual soporta header transparente (Hero)
   const isHeroPage = location.pathname === "/" || location.pathname === "/servicio-tecnico";
-
-  // El header es sólido si:
-  // 1. Ya se hizo scroll
-  // 2. NO es una página con Hero.
   const isSolid = scrolled || !isHeroPage;
 
   return (
@@ -76,7 +68,6 @@ function Header() {
       <header className={`gio-header ${isSolid || isMobileMenuOpen ? "scrolled" : ""}`}>
         <div className="section-inner d-flex justify-content-between align-items-center">
 
-          {/* Brand Area */}
           <div className="header-brand d-flex align-items-center gap-2 gap-md-3">
             {config.logo && (
               <img
@@ -92,7 +83,6 @@ function Header() {
             )}
           </div>
 
-          {/* Desktop Navigation (Renderizado condicional por CSS d-none d-lg-flex) */}
           <nav className="header-nav-desktop d-none d-lg-flex mb-0 mx-auto">
             <ul className="nav align-items-center mb-0">
               <li className="nav-item">
@@ -107,7 +97,6 @@ function Header() {
             </ul>
           </nav>
 
-          {/* Actions Area: Theme Toggle & Hamburger */}
           <div className="header-actions d-flex align-items-center gap-3">
             <button
               onClick={toggleTheme}
@@ -118,7 +107,6 @@ function Header() {
               <i className={`bi ${isDarkMode ? "bi-sun-fill" : "bi-moon-fill"}`}></i>
             </button>
 
-            {/* Hamburger Button (d-lg-none) */}
             <button
               className="mobile-menu-toggle d-lg-none"
               onClick={toggleMobileMenu}
@@ -131,7 +119,6 @@ function Header() {
         </div>
       </header>
 
-      {/* Structural Mobile Menu Overlay - Desacoplado del header flow, posicionado fixamente */}
       <div className={`mobile-nav-overlay d-lg-none ${isMobileMenuOpen ? "open" : ""}`}>
         <nav className="mobile-nav-container">
           <ul className="mobile-nav-list">
@@ -149,6 +136,6 @@ function Header() {
       </div>
     </>
   );
-}
+};
 
 export default Header;

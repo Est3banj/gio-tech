@@ -1,16 +1,30 @@
+// src/components/Catalogo.tsx
 import React, { useState, useEffect } from "react";
 import { useProducts } from "../hooks/useProducts";
 import { useConfig } from "../hooks/useConfig";
 import { normalizeText } from "../utils/formatters";
 import ProductCard from "./ProductCard";
-import { Container, Row, Col, Form, Spinner, Card, Button } from 'react-bootstrap';
+import { Container, Row, Col, Form, Spinner, Card } from 'react-bootstrap';
 import HeroCarousel from "./HeroCarousel";
 import GeminiChat from "./GeminiChat";
 
-// Lazy loading modals
 const WelcomeModal = React.lazy(() => import('./WelcomeModal'));
 
-function Catalogo() {
+interface RangoPrecio {
+  value: string;
+  label: string;
+}
+
+const rangosPrecio: RangoPrecio[] = [
+  { value: "", label: "Todos los precios" },
+  { value: "0-500000", label: "Hasta $500.000" },
+  { value: "500000-1000000", label: "$500.000 - $1.000.000" },
+  { value: "1000000-2000000", label: "$1.000.000 - $2.000.000" },
+  { value: "2000000-4000000", label: "$2.000.000 - $4.000.000" },
+  { value: "4000000-999999999", label: "Más de $4.000.000" },
+];
+
+const Catalogo: React.FC = () => {
   const { products: productos, isLoading } = useProducts();
   const { config } = useConfig();
   const [busqueda, setBusqueda] = useState("");
@@ -19,28 +33,14 @@ function Catalogo() {
   const [ordenamiento, setOrdenamiento] = useState("default");
   const [showWelcome, setShowWelcome] = useState(false);
   const [businessName, setBusinessName] = useState("");
-
-  // Rangos de precio predefinidos
-  const rangosPrecio = [
-    { value: "", label: "Todos los precios" },
-    { value: "0-500000", label: "Hasta $500.000" },
-    { value: "500000-1000000", label: "$500.000 - $1.000.000" },
-    { value: "1000000-2000000", label: "$1.000.000 - $2.000.000" },
-    { value: "2000000-4000000", label: "$2.000.000 - $4.000.000" },
-    { value: "4000000-999999999", label: "Más de $4.000.000" },
-  ];
-
-  // === Asistente IA Gemini ===
   const [showGeminiChat, setShowGeminiChat] = useState(false);
 
-  // businessName del hook
   useEffect(() => {
     if (config?.nombre) {
       setBusinessName(config.nombre);
     }
   }, [config]);
 
-  // Mostrar WelcomeModal solo una vez por sesión
   useEffect(() => {
     try {
       const seen = sessionStorage.getItem('gio_welcome_seen_sess_v1');
@@ -65,11 +65,10 @@ function Catalogo() {
       nombreNormalizado.includes(marcaFiltrada) ||
       descripcionNormalizada.includes(marcaFiltrada);
 
-    // Filtro por rango de precio
     let coincidePrecio = true;
     if (filtroPrecio) {
       const [min, max] = filtroPrecio.split('-').map(Number);
-      const precio = parseFloat(producto.contado) || 0;
+      const precio = parseFloat(String(producto.contado)) || 0;
       coincidePrecio = precio >= min && precio <= max;
     }
 
@@ -78,13 +77,13 @@ function Catalogo() {
 
   const productosOrdenados = [...productosFiltrados].sort((a, b) => {
     if (ordenamiento === "price_asc") {
-      const priceA = parseFloat(a.contado) || 0;
-      const priceB = parseFloat(b.contado) || 0;
+      const priceA = parseFloat(String(a.contado)) || 0;
+      const priceB = parseFloat(String(b.contado)) || 0;
       return priceA - priceB;
     }
     if (ordenamiento === "price_desc") {
-      const priceA = parseFloat(a.contado) || 0;
-      const priceB = parseFloat(b.contado) || 0;
+      const priceA = parseFloat(String(a.contado)) || 0;
+      const priceB = parseFloat(String(b.contado)) || 0;
       return priceB - priceA;
     }
     if (ordenamiento === "name_asc") {
@@ -106,7 +105,6 @@ function Catalogo() {
         />
       </React.Suspense>
 
-      {/* Hero Carousel - Carrusel dinámico gestionado desde el admin */}
       <HeroCarousel />
 
       <div className="section-inner py-4 header-offset">
@@ -115,7 +113,7 @@ function Catalogo() {
             <h2 className="display-5 fw-bold mb-3 text-primary">Nuestros Productos</h2>
             <p className="lead text-muted mb-4">
               Explora nuestra selección de los mejores celulares y otros dispositivos tecnológicos.
-              ¡Cotiza directamente por WhatsApp y estrena hoy mismo!
+              ¡Cotiza directamente por WhatsApp y estreia hoy mismo!
             </p>
           </Col>
           <Col xs={12} md={10} lg={8}>
@@ -202,7 +200,6 @@ function Catalogo() {
           </Row>
         )}
 
-        {/* Botón flotante del asistente IA */}
         <button
           type="button"
           onClick={() => setShowGeminiChat(true)}
@@ -232,7 +229,6 @@ function Catalogo() {
           🤖
         </button>
 
-        {/* Mensaje flotante junto al botón IA */}
         <div
           onClick={() => setShowGeminiChat(true)}
           style={{
@@ -261,17 +257,12 @@ function Catalogo() {
             50% { box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5), 0 0 0 10px rgba(30, 58, 138, 0); }
             100% { box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5), 0 0 0 0 rgba(30, 58, 138, 0); }
           }
-          @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
-          }
           @keyframes float-tip {
             0%, 100% { transform: translateX(0); }
             50% { transform: translateX(-5px); }
           }
         `}</style>
 
-        {/* Chat de Gemini IA */}
         {showGeminiChat && (
           <GeminiChat 
             productos={productos} 
@@ -281,6 +272,6 @@ function Catalogo() {
       </div>
     </>
   );
-}
+};
 
 export default Catalogo;

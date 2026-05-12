@@ -1,13 +1,18 @@
-import React from 'react';
+// src/components/OptimizedImage.tsx
+import React, { useState } from 'react';
 
-/**
- * Componente de imagen optimizado para cargar de forma diferida.
- * - lazy loading nativo
- * - decoding async
- * - placeholder en caso de error
- * - dimensions opcionales para evitar CLS
- */
-export default function OptimizedImage({
+interface OptimizedImageProps {
+  src?: string;
+  alt?: string;
+  className?: string;
+  width?: number | string;
+  height?: number | string;
+  placeholder?: string;
+  style?: React.CSSProperties;
+  [key: string]: unknown;
+}
+
+const OptimizedImage: React.FC<OptimizedImageProps> = ({
   src,
   alt,
   className,
@@ -16,9 +21,9 @@ export default function OptimizedImage({
   placeholder = 'https://via.placeholder.com/400x400?text=Sin+imagen',
   style,
   ...props
-}) {
-  const [error, setError] = React.useState(false);
-  const [loaded, setLoaded] = React.useState(false);
+}) => {
+  const [error, setError] = useState(false);
+  const [loaded, setLoaded] = useState(false);
 
   const handleError = () => {
     setError(true);
@@ -30,8 +35,7 @@ export default function OptimizedImage({
 
   const finalSrc = error || !src ? placeholder : src;
 
-  // Estilos base sin overrides que puedan romper el layout
-  const baseStyle = {
+  const baseStyle: React.CSSProperties = {
     ...style,
     opacity: loaded ? 1 : 0,
     transition: 'opacity 0.3s ease-in-out',
@@ -52,4 +56,6 @@ export default function OptimizedImage({
       {...props}
     />
   );
-}
+};
+
+export default OptimizedImage;

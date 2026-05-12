@@ -1,7 +1,8 @@
+// src/components/WhatsappFloatingButton.tsx
 import React from 'react';
 import { useWhatsappNumber } from '../contexts/WhatsappNumberContext';
 
-const WhatsappFloatingButton = () => {
+const WhatsAppFloatingButton: React.FC = () => {
   const phoneNumber = useWhatsappNumber();
   const mensajeDefault = "Hola GIO TECH, me interesa recibir asesoría sobre un equipo";
 
@@ -26,13 +27,12 @@ const WhatsappFloatingButton = () => {
           animation: fadeInUp 0.5s ease-out;
         }
 
-        /* La pestaña de mensaje - MÁS PEQUEÑA Y REFINADA */
         .whatsapp-badge {
           background: #ffffff;
           color: #444;
           padding: 6px 12px;
-          border-radius: 12px; /* Menos redondeado para verse moderno */
-          font-size: 13px; /* Texto más pequeño */
+          border-radius: 12px;
+          font-size: 13px;
           font-weight: 500;
           margin-left: 8px;
           box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -43,7 +43,6 @@ const WhatsappFloatingButton = () => {
           letter-spacing: -0.2px;
         }
 
-        /* Triangulito miniatura */
         .whatsapp-badge::before {
           content: "";
           position: absolute;
@@ -56,7 +55,7 @@ const WhatsappFloatingButton = () => {
         }
 
         .whatsapp-float-button {
-          width: 50px; /* Reducido de 60px a 50px */
+          width: 50px;
           height: 50px;
           background: linear-gradient(135deg, #25D366 0%, #128C7E 100%);
           border-radius: 50%;
@@ -69,7 +68,6 @@ const WhatsappFloatingButton = () => {
           transition: all 0.3s ease;
         }
 
-        /* Hover efectos */
         .whatsapp-container:hover .whatsapp-float-button {
           transform: scale(1.05);
         }
@@ -80,17 +78,16 @@ const WhatsappFloatingButton = () => {
         }
 
         .whatsapp-float-button i {
-          font-size: 26px; /* Icono ajustado al nuevo tamaño */
+          font-size: 26px;
         }
 
-        /* Ajustes para Móviles */
         @media (max-width: 768px) {
           .whatsapp-container {
             bottom: 20px;
             left: 15px;
           }
           .whatsapp-badge {
-            font-size: 12px; /* Texto aún más pequeño en móvil */
+            font-size: 12px;
             padding: 5px 10px;
           }
           .whatsapp-float-button {
@@ -102,10 +99,9 @@ const WhatsappFloatingButton = () => {
           }
         }
 
-        /* Para pantallas muy pequeñas (relojes o mini-celulares) */
         @media (max-width: 360px) {
           .whatsapp-badge {
-            display: none; /* Solo aquí desaparece si el espacio es crítico */
+            display: none;
           }
         }
 
@@ -131,4 +127,4 @@ const WhatsappFloatingButton = () => {
   );
 };
 
-export default WhatsappFloatingButton;
+export default WhatsAppFloatingButton;

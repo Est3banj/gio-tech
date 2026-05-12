@@ -1,22 +1,21 @@
-// src/components/HeroCarousel.jsx
+// src/components/HeroCarousel.tsx
 import React, { useState, useEffect } from 'react';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Pagination, Autoplay, EffectFade } from 'swiper/modules';
+import type { CarouselSlide } from '../types';
 
-// Import Swiper styles
 import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import 'swiper/css/effect-fade';
 
-function HeroCarousel() {
-  const [slides, setSlides] = useState([]);
+const HeroCarousel: React.FC = () => {
+  const [slides, setSlides] = useState<CarouselSlide[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    // Suscripción en tiempo real manteniéndose fiel a tu estructura original
     const unsubscribe = onSnapshot(
       collection(db, 'carrusel'),
       (snapshot) => {
@@ -25,10 +24,10 @@ function HeroCarousel() {
             id: doc.id,
             ...doc.data(),
           }))
-          .filter((slide) => slide.activo === true)
+          .filter((slide: CarouselSlide) => slide.activo === true)
           .sort((a, b) => (a.orden || 0) - (b.orden || 0));
 
-        setSlides(slidesData);
+        setSlides(slidesData as CarouselSlide[]);
         setIsLoading(false);
       },
       (error) => {
@@ -40,7 +39,6 @@ function HeroCarousel() {
     return () => unsubscribe();
   }, []);
 
-  // Si no hay slides, no ocupamos espacio innecesario
   if (isLoading || slides.length === 0) {
     return (
       <div 
@@ -97,23 +95,16 @@ function HeroCarousel() {
         {slides.map((slide, index) => (
           <SwiperSlide key={slide.id}>
             <div className="hero-slide">
-              {/* MEJORA: Usamos tag img para mejor rendimiento (LCP) y SEO */}
               <img
                 src={slide.url_imagen}
                 alt={slide.titulo || "GIO TECH Promoción"}
                 className="hero-slide-image-element"
-                // El primer slide debe cargar rápido (eager), los demás después (lazy)
                 loading={index === 0 ? "eager" : "lazy"}
               />
-
-              {/* Overlay con gradiente para legibilidad */}
               <div className="hero-overlay-gradient" />
-
-              {/* Contenido del slide */}
               {slide.titulo && (
                 <div className="hero-content">
                   <div className="container">
-                    {/* Solo el primer slide lleva el H1 principal para el SEO de la web */}
                     {index === 0 ? (
                       <h1 className="hero-title">{slide.titulo}</h1>
                     ) : (
@@ -127,7 +118,6 @@ function HeroCarousel() {
         ))}
       </Swiper>
 
-      {/* Estilos encapsulados */}
       <style>{`
         .hero-carousel-wrapper {
           width: 100%;
@@ -148,6 +138,10 @@ function HeroCarousel() {
 
         .hero-slide {
           background-color: #000;
+          position: relative;
+          width: 100%;
+          height: 100%;
+          overflow: hidden;
         }
 
         @media (max-width: 991px) {
@@ -160,41 +154,6 @@ function HeroCarousel() {
             min-height: 300px;
             padding-top: 60px;
           }
-        }
-
-        @media (max-width: 480px) {
-          .hero-swiper {
-            height: 45vh;
-            min-height: 250px;
-            padding-top: 50px;
-          }
-          .hero-title {
-            font-size: clamp(1.5rem, 6vw, 2.5rem);
-          }
-        }
-
-        .hero-slide {
-          position: relative;
-          width: 100%;
-          height: 100%;
-          overflow: hidden;
-        }
-
-        /* Ajuste de la imagen para que sea fluida y no se rompa */
-        .hero-slide-image-element {
-          position: absolute;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          object-fit: cover;
-          object-position: center center;
-          transition: transform 10s ease-out;
-          z-index: 0;
-        }
-
-        /* En mobile: asegurar queCubra todo el espacio */
-        @media (max-width: 768px) {
           .hero-slide-image-element {
             object-fit: cover !important;
             object-position: center !important;
@@ -214,12 +173,17 @@ function HeroCarousel() {
         }
 
         @media (max-width: 480px) {
-          .hero-content {
-            bottom: 15%;
-            padding: 0 1rem;
+          .hero-swiper {
+            height: 45vh;
+            min-height: 250px;
+            padding-top: 50px;
           }
           .hero-title {
             font-size: clamp(1.4rem, 6vw, 2rem);
+          }
+          .hero-content {
+            bottom: 15%;
+            padding: 0 1rem;
           }
           .hero-swiper .swiper-button-next,
           .hero-swiper .swiper-button-prev {
@@ -230,6 +194,18 @@ function HeroCarousel() {
           .hero-swiper .swiper-button-prev:after {
             font-size: 0.9rem;
           }
+        }
+
+        .hero-slide-image-element {
+          position: absolute;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center center;
+          transition: transform 10s ease-out;
+          z-index: 0;
         }
 
         .swiper-slide-active .hero-slide-image-element {
@@ -275,7 +251,6 @@ function HeroCarousel() {
           transition-delay: 0.4s;
         }
 
-        /* Controles de Swiper personalizados */
         .hero-swiper .swiper-button-next,
         .hero-swiper .swiper-button-prev {
           color: white;
@@ -300,6 +275,6 @@ function HeroCarousel() {
       `}</style>
     </div>
   );
-}
+};
 
 export default HeroCarousel;

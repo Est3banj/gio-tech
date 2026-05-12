@@ -1,3 +1,4 @@
+// src/components/LandingPage.tsx
 import React from "react";
 import { Link } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
@@ -5,16 +6,40 @@ import { usePopularProducts } from "../hooks/usePopularProducts";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import ProductCard from "./ProductCard";
 import HeroCarousel from "./HeroCarousel";
+import type { Product } from "../types";
 
-// ─── CONSTANTES DEFINIDAS (Para evitar el ReferenceError) ──────────
-const trustItems = [
+interface TrustItem {
+    icon: string;
+    title: string;
+    desc: string;
+}
+
+interface Review {
+    name: string;
+    rating: number;
+    text: string;
+    location: string;
+    avatar: string;
+}
+
+interface Service {
+    icon: string;
+    title: string;
+    desc: string;
+    link: string | null;
+    linkText: string;
+    accent: string;
+    isWA?: boolean;
+}
+
+const trustItems: TrustItem[] = [
     { icon: "bi-shield-check", title: "Garantía real", desc: "Todos nuestros equipos cuentan con garantía respaldada por el proveedor." },
     { icon: "bi-tools", title: "Servicio técnico", desc: "Reparación profesional con técnicos certificados y repuestos de la mejor calidad." },
     { icon: "bi-headset", title: "Atención personalizada", desc: "Te asesoramos uno a uno para que elijas el equipo perfecto para ti." },
     { icon: "bi-box-seam", title: "Envíos seguros", desc: "Despachamos a todo el Departamento del Putumayo con embalaje protegido y seguimiento." },
 ];
 
-const reviews = [
+const reviews: Review[] = [
     { name: "Valentina R.", rating: 5, text: "Excelente atención. Me ayudaron a escoger el celular ideal para mi trabajo y llegó en perfectas condiciones.", location: "Puerto Asís, Putumayo", avatar: "VR" },
     { name: "Carlos M.", rating: 5, text: "Compré a crédito y el proceso fue muy fácil. El equipo llegó el mismo día. ¡Muy recomendado!", location: "Mocoa, Putumayo", avatar: "CM" },
     { name: "Laura P.", rating: 5, text: "El servicio técnico resolvió el problema de mi teléfono en pocas horas. Profesionales de verdad.", location: "Orito, Putumayo", avatar: "LP" },
@@ -22,34 +47,30 @@ const reviews = [
     { name: "Paula G.", rating: 5, text: "Me garantizaron el precio más bajo de la región. Super satisfecha con mi Samsung.", location: "Puerto Asís, Putumayo", avatar: "PG" },
 ];
 
-const services = [
+const services: Service[] = [
     { icon: "bi-phone", title: "Venta de equipos", desc: "Celulares, tablets y accesorios de las mejores marcas. Contado y crédito disponible.", link: "/catalogo", linkText: "Ver catálogo", accent: "var(--gio-red)" },
     { icon: "bi-tools", title: "Servicio técnico", desc: "Diagnóstico, reparación y mantenimiento profesional. Garantía en cada trabajo.", link: "/servicio-tecnico", linkText: "Conocer más", accent: "var(--brand-blue)" },
     { icon: "bi-chat-heart", title: "Asesoría personalizada", desc: "Te orientamos sin presión para que tomes la mejor decisión según tu presupuesto.", link: null, linkText: "Hablar con un asesor", accent: "var(--brand-green)", isWA: true },
 ];
 
-// ─── COMPONENTE LANDINGPAGE ───────────────────────────────────────
-function LandingPage() {
-    const { products: productos, isLoading } = useProducts();
+const LandingPage: React.FC = () => {
+    const { products } = useProducts();
     const { popularIds } = usePopularProducts();
     const phoneNumber = useWhatsappNumber() || "573248022632";
 
-    // Los productos destacados son los más populares (los que tienen más vistas)
-    const productosDestacados = popularIds.length > 0 
-        ? productos.filter(p => popularIds.includes(p.id)).slice(0, 4)
-        : productos.slice(0, 4);
+    const productosDestacados: Product[] = popularIds.length > 0 
+        ? products.filter(p => popularIds.includes(p.id)).slice(0, 4)
+        : products.slice(0, 4);
     
     const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent("Hola GIO TECH, me gustaría recibir asesoría personalizada")}`;
 
     return (
         <div className="landing-wrapper" style={{ backgroundColor: '#020617', minHeight: '100vh' }}>
 
-            {/* 1. CAROUSEL CON RESERVA DE ESPACIO (Mejora el CLS) */}
             <div style={{ minHeight: '400px', backgroundColor: '#020617' }}>
                 <HeroCarousel />
             </div>
 
-            {/* 2. HERO */}
             <section className="landing-hero section-padding-lg">
                 <div className="section-inner">
                     <span className="landing-hero-eyebrow">Puerto Asís · Putumayo · Colombia</span>
@@ -67,7 +88,6 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* 3. TRUST ITEMS (Donde estaba el error) */}
             <section className="trust-section section-padding-lg">
                 <div className="section-inner">
                     <div className="trust-grid">
@@ -82,7 +102,6 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* 4. SERVICIOS */}
             <section className="services-section section-padding-lg">
                 <div className="section-inner">
                     <div className="section-header">
@@ -104,7 +123,7 @@ function LandingPage() {
                                         {s.linkText} <i className="bi bi-arrow-right ms-1"></i>
                                     </a>
                                 ) : (
-                                    <Link to={s.link} className="service-link" style={{ color: s.accent }}>
+                                    <Link to={s.link || '/'} className="service-link" style={{ color: s.accent }}>
                                         {s.linkText} <i className="bi bi-arrow-right ms-1"></i>
                                     </Link>
                                 )}
@@ -114,7 +133,6 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* 5. RESEÑAS OPTIMIZADAS (Sin texto flotante arriba) */}
             <section className="reviews-section" style={{ minHeight: '450px' }}>
                 <div className="landing-container">
                     <div className="section-header">
@@ -150,8 +168,7 @@ function LandingPage() {
                 </div>
             </section>
 
-            {/* 6. PRODUCTOS DESTACADOS (con badge HOT si son populares) */}
-            {!isLoading && productosDestacados.length > 0 && (
+            {productosDestacados.length > 0 && (
                 <section className="featured-section section-padding-lg">
                     <div className="section-inner">
                         <div className="section-header">
@@ -160,7 +177,7 @@ function LandingPage() {
                         <div className="featured-grid">
                             {productosDestacados.map((producto) => (
                                 <div key={producto.id} className="featured-card-wrap">
-                                    <ProductCard producto={producto} isPopular={producto.isPopular} />
+                                    <ProductCard producto={producto} isPopular={producto.esDestacado} />
                                 </div>
                             ))}
                         </div>
@@ -169,6 +186,6 @@ function LandingPage() {
             )}
         </div>
     );
-}
+};
 
 export default LandingPage;

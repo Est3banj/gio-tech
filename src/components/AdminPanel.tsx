@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FormEvent, ChangeEvent } from "react";
 import { db } from "../firebase";
 import {
   collection,
@@ -8,6 +8,8 @@ import {
   deleteDoc,
   onSnapshot,
   setDoc,
+  DocumentData,
+  QueryDocumentSnapshot,
 } from "firebase/firestore";
 import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { createUserWithEmailAndPassword } from "firebase/auth";
@@ -37,85 +39,81 @@ import {
   Badge,
 } from "react-bootstrap";
 
+import { Product, ProductSpecs, Asesor, CarouselSlideAdmin, ThemeVars } from "../types";
+
 function AdminPanel() {
-  // ===== Productos =====
-  const [nombreProducto, setNombreProducto] = useState("");
-  const [descripcionProducto, setDescripcionProducto] = useState("");
-  const [contadoProducto, setContadoProducto] = useState("");
-  const [cuotas6Producto, setCuotas6Producto] = useState("");
-  const [cuotas8Producto, setCuotas8Producto] = useState("");
-  const [imagenProducto, setImagenProducto] = useState("");
-  const [cuotaInicialProducto, setCuotaInicialProducto] = useState("");
-  const [productos, setProductos] = useState([]);
-  const [editandoProducto, setEditandoProducto] = useState(null);
-  const [searchProducto, setSearchProducto] = useState(""); // Estado para búsqueda
+  const [nombreProducto, setNombreProducto] = useState<string>("");
+  const [descripcionProducto, setDescripcionProducto] = useState<string>("");
+  const [contadoProducto, setContadoProducto] = useState<string>("");
+  const [cuotas6Producto, setCuotas6Producto] = useState<string>("");
+  const [cuotas8Producto, setCuotas8Producto] = useState<string>("");
+  const [imagenProducto, setImagenProducto] = useState<string>("");
+  const [cuotaInicialProducto, setCuotaInicialProducto] = useState<string>("");
+  const [productos, setProductos] = useState<Product[]>([]);
+  const [editandoProducto, setEditandoProducto] = useState<Product | null>(null);
+  const [searchProducto, setSearchProducto] = useState<string>("");
 
-  // >>> Campos de PROMO por producto <<<
-  const [promoActivo, setPromoActivo] = useState(false);
-  const [promoPrice, setPromoPrice] = useState("");
-  const [promoBadgeText, setPromoBadgeText] = useState("PROMO");
-  const [promoBadgeBg, setPromoBadgeBg] = useState("#d81b60");
-  const [promoHighlight, setPromoHighlight] = useState(""); // rgba(...) o #hex (opcional)
+  const [promoActivo, setPromoActivo] = useState<boolean>(false);
+  const [promoPrice, setPromoPrice] = useState<string>("");
+  const [promoBadgeText, setPromoBadgeText] = useState<string>("PROMO");
+  const [promoBadgeBg, setPromoBadgeBg] = useState<string>("#d81b60");
+  const [promoHighlight, setPromoHighlight] = useState<string>("");
 
-  // >>> Campos de "Producto Nuevo"
-  const [nuevoActivo, setNuevoActivo] = useState(false);
-  const [nuevoBadgeText, setNuevoBadgeText] = useState("NUEVO");
-  const [nuevoBadgeBg, setNuevoBadgeBg] = useState("#28a745"); // verde por defecto
+  const [nuevoActivo, setNuevoActivo] = useState<boolean>(false);
+  const [nuevoBadgeText, setNuevoBadgeText] = useState<string>("NUEVO");
+  const [nuevoBadgeBg, setNuevoBadgeBg] = useState<string>("#28a745");
 
-  // >>> Modo de badge (controla visualización) - 'none'|'promo'|'nuevo'|'ambos'
-  const [badgeMode, setBadgeMode] = useState("promo");
+  const [badgeMode, setBadgeMode] = useState<string>("promo");
 
-  // >>> Financiación exclusiva 12 meses <<<
-  const [solo12Meses, setSolo12Meses] = useState(false);
-  const [cuotas12Producto, setCuotas12Producto] = useState("");
+  const [solo12Meses, setSolo12Meses] = useState<boolean>(false);
+  const [cuotas12Producto, setCuotas12Producto] = useState<string>("");
 
-  // ===== Configuración del negocio / tema =====
-  const [nombreNegocio, setNombreNegocio] = useState("");
-  const [logoNegocio, setLogoNegocio] = useState(null);
-  const [previewLogo, setPreviewLogo] = useState("");
+  const [nombreNegocio, setNombreNegocio] = useState<string>("");
+  const [logoNegocio, setLogoNegocio] = useState<File | null>(null);
+  const [previewLogo, setPreviewLogo] = useState<string>("");
 
-  // >>> Theme (panel sin tocar código) <<<
-  const [themeEnabled, setThemeEnabled] = useState(false);
-  const [themeStart, setThemeStart] = useState("");
-  const [themeEnd, setThemeEnd] = useState("");
-  const [themeVars, setThemeVars] = useState({
+  const [themeEnabled, setThemeEnabled] = useState<boolean>(false);
+  const [themeStart, setThemeStart] = useState<string>("");
+  const [themeEnd, setThemeEnd] = useState<string>("");
+  const [themeVars, setThemeVars] = useState<ThemeVars>({
     "--promo-badge-bg": "#d81b60",
     "--promo-badge-text": "#ffffff",
     "--promo-highlight": "rgba(216,27,96,.18)",
-    // Puedes agregar más, ej: '--gio-primary': '#0d6efd'
   });
 
-  // ===== Asesores =====
-  const [asesores, setAsesores] = useState([]);
-  const [emailAsesor, setEmailAsesor] = useState("");
-  const [passwordAsesor, setPasswordAsesor] = useState("");
-  const [nombreCompletoAsesor, setNombreCompletoAsesor] = useState("");
-  const [whatsappAsesor, setWhatsappAsesor] = useState("");
-  const [rolAsesor, setRolAsesor] = useState("asesor");
-  const [editandoAsesor, setEditandoAsesor] = useState(null);
+  const [asesores, setAsesores] = useState<Asesor[]>([]);
+  const [emailAsesor, setEmailAsesor] = useState<string>("");
+  const [passwordAsesor, setPasswordAsesor] = useState<string>("");
+  const [nombreCompletoAsesor, setNombreCompletoAsesor] = useState<string>("");
+  const [whatsappAsesor, setWhatsappAsesor] = useState<string>("");
+  const [rolAsesor, setRolAsesor] = useState<string>("asesor");
+  const [editandoAsesor, setEditandoAsesor] = useState<Asesor | null>(null);
 
-  // ===== Carrusel Hero =====
-  const [slides, setSlides] = useState([]);
-  const [urlImagenSlide, setUrlImagenSlide] = useState("");
-  const [tituloSlide, setTituloSlide] = useState("");
-  const [ordenSlide, setOrdenSlide] = useState("");
-  const [activoSlide, setActivoSlide] = useState(true);
-  const [editandoSlide, setEditandoSlide] = useState(null);
-  const [previewImagenSlide, setPreviewImagenSlide] = useState("");
+  const [slides, setSlides] = useState<CarouselSlideAdmin[]>([]);
+  const [urlImagenSlide, setUrlImagenSlide] = useState<string>("");
+  const [tituloSlide, setTituloSlide] = useState<string>("");
+  const [ordenSlide, setOrdenSlide] = useState<string>("");
+  const [activoSlide, setActivoSlide] = useState<boolean>(true);
+  const [editandoSlide, setEditandoSlide] = useState<CarouselSlideAdmin | null>(null);
+  const [previewImagenSlide, setPreviewImagenSlide] = useState<string>("");
 
-  // ===== Mensajes / pestañas =====
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-  const [key, setKey] = useState("productos");
+  const [error, setError] = useState<string>("");
+  const [success, setSuccess] = useState<string>("");
+  const [key, setKey] = useState<string>("productos");
 
   const storage = getStorage();
 
-  // --- Specs parser (inlined helper) ---
-  function parseDescriptionToSpecs(description = "") {
-    if (!description || typeof description !== "string") return {};
+  function parseDescriptionToSpecs(description: string = ""): ProductSpecs {
+    if (!description || typeof description !== "string") return {
+      almacenamiento: null,
+      ram: null,
+      camara: null,
+      pantalla: null,
+      bateria: null,
+    };
     const text = description.toLowerCase();
 
-    const toNum = (v) => {
+    const toNum = (v: string | number | undefined | null): number | null => {
       if (v === 0 || v) {
         const s = String(v)
           .replace(/[^0-9.,]/g, "")
@@ -126,26 +124,22 @@ function AdminPanel() {
       return null;
     };
 
-    // almacenamiento (GB)
     const almacenamientoMatch = text.match(/\b(\d{2,4})\s?gb\b/);
     const almacenamiento = almacenamientoMatch
       ? toNum(almacenamientoMatch[1])
       : null;
 
-    // RAM (GB)
     const ramMatch =
       text.match(/\b(\d{1,2})\s?gb\s?de\s?ram\b/) ||
       text.match(/\b(\d{1,2})\s?gb\s?ram\b/) ||
       text.match(/\b(\d{1,2})\s?gb\b/);
     const ram = ramMatch ? toNum(ramMatch[1]) : null;
 
-    // Cámara (MP)
     const camMatch =
       text.match(/(\d{2,4})\s?mp\b/) ||
       text.match(/cámara\s?de\s?(\d{2,4})\s?mp/);
     const camara = camMatch ? toNum(camMatch[1] || camMatch[2]) : null;
 
-    // Pantalla (pulgadas)
     const screenMatch =
       text.match(/(\d{1,2}(?:[.,]\d)?)\s?(?:pulgadas|")/) ||
       text.match(/pantalla.*?(\d{1,2}(?:[.,]\d)?)/);
@@ -153,7 +147,6 @@ function AdminPanel() {
       ? toNum((screenMatch[1] || screenMatch[2] || "").replace(",", "."))
       : null;
 
-    // Batería (mAh)
     const batMatch = text.match(/(\d{3,5})\s?m(?:ah)?\b/);
     const bateria = batMatch ? toNum(batMatch[1]) : null;
 
@@ -166,27 +159,21 @@ function AdminPanel() {
     };
   }
 
-  // Helpers tema
-  const toTimeInput = (ts) => {
+  const toTimeInput = (ts: Date | { seconds: number } | string | null | undefined): string => {
     if (!ts) return "";
-    const ms = ts?.seconds ? ts.seconds * 1000 : Date.parse(ts);
+    const ms = ts && (ts as { seconds: number }).seconds ? (ts as { seconds: number }).seconds * 1000 : Date.parse(ts as string);
     return isNaN(ms) ? "" : new Date(ms).toISOString().slice(0, 16);
   };
-  const toDateOrNull = (s) => (s ? new Date(s) : null);
+  const toDateOrNull = (s: string): Date | null => (s ? new Date(s) : null);
 
-  // ===== Suscripciones =====
   useEffect(() => {
-    // productos
-    const unsubProductos = subscribeToProducts((lista) => {
+    const unsubProductos = subscribeToProducts((lista: Product[]) => {
       setProductos(lista);
     });
 
-    // configuracion/general
-    const unsubConfig = subscribeToConfig((data) => {
+    const unsubConfig = subscribeToConfig((data: { nombre?: string; logo?: string; theme?: { enabled: boolean; start?: Date; end?: Date; vars: ThemeVars } | null }) => {
       setNombreNegocio(data.nombre || "");
       setPreviewLogo(data.logo || "");
-      // If we need the ID, the service typically returns data.
-      // In the original code, docSnap.id is "general".
 
       const theme = data.theme || null;
       if (theme) {
@@ -197,21 +184,19 @@ function AdminPanel() {
       }
     });
 
-    // asesores
     const unsubAsesores = onSnapshot(collection(db, "usuarios"), (snapshot) => {
-      const listaAsesores = snapshot.docs.map((doc) => ({
+      const listaAsesores: Asesor[] = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({
         id: doc.id,
         ...doc.data(),
-      }));
+      })) as Asesor[];
       setAsesores(listaAsesores);
     });
 
-    // carrusel
     const unsubCarrusel = onSnapshot(collection(db, "carrusel"), (snapshot) => {
-      const listaSlides = snapshot.docs.map((doc) => ({
+      const listaSlides: CarouselSlideAdmin[] = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({
         id: doc.id,
         ...doc.data(),
-      }));
+      })) as CarouselSlideAdmin[];
       setSlides(listaSlides);
     });
 
@@ -223,7 +208,6 @@ function AdminPanel() {
     };
   }, []);
 
-  // ===== Productos: CRUD =====
   const resetProductoForm = () => {
     setNombreProducto("");
     setDescripcionProducto("");
@@ -233,38 +217,32 @@ function AdminPanel() {
     setImagenProducto("");
     setCuotaInicialProducto("");
 
-    // promo
     setPromoActivo(false);
     setPromoPrice("");
     setPromoBadgeText("PROMO");
     setPromoBadgeBg("#d81b60");
     setPromoHighlight("");
 
-    // nuevo
     setNuevoActivo(false);
     setNuevoBadgeText("NUEVO");
     setNuevoBadgeBg("#28a745");
 
-    // badge mode
     setBadgeMode("promo");
 
-    // 12 meses
     setSolo12Meses(false);
     setCuotas12Producto("");
 
     setEditandoProducto(null);
   };
 
-  const handleSubmitProducto = async (e) => {
+  const handleSubmitProducto = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
     const specs = parseDescriptionToSpecs(descripcionProducto || "");
 
-    // Normalizar y convertir a números para evitar inconsistencias
-    const parseNumberSafe = (v) => {
+    const parseNumberSafe = (v: string): number | null => {
       if (v === "" || v === null || typeof v === "undefined") return null;
-      // Convertir comas a punto y eliminar espacios
       const s = String(v).replace(/\s+/g, "").replace(/,/, ".");
       const n = Number(s);
       return Number.isFinite(n) ? n : null;
@@ -276,7 +254,7 @@ function AdminPanel() {
     const cuotaInicialVal = parseNumberSafe(cuotaInicialProducto);
 
     try {
-      const payload = {
+      const payload: Partial<Product> = {
         nombre: nombreProducto,
         descripcion: descripcionProducto,
         contado: contadoVal,
@@ -285,19 +263,15 @@ function AdminPanel() {
         imagen: imagenProducto,
         cuotaInicial: cuotaInicialVal,
         specs: specs,
-        // promo fields
         promo: !!promoActivo,
         promoPrice: promoActivo ? Number(promoPrice || 0) : null,
         promoBadgeText: promoActivo ? promoBadgeText || "PROMO" : null,
         promoBadgeBg: promoActivo ? promoBadgeBg || null : null,
         promoHighlight: promoActivo ? promoHighlight || null : null,
-        // nuevo badge
         nuevo: !!nuevoActivo,
         nuevoBadgeText: nuevoActivo ? nuevoBadgeText || "NUEVO" : null,
         nuevoBadgeBg: nuevoActivo ? nuevoBadgeBg || null : null,
-        // badge display mode
-        badgeMode: badgeMode || "promo",
-        // financiación 12 meses
+        badgeMode: (badgeMode || "promo") as 'none' | 'promo' | 'nuevo' | 'ambos',
         solo12Meses: !!solo12Meses,
         cuotas12: solo12Meses ? parseNumberSafe(cuotas12Producto) : null,
       };
@@ -310,43 +284,40 @@ function AdminPanel() {
         setSuccess("Producto agregado exitosamente!");
       }
       resetProductoForm();
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error al guardar producto:", err);
-      setError(`Error al guardar producto: ${err.message}`);
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      setError(`Error al guardar producto: ${message}`);
     }
   };
 
-  const handleEditProducto = (producto) => {
+  const handleEditProducto = (producto: Product) => {
     setEditandoProducto(producto);
     setNombreProducto(producto.nombre);
     setDescripcionProducto(producto.descripcion || "");
-    setContadoProducto(producto.contado || "");
-    setCuotas6Producto(producto.cuotas6 || "");
-    setCuotas8Producto(producto.cuotas8 || "");
+    setContadoProducto(producto.contado?.toString() || "");
+    setCuotas6Producto(producto.cuotas6?.toString() || "");
+    setCuotas8Producto(producto.cuotas8?.toString() || "");
     setImagenProducto(producto.imagen || "");
-    setCuotaInicialProducto(producto.cuotaInicial || "");
+    setCuotaInicialProducto(producto.cuotaInicial?.toString() || "");
 
-    // promo
     setPromoActivo(!!producto.promo);
-    setPromoPrice(producto.promoPrice ?? "");
+    setPromoPrice(producto.promoPrice?.toString() ?? "");
     setPromoBadgeText(producto.promoBadgeText || "PROMO");
     setPromoBadgeBg(producto.promoBadgeBg || "#d81b60");
     setPromoHighlight(producto.promoHighlight || "");
 
-    // nuevo
     setNuevoActivo(!!producto.nuevo);
     setNuevoBadgeText(producto.nuevoBadgeText || "NUEVO");
     setNuevoBadgeBg(producto.nuevoBadgeBg || "#28a745");
 
-    // badge mode
     setBadgeMode(producto.badgeMode || "promo");
 
-    // 12 meses
     setSolo12Meses(!!producto.solo12Meses);
-    setCuotas12Producto(producto.cuotas12 || "");
+    setCuotas12Producto(producto.cuotas12?.toString() || "");
   };
 
-  const handleDeleteProducto = async (id) => {
+  const handleDeleteProducto = async (id: string) => {
     setError("");
     setSuccess("");
     if (
@@ -355,14 +326,13 @@ function AdminPanel() {
       try {
         await deleteProduct(id);
         setSuccess("Producto eliminado exitosamente!");
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Error al eliminar producto:", err);
-        setError(`Error al eliminar producto: ${err.message}`);
+        const message = err instanceof Error ? err.message : "Error desconocido";
+        setError(`Error al eliminar producto: ${message}`);
       }
     }
   };
-
-  // ===== Configuración del negocio =====
 
   const handleUpdateConfig = async () => {
     setError("");
@@ -386,14 +356,14 @@ function AdminPanel() {
       });
       setSuccess("Configuración actualizada exitosamente!");
       setLogoNegocio(null);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error al actualizar configuración:", err);
-      setError(`Error al actualizar configuración: ${err.message}`);
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      setError(`Error al actualizar configuración: ${message}`);
     }
   };
 
-  // ===== Asesores =====
-  const handleAddAsesor = async (e) => {
+  const handleAddAsesor = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -429,13 +399,14 @@ function AdminPanel() {
       setPasswordAsesor("");
       setNombreCompletoAsesor("");
       setWhatsappAsesor("");
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error al registrar asesor:", err);
-      setError(`Error al registrar asesor: ${err.message}`);
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      setError(`Error al registrar asesor: ${message}`);
     }
   };
 
-  const handleEditAsesor = (asesor) => {
+  const handleEditAsesor = (asesor: Asesor) => {
     setEditandoAsesor(asesor);
     setEmailAsesor(asesor.email);
     setNombreCompletoAsesor(asesor.nombreCompleto);
@@ -444,7 +415,7 @@ function AdminPanel() {
     setKey("asesores");
   };
 
-  const handleUpdateAsesor = async (e) => {
+  const handleUpdateAsesor = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
@@ -460,13 +431,14 @@ function AdminPanel() {
       setNombreCompletoAsesor("");
       setWhatsappAsesor("");
       setPasswordAsesor("");
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error al actualizar asesor:", err);
-      setError(`Error al actualizar asesor: ${err.message}`);
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      setError(`Error al actualizar asesor: ${message}`);
     }
   };
 
-  const handleDeleteAsesor = async (id) => {
+  const handleDeleteAsesor = async (id: string) => {
     setError("");
     setSuccess("");
     if (
@@ -477,14 +449,14 @@ function AdminPanel() {
       try {
         await deleteDoc(doc(db, "usuarios", id));
         setSuccess("Asesor eliminado exitosamente del listado.");
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Error al eliminar asesor:", err);
-        setError(`Error al eliminar asesor: ${err.message}`);
+        const message = err instanceof Error ? err.message : "Error desconocido";
+        setError(`Error al eliminar asesor: ${message}`);
       }
     }
   };
 
-  // ===== Carrusel Hero: CRUD =====
   const resetSlideForm = () => {
     setUrlImagenSlide("");
     setTituloSlide("");
@@ -494,9 +466,8 @@ function AdminPanel() {
     setPreviewImagenSlide("");
   };
 
-  const handleUrlImagenChange = (url) => {
+  const handleUrlImagenChange = (url: string) => {
     setUrlImagenSlide(url);
-    // Actualizar preview si la URL parece válida
     if (url && (url.startsWith("http://") || url.startsWith("https://"))) {
       setPreviewImagenSlide(url);
     } else {
@@ -504,12 +475,11 @@ function AdminPanel() {
     }
   };
 
-  const handleSubmitSlide = async (e) => {
+  const handleSubmitSlide = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
 
-    // Validación básica de URL
     if (
       !urlImagenSlide ||
       (!urlImagenSlide.startsWith("http://") &&
@@ -538,37 +508,39 @@ function AdminPanel() {
         setSuccess("Slide agregado exitosamente!");
       }
       resetSlideForm();
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error al guardar slide:", err);
-      setError(`Error al guardar slide: ${err.message}`);
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      setError(`Error al guardar slide: ${message}`);
     }
   };
 
-  const handleEditSlide = (slide) => {
+  const handleEditSlide = (slide: CarouselSlideAdmin) => {
     setEditandoSlide(slide);
     setUrlImagenSlide(slide.url_imagen || "");
     setTituloSlide(slide.titulo || "");
-    setOrdenSlide(slide.orden || "");
+    setOrdenSlide(slide.orden?.toString() || "");
     setActivoSlide(slide.activo !== false);
     setPreviewImagenSlide(slide.url_imagen || "");
-    setKey("carrusel"); // Cambiar a la pestaña de carrusel
+    setKey("carrusel");
   };
 
-  const handleDeleteSlide = async (id) => {
+  const handleDeleteSlide = async (id: string) => {
     setError("");
     setSuccess("");
     if (window.confirm("¿Estás seguro de que quieres eliminar este slide?")) {
       try {
         await deleteDoc(doc(db, "carrusel", id));
         setSuccess("Slide eliminado exitosamente!");
-      } catch (err) {
+      } catch (err: unknown) {
         console.error("Error al eliminar slide:", err);
-        setError(`Error al eliminar slide: ${err.message}`);
+        const message = err instanceof Error ? err.message : "Error desconocido";
+        setError(`Error al eliminar slide: ${message}`);
       }
     }
   };
 
-  const handleToggleActivoSlide = async (slide) => {
+  const handleToggleActivoSlide = async (slide: CarouselSlideAdmin) => {
     try {
       await updateDoc(doc(db, "carrusel", slide.id), {
         activo: !slide.activo,
@@ -576,13 +548,25 @@ function AdminPanel() {
       setSuccess(
         `Slide ${!slide.activo ? "activado" : "desactivado"} exitosamente!`,
       );
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error al cambiar estado del slide:", err);
-      setError(`Error al cambiar estado: ${err.message}`);
+      const message = err instanceof Error ? err.message : "Error desconocido";
+      setError(`Error al cambiar estado: ${message}`);
     }
   };
 
-  // ===== UI =====
+  const handleLogoFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setLogoNegocio(file);
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPreviewLogo(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   return (
     <Container className="py-4">
       <h2 className="text-center mb-4">Panel de Administración</h2>
@@ -593,10 +577,9 @@ function AdminPanel() {
       <Tabs
         id="admin-panel-tabs"
         activeKey={key}
-        onSelect={(k) => setKey(k)}
+        onSelect={(k) => setKey(k || "productos")}
         className="mb-3"
       >
-        {/* === Productos === */}
         <Tab eventKey="productos" title="Gestionar Productos">
           <Card className="p-4 mb-4 shadow-sm">
             <h3 className="mb-3">
@@ -706,7 +689,6 @@ function AdminPanel() {
                 </Col>
               </Row>
 
-              {/* === BLOQUE PROMOCIÓN === */}
               <Card className="p-3 mb-3">
                 <div className="d-flex align-items-center justify-content-between">
                   <h5 className="mb-0">
@@ -774,8 +756,8 @@ function AdminPanel() {
                       onChange={(e) => setBadgeMode(e.target.value)}
                     >
                       <option value="none">Ninguna</option>
-                      <option value="promo">Sólo Promo</option>
-                      <option value="nuevo">Sólo Nuevo</option>
+                      <option value="promo">Só]!d~[pidolo</option>
+                      <option value="nuevo">Só Nuevo</option>
                       <option value="ambos">Promo + Nuevo</option>
                     </Form.Select>
                     <Form.Text className="text-muted">
@@ -826,7 +808,6 @@ function AdminPanel() {
                 </Form.Text>
               </Card>
 
-              {/* === BLOQUE FINANCIACIÓN 12 MESES === */}
               <Card
                 className="p-3 mb-3"
                 style={{ borderLeft: "4px solid #2196f3" }}
@@ -884,7 +865,6 @@ function AdminPanel() {
           <Card className="p-4 mb-4 shadow-sm">
             <h3 className="mb-3">Productos Actuales</h3>
 
-            {/* Buscador de productos */}
             <InputGroup className="mb-3">
               <InputGroup.Text>
                 <i className="bi bi-search"></i>
@@ -905,7 +885,6 @@ function AdminPanel() {
               )}
             </InputGroup>
 
-            {/* Tabla de productos */}
             <div className="table-responsive">
               <Table striped bordered hover>
                 <thead className="table-dark">
@@ -934,7 +913,6 @@ function AdminPanel() {
                     })
                     .map((producto) => (
                       <tr key={producto.id}>
-                        {/* Imagen miniatura */}
                         <td className="text-center align-middle">
                           <img
                             src={
@@ -951,7 +929,6 @@ function AdminPanel() {
                           />
                         </td>
 
-                        {/* Nombre del producto */}
                         <td className="align-middle">
                           <strong>{producto.nombre}</strong>
                           {producto.descripcion && (
@@ -969,7 +946,6 @@ function AdminPanel() {
                           )}
                         </td>
 
-                        {/* Precio Contado */}
                         <td className="align-middle">
                           {producto.promo && producto.promoPrice ? (
                             <>
@@ -978,13 +954,13 @@ function AdminPanel() {
                                 style={{ textDecoration: "line-through" }}
                               >
                                 $
-                                {parseFloat(producto.contado).toLocaleString(
+                                {parseFloat(String(producto.contado)).toLocaleString(
                                   "es-CO",
                                 )}
                               </div>
                               <strong className="text-danger">
                                 $
-                                {parseFloat(producto.promoPrice).toLocaleString(
+                                {parseFloat(String(producto.promoPrice)).toLocaleString(
                                   "es-CO",
                                 )}
                               </strong>
@@ -992,13 +968,12 @@ function AdminPanel() {
                           ) : (
                             <strong>
                               {producto.contado
-                                ? `$${parseFloat(producto.contado).toLocaleString("es-CO")}`
+                                ? `$${parseFloat(String(producto.contado)).toLocaleString("es-CO")}`
                                 : "N/A"}
                             </strong>
                           )}
                         </td>
 
-                        {/* Precio Crédito */}
                         <td className="align-middle">
                           {producto.solo12Meses && producto.cuotas12 ? (
                             <div className="small">
@@ -1012,7 +987,7 @@ function AdminPanel() {
                               <div>
                                 <strong>
                                   $
-                                  {parseFloat(producto.cuotas12).toLocaleString(
+                                  {parseFloat(String(producto.cuotas12)).toLocaleString(
                                     "es-CO",
                                   )}
                                 </strong>
@@ -1024,7 +999,7 @@ function AdminPanel() {
                               <div className="small">
                                 <strong>
                                   $
-                                  {parseFloat(producto.cuotas6).toLocaleString(
+                                  {parseFloat(String(producto.cuotas6)).toLocaleString(
                                     "es-CO",
                                   )}
                                 </strong>
@@ -1033,7 +1008,7 @@ function AdminPanel() {
                               {producto.cuotas8 && (
                                 <div className="small text-muted">
                                   $
-                                  {parseFloat(producto.cuotas8).toLocaleString(
+                                  {parseFloat(String(producto.cuotas8)).toLocaleString(
                                     "es-CO",
                                   )}{" "}
                                   /mes
@@ -1045,7 +1020,6 @@ function AdminPanel() {
                           )}
                         </td>
 
-                        {/* Badges/Etiquetas */}
                         <td className="align-middle">
                           <div className="d-flex flex-column gap-1">
                             {producto.promo &&
@@ -1083,7 +1057,6 @@ function AdminPanel() {
                           </div>
                         </td>
 
-                        {/* Acciones */}
                         <td className="align-middle">
                           <div className="d-flex gap-2">
                             <Button
@@ -1109,7 +1082,6 @@ function AdminPanel() {
                 </tbody>
               </Table>
 
-              {/* Mensaje cuando no hay resultados */}
               {productos.filter((producto) => {
                 if (!searchProducto) return true;
                 const searchLower = searchProducto.toLowerCase();
@@ -1132,7 +1104,6 @@ function AdminPanel() {
           </Card>
         </Tab>
 
-        {/* === Configuración del Negocio === */}
         <Tab eventKey="negocio" title="Configuración del Negocio">
           <Card className="p-4 mb-4 shadow-sm">
             <h3 className="mb-3">Configuración del Negocio</h3>
@@ -1155,15 +1126,21 @@ function AdminPanel() {
                 </Col>
                 <Col md={6}>
                   <Form.Group className="mb-3">
-                    <Form.Label>Logo del Negocio (URL)</Form.Label>
+                    <Form.Label>Logo del Negocio (URL o archivo)</Form.Label>
+                    <Form.Control
+                      type="file"
+                      accept="image/*"
+                      onChange={handleLogoFileChange}
+                    />
                     <Form.Control
                       type="text"
+                      className="mt-2"
                       value={previewLogo}
                       onChange={(e) => {
-                        setLogoNegocio(null); //清除文件上传
+                        setLogoNegocio(null);
                         setPreviewLogo(e.target.value);
                       }}
-                      placeholder="https://ejemplo.com/logo.png"
+                      placeholder="O pega una URL (https://ejemplo.com/logo.png)"
                     />
                     {previewLogo && (
                       <img
@@ -1174,14 +1151,13 @@ function AdminPanel() {
                       />
                     )}
                     <Form.Text className="text-muted">
-                      Pega la URL de tu logo (ej: desde Firebase Storage, Imgur,
+                      Sube un archivo o pega la URL de tu logo (ej: desde Firebase Storage, Imgur,
                       etc.)
                     </Form.Text>
                   </Form.Group>
                 </Col>
               </Row>
 
-              {/* === Tema de temporada (sin tocar código) === */}
               <Card className="p-3 mb-3">
                 <div className="d-flex align-items-center justify-content-between">
                   <h5 className="mb-0">Tema de temporada</h5>
@@ -1211,7 +1187,6 @@ function AdminPanel() {
                     />
                   </Col>
 
-                  {/* Variables CSS clave para promos */}
                   <Col md={4}>
                     <Form.Label>Color badge promo</Form.Label>
                     <Form.Control
@@ -1310,7 +1285,6 @@ function AdminPanel() {
           </Card>
         </Tab>
 
-        {/* === Asesores === */}
         <Tab eventKey="asesores" title="Gestionar Asesores">
           <Card className="p-4 mb-4 shadow-sm">
             <h3 className="mb-3">
@@ -1432,7 +1406,6 @@ function AdminPanel() {
           </Card>
         </Tab>
 
-        {/* === Carrusel Hero === */}
         <Tab eventKey="carrusel" title="Carrusel Hero">
           <Card className="p-4 mb-4 shadow-sm">
             <h3 className="mb-3">
@@ -1454,7 +1427,6 @@ function AdminPanel() {
                 </Form.Text>
               </Form.Group>
 
-              {/* Vista previa de la imagen */}
               {previewImagenSlide && (
                 <div className="mb-3">
                   <Form.Label>Vista Previa</Form.Label>
@@ -1477,9 +1449,13 @@ function AdminPanel() {
                         objectFit: "cover",
                       }}
                       onError={(e) => {
-                        e.target.style.display = "none";
-                        e.target.parentElement.innerHTML =
-                          '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6c757d;">Error al cargar la imagen</div>';
+                        const target = e.target as HTMLImageElement;
+                        target.style.display = "none";
+                        const parent = target.parentElement;
+                        if (parent) {
+                          parent.innerHTML =
+                            '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#6c757d;">Error al cargar la imagen</div>';
+                        }
                       }}
                     />
                   </div>

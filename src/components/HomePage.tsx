@@ -1,7 +1,12 @@
+// src/components/HomePage.tsx
 import React from "react";
 import { Link } from "react-router-dom";
 
-function HomePage({ anuncio }) {
+interface HomePageProps {
+  anuncio?: string;
+}
+
+const HomePage: React.FC<HomePageProps> = ({ anuncio }) => {
   return (
     <div className="text-center py-5 bg-light" style={{ minHeight: "90vh" }}>
       <img
@@ -33,6 +38,6 @@ function HomePage({ anuncio }) {
       </footer>
     </div>
   );
-}
+};
 
 export default HomePage;

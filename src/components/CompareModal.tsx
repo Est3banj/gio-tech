@@ -1,31 +1,37 @@
-// src/components/CompareModal.jsx
+// src/components/CompareModal.tsx
 import React from 'react';
 import { Modal, Table, Button } from 'react-bootstrap';
+import type { Product } from '../types';
+
+interface CompareModalProps {
+  show: boolean;
+  onHide: () => void;
+  items?: Product[];
+}
 
 // === Helpers ===
-const fmtCOP = (n) =>
+const fmtCOP = (n: unknown) =>
   (Number(n) || 0).toLocaleString('es-CO', {
     style: 'currency',
     currency: 'COP',
     maximumFractionDigits: 0,
   });
 
-const fmtInt = (n) => (Number.isFinite(n) ? Math.round(n) : '—');
+const fmtInt = (n: unknown) => (Number.isFinite(Number(n)) ? Math.round(Number(n)) : '—');
 
-const fmtOneDecimal = (n) => {
-  if (!Number.isFinite(n)) return '—';
-  return `${Math.round(n * 10) / 10}\u2033`; // pulgadas con double prime
+const fmtOneDecimal = (n: unknown) => {
+  if (!Number.isFinite(Number(n))) return '—';
+  return `${Math.round(Number(n) * 10) / 10}\u2033`;
 };
 
-// Lee y normaliza valores desde specs o desde claves sueltas
-const readSpec = (item, fallbacks = []) => {
-  // Permite que algunas tiendas ya tengan los valores al nivel raíz
+const readSpec = (item: Record<string, unknown>, fallbacks: string[]): number | undefined => {
   for (const key of fallbacks) {
     const parts = key.split('.');
-    let v = item;
+    let v: unknown = item;
     for (const part of parts) {
-      if (v && typeof v === 'object' && part in v) v = v[part];
-      else {
+      if (v && typeof v === 'object' && part in v) {
+        v = (v as Record<string, unknown>)[part];
+      } else {
         v = undefined;
         break;
       }
@@ -35,7 +41,6 @@ const readSpec = (item, fallbacks = []) => {
     if (typeof v === 'number') return v;
 
     if (typeof v === 'string') {
-      // "8 GB", "5000mAh", "6.5\"", "50MP" => num
       const raw = v.replace(/,/g, '.').replace(/[^\d.]/g, '');
       if (raw === '') return undefined;
       const n = parseFloat(raw);
@@ -46,16 +51,22 @@ const readSpec = (item, fallbacks = []) => {
   return undefined;
 };
 
-// --- Whitelists & sanitizers to prevent bad values (e.g., "56 GB RAM") ---
-const RAM_SET = new Set([2, 3, 4, 6, 8, 12, 16, 24]);                 // GB
-const STORAGE_SET = new Set([32, 64, 128, 256, 512, 1024, 2048]);     // GB
-const inRange = (n, min, max) => Number.isFinite(n) && n >= min && n <= max;
+const RAM_SET = new Set([2, 3, 4, 6, 8, 12, 16, 24]);
+const STORAGE_SET = new Set([32, 64, 128, 256, 512, 1024, 2048]);
+const inRange = (n: number, min: number, max: number) => Number.isFinite(n) && n >= min && n <= max;
 
-function sanitizeSpecs(specs = {}) {
+interface SanitizedSpecs {
+  ram: number | null;
+  almacenamiento: number | null;
+  bateria: number | null;
+  camara: number | null;
+  pantalla: number | null;
+}
+
+function sanitizeSpecs(specs: SanitizedSpecs): SanitizedSpecs {
   let { ram, almacenamiento, bateria, camara, pantalla } = specs;
 
-  // Coerce to numbers
-  const toNum = (v) => (v === 0 || v ? Number(v) : null);
+  const toNum = (v: unknown) => (v === 0 || v ? Number(v) : null);
 
   ram = toNum(ram);
   almacenamiento = toNum(almacenamiento);
@@ -63,21 +74,19 @@ function sanitizeSpecs(specs = {}) {
   camara = toNum(camara);
   pantalla = toNum(pantalla);
 
-  // Enforce whitelist/ranges
-  if (!RAM_SET.has(ram)) ram = null;
-  if (!STORAGE_SET.has(almacenamiento)) almacenamiento = null;
-  if (!inRange(bateria, 800, 10000)) bateria = null;
-  if (!inRange(camara, 2, 300)) camara = null;
-  if (!inRange(pantalla, 3, 8)) pantalla = null;
+  if (!RAM_SET.has(ram as number)) ram = null;
+  if (!STORAGE_SET.has(almacenamiento as number)) almacenamiento = null;
+  if (!inRange(bateria as number, 800, 10000)) bateria = null;
+  if (!inRange(camara as number, 2, 300)) camara = null;
+  if (!inRange(pantalla as number, 3, 8)) pantalla = null;
 
   return { ram, almacenamiento, bateria, camara, pantalla };
 }
 
-// --- Parser fallback: extrae specs desde la descripción libre ---
-function parseDescriptionToSpecs(description = "") {
-  if (!description || typeof description !== 'string') return {};
+function parseDescriptionToSpecs(description = ""): SanitizedSpecs {
+  if (!description || typeof description !== 'string') return { ram: null, almacenamiento: null, camara: null, pantalla: null, bateria: null };
   const text = description.toLowerCase();
-  const toNum = (v) => {
+  const toNum = (v: unknown) => {
     if (v === 0 || v) {
       const s = String(v).replace(/[^0-9.,]/g, "").replace(",", ".");
       const n = Number(s);
@@ -110,13 +119,27 @@ function parseDescriptionToSpecs(description = "") {
   };
 }
 
-export default function CompareModal({ show, onHide, items = [] }) {
+interface CompareRow {
+  id: string;
+  imagen?: string;
+  nombre?: string;
+  contado?: number;
+  cuotas6?: number;
+  cuotas8?: number;
+  ramGB: number | null;
+  almacenamientoGB: number | null;
+  bateria_mAh: number | null;
+  camara_MP: number | null;
+  pantallaIn: number | null;
+}
+
+const CompareModal: React.FC<CompareModalProps> = ({ show, onHide, items = [] }) => {
   const hasImage = Array.isArray(items) && items.some((it) => it?.imagen);
 
-  // Prepara filas normalizando valores desde specs
-  const rows = items.map((p) => {
-    const parsed = parseDescriptionToSpecs(p.descripcion || p.description || '');
-    const source = { ...p, specs: { ...(p.specs || {}), ...parsed } };
+  const rows: CompareRow[] = items.map((p) => {
+    const parsed = parseDescriptionToSpecs(p.descripcion || (p as unknown as { description?: string }).description || '');
+    const specs = (p as unknown as { specs?: SanitizedSpecs }).specs || {};
+    const source = { ...p, specs: { ...specs, ...parsed } };
 
     const ram = readSpec(source, ['specs.ram', 'specs.ramGB', 'ram', 'ramGB']);
     const storage = readSpec(source, ['specs.almacenamiento', 'specs.almacenamientoGB', 'almacenamiento', 'almacenamientoGB']);
@@ -125,11 +148,11 @@ export default function CompareModal({ show, onHide, items = [] }) {
     const screen = readSpec(source, ['specs.pantalla', 'specs.pantallaIn', 'pantalla_pulgadas', 'specs.pantalla.pulgadas']);
 
     const safe = sanitizeSpecs({
-      ram,
-      almacenamiento: storage,
-      bateria: battery,
-      camara: camera,
-      pantalla: screen,
+      ram: ram ?? null,
+      almacenamiento: storage ?? null,
+      bateria: battery ?? null,
+      camara: camera ?? null,
+      pantalla: screen ?? null,
     });
 
     return {
@@ -161,7 +184,7 @@ export default function CompareModal({ show, onHide, items = [] }) {
 
   const headers = hasImage ? [{ key: '__image', label: '' }, ...baseHeaders] : baseHeaders;
 
-  const renderCell = (row, key) => {
+  const renderCell = (row: CompareRow, key: string) => {
     if (key === '__image') {
       return row.imagen ? (
         <img
@@ -175,7 +198,7 @@ export default function CompareModal({ show, onHide, items = [] }) {
       );
     }
 
-    const v = row[key];
+    const v = row[key as keyof CompareRow];
 
     if (key === 'contado') return fmtCOP(v);
     if (key === 'cuotas6' || key === 'cuotas8')
@@ -242,4 +265,6 @@ export default function CompareModal({ show, onHide, items = [] }) {
       </Modal.Footer>
     </Modal>
   );
-}
+};
+
+export default CompareModal;

@@ -1,11 +1,19 @@
-// src/components/ServicioTecnicoPage.jsx
-// Página editorial de Servicio Técnico estilo Apple/Mac Center
-// ⚠️ Solo layout visual. Sin lógica de negocio.
+// src/components/ServicioTecnicoPage.tsx
 import React from "react";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 
-// ─── Qué reparamos ─────────────────────────────────────────────
-const reparaciones = [
+interface Reparacion {
+    icon: string;
+    label: string;
+}
+
+interface Paso {
+    num: string;
+    title: string;
+    desc: string;
+}
+
+const reparaciones: Reparacion[] = [
     { icon: "bi-phone", label: "Pantallas rotas" },
     { icon: "bi-battery-half", label: "Baterías agotadas" },
     { icon: "bi-usb-plug", label: "Puertos de carga" },
@@ -16,8 +24,7 @@ const reparaciones = [
     { icon: "bi-code-square", label: "Software y sistema" },
 ];
 
-// ─── Pasos del proceso ──────────────────────────────────────────
-const pasos = [
+const pasos: Paso[] = [
     {
         num: "01",
         title: "Trae tu equipo",
@@ -40,8 +47,7 @@ const pasos = [
     },
 ];
 
-// ─── Component ─────────────────────────────────────────────────
-function ServicioTecnicoPage() {
+const ServicioTecnicoPage: React.FC = () => {
     const phoneNumber = useWhatsappNumber() || "573248022632";
 
     const mensajeWA = encodeURIComponent(
@@ -52,9 +58,6 @@ function ServicioTecnicoPage() {
     return (
         <div className="landing-wrapper st-page">
 
-            {/* ══════════════════════════════════════════
-          HERO
-      ══════════════════════════════════════════ */}
             <section className="st-hero section-padding-lg">
                 <div className="section-inner">
                     <span className="landing-hero-eyebrow">Servicio Técnico Especializado</span>
@@ -71,9 +74,6 @@ function ServicioTecnicoPage() {
                 </div>
             </section>
 
-            {/* ══════════════════════════════════════════
-          QUÉ REPARAMOS
-      ══════════════════════════════════════════ */}
             <section className="st-section section-padding-lg">
                 <div className="section-inner">
                     <div className="section-header">
@@ -93,9 +93,6 @@ function ServicioTecnicoPage() {
                 </div>
             </section>
 
-            {/* ══════════════════════════════════════════
-          CÓMO FUNCIONA
-      ══════════════════════════════════════════ */}
             <section className="st-section st-section-alt section-padding-lg">
                 <div className="section-inner">
                     <div className="section-header">
@@ -114,9 +111,6 @@ function ServicioTecnicoPage() {
                 </div>
             </section>
 
-            {/* ══════════════════════════════════════════
-          GARANTÍA
-      ══════════════════════════════════════════ */}
             <section className="st-section">
                 <div className="landing-container">
                     <div className="st-guarantee">
@@ -134,9 +128,6 @@ function ServicioTecnicoPage() {
                 </div>
             </section>
 
-            {/* ══════════════════════════════════════════
-          CTA WHATSAPP
-      ══════════════════════════════════════════ */}
             <section className="st-cta-section section-padding-lg">
                 <div className="section-inner">
                     <div className="st-cta-box">
@@ -162,6 +153,6 @@ function ServicioTecnicoPage() {
 
         </div>
     );
-}
+};
 
 export default ServicioTecnicoPage;

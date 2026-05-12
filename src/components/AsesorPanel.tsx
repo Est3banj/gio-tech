@@ -1,43 +1,42 @@
-// src/components/AsesorPanel.jsx
+// src/components/AsesorPanel.tsx
 import React, { useState, useEffect } from 'react';
-import { db } from '../firebase'; // Asume que 'db' está exportado desde firebase.js
-import { doc, getDoc, updateDoc } from 'firebase/firestore'; // setDoc necesario para usuarios
-import { getAuth } from 'firebase/auth'; // Importar getAuth para obtener el usuario actual
-
+import { db } from '../firebase';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
 import { Container, Form, Button, Card, Alert } from 'react-bootstrap';
 
-function AsesorPanel() { // No necesitas pasar 'usuario' como prop si lo obtienes de auth
-  const auth = getAuth(); // Obtener la instancia de auth
-  const currentUser = auth.currentUser; // Obtener el usuario actualmente logueado
+interface AsesorData {
+  nombreCompleto?: string;
+  whatsappNumber?: string;
+  rol?: string;
+}
+
+const AsesorPanel: React.FC = () => {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
 
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [shareLink, setShareLink] = useState('');
-  const [asesorData, setAsesorData] = useState(null); // Para almacenar los datos completos del asesor
+  const [asesorData, setAsesorData] = useState<AsesorData | null>(null);
 
   useEffect(() => {
-    // Este efecto se ejecuta cuando el usuario actual cambia (al iniciar sesión, por ejemplo)
     if (currentUser && currentUser.uid) {
       const fetchAsesorData = async () => {
         try {
           const docRef = doc(db, "usuarios", currentUser.uid);
           const docSnap = await getDoc(docRef);
           if (docSnap.exists()) {
-            const data = docSnap.data();
-            setAsesorData(data); // Guarda todos los datos del asesor
-            setWhatsappNumber(data.whatsappNumber || ''); // Establece el número de WhatsApp
+            const data = docSnap.data() as AsesorData;
+            setAsesorData(data);
+            setWhatsappNumber(data.whatsappNumber || '');
           } else {
-            // Si el documento de usuario no existe en Firestore (ej. nuevo usuario no registrado aún por admin),
-            // puedes manejarlo aquí, por ejemplo, creando un documento básico con el rol "asesor" por defecto.
-            // Esto solo si no lo haces al registrar desde AdminPanel.
-            // Para GIO TECH, asumimos que un admin registra al asesor en Firestore.
             console.warn(`Documento de usuario para ${currentUser.email} no encontrado en Firestore.`);
             setError("Tus datos no se encontraron en la base de datos. Contacta al administrador.");
           }
 
-          // Generar el link único para compartir
-          const baseUrl = window.location.origin; // Obtiene el dominio actual (ej: http://localhost:5173)
+          const baseUrl = window.location.origin;
           setShareLink(`${baseUrl}/?asesor=${currentUser.uid}`);
         } catch (err) {
           console.error("Error al cargar datos del asesor:", err);
@@ -46,15 +45,13 @@ function AsesorPanel() { // No necesitas pasar 'usuario' como prop si lo obtiene
       };
       fetchAsesorData();
     } else {
-      // Si no hay usuario logueado, limpiamos los estados
       setAsesorData(null);
       setWhatsappNumber('');
       setShareLink('');
     }
-  }, [currentUser]); // Depende del currentUser para cargar datos
+  }, [currentUser]);
 
-  // Función para actualizar el número de WhatsApp del asesor
-  const handleUpdateWhatsapp = async (e) => {
+  const handleUpdateWhatsapp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
@@ -63,25 +60,23 @@ function AsesorPanel() { // No necesitas pasar 'usuario' como prop si lo obtiene
       return;
     }
     try {
-      // Actualizar el documento del usuario en Firestore
       await updateDoc(doc(db, "usuarios", currentUser.uid), {
         whatsappNumber: whatsappNumber
       });
       setSuccess("Número de WhatsApp actualizado exitosamente!");
     } catch (err) {
       console.error("Error al actualizar WhatsApp:", err);
-      setError(`Error al actualizar: ${err.message}`);
+      const errorObj = err as { message?: string };
+      setError(`Error al actualizar: ${errorObj.message}`);
     }
   };
 
-  // Función para copiar el enlace al portapapeles
   const copyShareLink = () => {
     navigator.clipboard.writeText(shareLink);
     setSuccess('¡Enlace copiado al portapapeles!');
-    setTimeout(() => setSuccess(''), 3000); // Borrar mensaje después de 3 segundos
+    setTimeout(() => setSuccess(''), 3000);
   };
 
-  // Renderizado condicional si no hay usuario logueado
   if (!currentUser) {
     return (
       <Container className="py-5 text-center">
@@ -91,7 +86,6 @@ function AsesorPanel() { // No necesitas pasar 'usuario' como prop si lo obtiene
     );
   }
 
-  // Renderizado del panel para el asesor logueado
   return (
     <Container className="py-4">
       <h2 className="text-center mb-4">Panel del Asesor - {asesorData?.nombreCompleto || currentUser?.email}</h2>
@@ -134,6 +128,6 @@ function AsesorPanel() { // No necesitas pasar 'usuario' como prop si lo obtiene
       </Card>
     </Container>
   );
-}
+};
 
 export default AsesorPanel;

@@ -1,21 +1,21 @@
-// src/components/CartFloatingButton.jsx
+// src/components/CartFloatingButton.tsx
 import React, { useState } from 'react';
 import { Button, Offcanvas, ListGroup } from 'react-bootstrap';
 import { useCart } from '../contexts/CartContext';
-import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
+import { useWhatsappNumber } from '../contexts/WhatsappNumberContext';
 import { formatPrice } from '../utils/formatters';
 import { trackPurchase, trackLead } from '../utils/metaPixel';
 
-const CartFloatingButton = () => {
+const CartFloatingButton: React.FC = () => {
   const { cartItems, removeFromCart, clearCart, cartCount } = useCart();
-  const phoneNumber = useWhatsappNumber(); // Obtiene el número de WhatsApp del contexto
+  const phoneNumber = useWhatsappNumber();
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  const generarMensajeLista = () => {
+  const generarMensajeLista = (): string => {
     if (cartItems.length === 0) {
-      return "Hola, estoy contactando a GIO TECH. No tengo productos en mi lista de interés.";
+      return encodeURIComponent("Hola, estoy contactando a GIO TECH. No tengo productos en mi lista de interés.");
     }
 
     let mensaje = "Hola, estoy interesado en los siguientes productos de GIO TECH:\n\n";
@@ -31,11 +31,9 @@ const CartFloatingButton = () => {
   };
 
   const handleSendToWhatsapp = () => {
-    // Track de Purchase (el usuario inicia el proceso de compra)
     if (cartItems.length > 0) {
       trackPurchase(cartItems);
     }
-    // Track de Lead (contacto por WhatsApp)
     trackLead();
     handleClose();
   };
@@ -43,7 +41,7 @@ const CartFloatingButton = () => {
   return (
     <>
       <Button
-        variant="danger" // Usar el rojo de GIO TECH
+        variant="danger"
         className="floating-cart-btn rounded-circle shadow-lg"
         onClick={handleShow}
         style={{
@@ -56,7 +54,7 @@ const CartFloatingButton = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          zIndex: 1050, // Asegura que esté por encima de la mayoría de los elementos
+          zIndex: 1050,
           backgroundColor: 'var(--gio-red)',
           borderColor: 'var(--gio-red)'
         }}
@@ -84,7 +82,11 @@ const CartFloatingButton = () => {
               <ListGroup className="flex-grow-1 overflow-auto">
                 {cartItems.map(item => (
                   <ListGroup.Item key={item.itemId} className="d-flex align-items-center mb-2 p-2">
-                    <img src={item.imagen || "https://via.placeholder.com/50x50?text=IMG"} alt={item.nombre} style={{ width: '50px', height: '50px', objectFit: 'contain', marginRight: '10px' }} />
+                    <img 
+                      src={item.imagen || "https://via.placeholder.com/50x50?text=IMG"} 
+                      alt={item.nombre} 
+                      style={{ width: '50px', height: '50px', objectFit: 'contain', marginRight: '10px' }} 
+                    />
                     <div className="flex-grow-1">
                       <h6 className="mb-0">{item.nombre}</h6>
                       <small className="text-muted">

@@ -5,12 +5,20 @@
 // ---------------------------------------------------------------------
 // 📦 PRODUCTOS (Catálogo)
 // ---------------------------------------------------------------------
+export interface ProductSpecs {
+  almacenamiento: number | null;
+  ram: number | null;
+  camara: number | null;
+  pantalla: number | null;
+  bateria: number | null;
+}
+
 export interface Product {
   id: string;
   nombre: string;
-  marca: string;
-  modelo: string;
-  precio: number;
+  marca?: string;
+  modelo?: string;
+  precio?: number;
   precioAnterior?: number;
   imagen: string;
   imagenes?: string[];
@@ -19,6 +27,29 @@ export interface Product {
   categoria?: string;
   esDestacado?: boolean;
   fechaAgregado?: Date;
+  // Campos de AdminPanel
+  contado?: number | null;
+  cuotas6?: number | null;
+  cuotas8?: number | null;
+  cuotaInicial?: number | null;
+  specs?: ProductSpecs;
+  // Promo
+  promo?: boolean;
+  promoPrice?: number | null;
+  promoBadgeText?: string | null;
+  promoBadgeBg?: string | null;
+  promoHighlight?: string | null;
+  // Nuevo badge
+  nuevo?: boolean;
+  nuevoBadgeText?: string | null;
+  nuevoBadgeBg?: string | null;
+  // Badge mode: 'none' | 'promo' | 'nuevo' | 'ambos'
+  badgeMode?: 'none' | 'promo' | 'nuevo' | 'ambos';
+  // Financiación 12 meses
+  solo12Meses?: boolean;
+  cuotas12?: number | null;
+  // Firestore
+  createdAt?: Date;
 }
 
 // ---------------------------------------------------------------------
@@ -62,6 +93,21 @@ export interface CartContextType {
 // ---------------------------------------------------------------------
 // ⚙️ CONFIGURACIÓN
 // ---------------------------------------------------------------------
+export interface ThemeVars {
+  "--promo-badge-bg"?: string;
+  "--promo-badge-text"?: string;
+  "--promo-highlight"?: string;
+  "--theme-name"?: string;
+  [key: string]: string | undefined;
+}
+
+export interface ThemeConfig {
+  enabled: boolean;
+  start?: Date | null;
+  end?: Date | null;
+  vars: ThemeVars;
+}
+
 export interface StoreConfig {
   nombre?: string;
   logo?: string;
@@ -73,6 +119,7 @@ export interface StoreConfig {
     instagram?: string;
     tiktok?: string;
   };
+  theme?: ThemeConfig | null;
 }
 
 // ---------------------------------------------------------------------
@@ -80,12 +127,33 @@ export interface StoreConfig {
 // ---------------------------------------------------------------------
 export interface CarouselSlide {
   id: string;
-  imagen: string;
+  url_imagen: string;
   titulo?: string;
   descripcion?: string;
   enlace?: string;
   orden?: number;
   activo?: boolean;
+}
+
+// Slide format used in AdminPanel (Firestore)
+export interface CarouselSlideAdmin {
+  id: string;
+  url_imagen: string;
+  titulo?: string;
+  orden?: number;
+  activo?: boolean;
+  createdAt?: Date;
+}
+
+// ---------------------------------------------------------------------
+// 👥 ASESORES
+// ---------------------------------------------------------------------
+export interface Asesor {
+  id: string;
+  email: string;
+  nombreCompleto: string;
+  rol: string;
+  whatsappNumber: string;
 }
 
 // ---------------------------------------------------------------------

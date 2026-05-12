@@ -1,18 +1,23 @@
-// src/components/ProductCard.jsx
+// src/components/ProductCard.tsx
 import React, { useState, useEffect } from "react";
 import { Modal, Button, Card, Row, Col, Badge } from "react-bootstrap";
 import { useCart } from "../contexts/CartContext";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { formatPrice } from "../utils/formatters";
-import OptimizedImage from "./OptimizedImage";
 import { recordProductView } from "../services/productStats.service";
+import type { Product, CotizacionType } from "../types";
 
-function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obtiene del contexto, no se pasa como prop
+interface ProductCardProps {
+  producto: Product;
+  isPopular?: boolean;
+}
+
+const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }) => {
   const [mostrar, setMostrar] = useState(false);
-  const [tipoSeleccionado, setTipoSeleccionado] = useState(null); // null, 'comprar', 'carrito'
+  const [tipoSeleccionado, setTipoSeleccionado] = useState<null | 'comprar' | 'carrito'>(null);
   const { addToCart } = useCart();
   const rawPhoneNumber = useWhatsappNumber();
-  const phoneNumber = rawPhoneNumber || '573248022632'; // Asegura un número por defecto
+  const phoneNumber = rawPhoneNumber || '573248022632';
 
   // Registrar vista del producto
   useEffect(() => {
@@ -22,9 +27,8 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
   }, [producto?.id]);
 
   const abrir = () => { setMostrar(true); setTipoSeleccionado(null); };
-  const cerrar = () => { setMostrar(false), setTipoSeleccionado(null); };
+  const cerrar = () => { setMostrar(false); setTipoSeleccionado(null); };
 
-  // Desestructuración del producto
   const {
     nombre = "Producto sin nombre",
     descripcion = "",
@@ -32,7 +36,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
     cuotas6,
     cuotas8,
     imagen,
-    // promo
     promoPrice,
     promoLabel,
     promoStart,
@@ -40,45 +43,43 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
     promoBadgeBg,
     promoBadgeText,
     promoHighlight,
-    // nuevo + display
     nuevo,
     nuevoBadgeText,
     nuevoBadgeBg,
     badgeMode,
-    // financiación 12 meses
     solo12Meses,
     cuotas12,
   } = producto || {};
 
-  // Compatibilidad promo flag
-  const effectivePromoActive = (producto?.promoActive !== undefined ? producto.promoActive
-    : (producto?.promo !== undefined ? producto.promo
-      : undefined));
+  const effectivePromoActive = producto?.promoActive !== undefined 
+    ? producto.promoActive
+    : producto?.promo !== undefined 
+      ? producto.promo 
+      : undefined;
 
-  // Helpers promo timing
-  const getMillis = (ts) => {
+  const getMillis = (ts: unknown): number | null => {
     if (!ts) return null;
     if (typeof ts === 'number') return ts;
-    if (typeof ts?.toMillis === 'function') return ts.toMillis();
-    const n = +new Date(ts);
+    if (typeof ts === 'object' && ts !== null && 'toMillis' in ts && typeof (ts as { toMillis: () => number }).toMillis === 'function') {
+      return (ts as { toMillis: () => number }).toMillis();
+    }
+    const n = +new Date(ts as string | number);
     return Number.isFinite(n) ? n : null;
   };
+
   const nowMs = Date.now();
   const startMs = getMillis(promoStart);
   const endMs = getMillis(promoEnd);
   const inWindow = (!startMs || nowMs >= startMs) && (!endMs || nowMs <= endMs);
 
-  // Validez precio promo (solo para mostrar precio promocional)
   const countedPromoPrice = Number(promoPrice);
   const countedContado = Number(contado);
   const hasPromoPrice = Number.isFinite(countedPromoPrice) && countedPromoPrice > 0 && Number.isFinite(countedContado) && countedContado > 0 && countedPromoPrice < countedContado;
 
-  // Modo de badges y flags de visibilidad (separado: badge vs precio)
   const effectiveBadgeMode = badgeMode || 'promo';
   const showPromoBadge = (effectiveBadgeMode === 'promo' || effectiveBadgeMode === 'ambos') && !!effectivePromoActive && inWindow;
   const showNuevoBadge = (effectiveBadgeMode === 'nuevo' || effectiveBadgeMode === 'ambos') && !!nuevo;
 
-  // Si hay precio promo válido, mostrar precio promo en UI
   const showPromoPrice = hasPromoPrice && inWindow && !!effectivePromoActive;
 
   const priceRegularStr = formatPrice(contado);
@@ -97,8 +98,7 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
     ? `Hola, estoy interesado en el ${nombre} con el plan especial de 12 meses.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatPrice(cuotaInicial)}\n12 cuotas mensuales: ${formatPrice(cuotas12)}\n¿Me pueden dar más información?`
     : `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatPrice(cuotaInicial)}\n16 cuotas quincenales: ${formatPrice(cuotas6)}\n8 cuotas mensuales: ${formatPrice(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
 
-  // Función para manejar la selección de tipo (contado o crédito)
-  const handleSeleccionTipo = (tipo) => {
+  const handleSeleccionTipo = (tipo: CotizacionType) => {
     if (tipoSeleccionado === 'comprar') {
       const mensaje = tipo === 'contado' ? mensajeWhatsAppContadoDirecto : mensajeWhatsAppCreditoDirecto;
       phoneNumber && window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, "_blank");
@@ -111,7 +111,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
   return (
     <>
       <style>{`
-        /* Título del modal */
         .modal-section-title {
           font-size: 1.1rem;
           font-weight: 600;
@@ -120,7 +119,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
           color: var(--text-primary);
         }
         
-        /* Contenedor de etiquetas */
         .gio-badge-container {
           position: absolute;
           top: 10px;
@@ -146,7 +144,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
           box-shadow: var(--shadow-sm);
         }
 
-        /* Animación shimmer para botón de comprar */
         @keyframes shimmer {
           0% { box-shadow: 0 0 0 0 rgba(40, 167, 69, 0.4); }
           70% { box-shadow: 0 0 0 10px rgba(40, 167, 69, 0); }
@@ -169,7 +166,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
           }
         }
 
-        /* ===== CORRECCIÓN PARA MODO OSCURO (MODAL) ===== */
         .modal-content {
           background-color: var(--bg-secondary) !important;
           color: var(--text-primary) !important;
@@ -182,7 +178,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
         .modal-title {
           color: var(--text-primary) !important;
         }
-        /* Esto asegura que la 'X' de cerrar sea blanca en modo oscuro */
         .btn-close {
           filter: var(--icon-filter, invert(0)); 
         }
@@ -199,7 +194,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
           font-size: 1.05em;
         }
         
-        /* Cajas de planes adaptables */
         .plan-special-box {
           margin-top: 1.25rem;
           padding: 1.25rem;
@@ -260,7 +254,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
             </span>
           </div>
 
-          {/* Badge de producto popular */}
           {isPopular && (
             <div className="gio-badge-wrapper">
               <span
@@ -299,11 +292,9 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
                 </Card.Text>
               </>
             ) : (
-              <>
-                <Card.Text className="product-card-price fw-bold fs-5 mb-0" style={{ color: 'var(--brand-blue)' }}>
-                  {priceRegularStr}
-                </Card.Text>
-              </>
+              <Card.Text className="product-card-price fw-bold fs-5 mb-0" style={{ color: 'var(--brand-blue)' }}>
+                {priceRegularStr}
+              </Card.Text>
             )}
           </div>
 
@@ -333,7 +324,7 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
             <i className="bi bi-cart-plus"></i> Ver detalles
           </button>
         </Card.Body>
-      </Card >
+      </Card>
 
       <Modal show={mostrar} onHide={cerrar} centered>
         <Modal.Header closeButton>
@@ -439,6 +430,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
       </Modal>
     </>
   );
-}
+};
 
 export default ProductCard;

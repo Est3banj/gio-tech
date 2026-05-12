@@ -1,12 +1,10 @@
-// src/components/Footer.jsx
+// src/components/Footer.tsx
 import React from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 
-const Footer = () => {
-  const phoneNumber = '573223652569'; // Tu número de WhatsApp aquí
-  // Reemplaza con la URL real de tu página de Facebook
+const Footer: React.FC = () => {
+  const phoneNumber = '573223652569';
   const facebookPageUrl = 'https://www.facebook.com/share/1CUYUF25YF/?mibextid=wwXIfr';
-  // Reemplaza con tu dirección física
   const businessAddress = 'Calle 32 #13-36,B-Camilo Torres, Puerto Asís, Putumayo.';
 
   return (

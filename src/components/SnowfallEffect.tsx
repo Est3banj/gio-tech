@@ -1,5 +1,9 @@
-// src/components/SnowfallEffect.jsx
+// src/components/SnowfallEffect.tsx
 import React, { useEffect, useRef } from 'react';
+
+interface SnowfallEffectProps {
+  enabled?: boolean;
+}
 
 /**
  * Componente de efecto de nieve para temporada navideña
@@ -8,8 +12,8 @@ import React, { useEffect, useRef } from 'react';
  * Para activar/desactivar, usa la prop 'enabled' en el componente padre
  * Ejemplo: <SnowfallEffect enabled={true} />
  */
-const SnowfallEffect = ({ enabled = false }) => {
-    const canvasRef = useRef(null);
+const SnowfallEffect: React.FC<SnowfallEffectProps> = ({ enabled = false }) => {
+    const canvasRef = useRef<HTMLCanvasElement>(null);
 
     useEffect(() => {
         if (!enabled) return;
@@ -18,8 +22,10 @@ const SnowfallEffect = ({ enabled = false }) => {
         if (!canvas) return;
 
         const ctx = canvas.getContext('2d');
-        let animationFrameId;
-        let snowflakes = [];
+        if (!ctx) return;
+        
+        let animationFrameId: number;
+        let snowflakes: Snowflake[] = [];
 
         // Configuración del canvas
         const resizeCanvas = () => {
@@ -29,7 +35,7 @@ const SnowfallEffect = ({ enabled = false }) => {
 
         // Configuración de los copos de nieve
         const config = {
-            count: 100, // Número de copos (ajusta según necesites)
+            count: 100,
             minSize: 2,
             maxSize: 5,
             minSpeed: 0.5,
@@ -40,9 +46,16 @@ const SnowfallEffect = ({ enabled = false }) => {
 
         // Clase Copo de Nieve
         class Snowflake {
+            x: number;
+            y: number;
+            size: number;
+            speed: number;
+            opacity: number;
+            drift: number;
+
             constructor() {
                 this.reset();
-                this.y = Math.random() * canvas.height; // Posición inicial aleatoria
+                this.y = Math.random() * canvas.height;
             }
 
             reset() {
@@ -51,19 +64,17 @@ const SnowfallEffect = ({ enabled = false }) => {
                 this.size = Math.random() * (config.maxSize - config.minSize) + config.minSize;
                 this.speed = Math.random() * (config.maxSpeed - config.minSpeed) + config.minSpeed;
                 this.opacity = Math.random() * (config.maxOpacity - config.minOpacity) + config.minOpacity;
-                this.drift = Math.random() * 0.5 - 0.25; // Movimiento horizontal sutil
+                this.drift = Math.random() * 0.5 - 0.25;
             }
 
             update() {
                 this.y += this.speed;
                 this.x += this.drift;
 
-                // Si el copo sale de la pantalla, reiniciarlo arriba
                 if (this.y > canvas.height) {
                     this.reset();
                 }
 
-                // Mantener dentro del ancho de la pantalla
                 if (this.x > canvas.width) {
                     this.x = 0;
                 } else if (this.x < 0) {
@@ -74,7 +85,7 @@ const SnowfallEffect = ({ enabled = false }) => {
             draw() {
                 ctx.beginPath();
                 ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`; // Note: strictly we should use var(--text-white) if possible, but canvas needs RGBA
+                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
                 ctx.fill();
             }
         }
@@ -131,10 +142,10 @@ const SnowfallEffect = ({ enabled = false }) => {
                 left: 0,
                 width: '100vw',
                 height: '100vh',
-                pointerEvents: 'none', // ¡CRÍTICO! Permite clics a través del canvas
-                zIndex: 9999, // Por encima de todo
+                pointerEvents: 'none',
+                zIndex: 9999,
             }}
-            aria-hidden="true" // Accesibilidad: ocultar para lectores de pantalla
+            aria-hidden="true"
         />
     );
 };

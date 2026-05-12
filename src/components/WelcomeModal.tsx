@@ -1,19 +1,20 @@
-// src/components/WelcomeModal.jsx
+// src/components/WelcomeModal.tsx
 import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
+
+interface WelcomeModalProps {
+  show: boolean;
+  onClose?: () => void;
+  businessName?: string;
+}
 
 /**
  * Modal de bienvenida para el catálogo.
  * - Explica que las cuotas mostradas son una simulación aproximada.
  * - La cotización real se confirma tras validación de crédito.
  * - Se muestra solo una vez por sesión (controlado con sessionStorage).
- *
- * Props:
- *  - show: boolean - controla la visibilidad del modal
- *  - onClose: () => void - callback para cerrar
- *  - businessName?: string - nombre del negocio para el saludo
  */
-export default function WelcomeModal({ show, onClose, businessName }) {
+const WelcomeModal: React.FC<WelcomeModalProps> = ({ show, onClose, businessName }) => {
   const [dontShowAgain, setDontShowAgain] = useState(true);
 
   const handleClose = () => {
@@ -62,13 +63,9 @@ export default function WelcomeModal({ show, onClose, businessName }) {
         <Button variant="outline-secondary" onClick={handleClose}>
           Entendido
         </Button>
-        {/* Si más adelante quieres un acceso directo a WhatsApp global, puedes
-            descomentar el botón inferior y pasar el link desde el padre.
-            <Button variant="success" onClick={() => window.open(whatsappUrl, '_blank', 'noopener,noreferrer')}>
-              Hablar con un asesor
-            </Button>
-        */}
       </Modal.Footer>
     </Modal>
   );
-}
+};
+
+export default WelcomeModal;
