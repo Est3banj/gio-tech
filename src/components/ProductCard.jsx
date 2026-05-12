@@ -17,7 +17,6 @@ function ProductCard({ producto, isPopular = false }) { // `phoneNumber` se obti
   // Registrar vista del producto
   useEffect(() => {
     if (producto?.id) {
-      console.log('🔍 Registrando vista para:', producto.id);
       recordProductView(producto.id);
     }
   }, [producto?.id]);

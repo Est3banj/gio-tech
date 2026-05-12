@@ -65,12 +65,9 @@ const buscarProductosRelevantes = ( pregunta, productos, historial = []) => {
                        preguntaLower.includes('cual me recomiendas') ||
                        preguntaLower.includes('que me recomiendas');
   
-  // Extraer presupuesto si lo hay
-  let presupuestoMax = null;
-  const matchPresupuesto = preguntaLower.match(/(\d{1,3})\s*(mil|milés|m)?/);
-  if (matchPresupuesto) {
-    presupuestoMax = parseInt(matchPresupuesto[1]) * 1000;
-  }
+  // Extraer presupuesto si lo hay (para futuro uso en filtrado por rango de precio)
+  // TODO: implementar filtrado por presupuesto cuando se requiera
+  preguntaLower.match(/(\d{1,3})\s*(mil|milés|m)?/);
   
   // Si pregunta por marca específica, buscar TODOS los productos de esa marca
   const marcasEnPregunta = ['redmi', 'samsung', 'iphone', 'xiaomi', 'tecno', 'infinix', 'motorola', 'oppo', 'huawei', 'apple'];
@@ -85,7 +82,6 @@ const buscarProductosRelevantes = ( pregunta, productos, historial = []) => {
     });
     
     if (resultados.length > 0) {
-      console.log("🔍 Productos encontrados para marca", marcaBuscada, ":", resultados.length);
       return resultados.slice(0, 15); // Más productos para mejor contexto
     }
   }
@@ -103,7 +99,6 @@ const buscarProductosRelevantes = ( pregunta, productos, historial = []) => {
       });
       
       if (resultados.length > 0) {
-        console.log("🔄 Seguimiento, marcas previas:", marcasMencionadas, "-> productos:", resultados.length);
         return resultados.slice(0, 15);
       }
     }
@@ -177,10 +172,6 @@ const formatearProducto = (p) => {
  * @returns {Promise<string>} - Respuesta del asistente
  */
 export const askGeminiAssistant = async (pregunta, productos, historial = []) => {
-  console.log("🔑 Groq API Key:", GROQ_API_KEY ? "Cargada" : "NO CARGADA");
-  console.log("📦 Productos disponibles:", productos.length);
-  console.log("💬 Mensajes en historial:", historial.length);
-  
   if (!GROQ_API_KEY) {
     return "Lo siento, el asistente no está configurado correctamente. Por favor contáctanos por WhatsApp.";
   }
@@ -191,7 +182,6 @@ export const askGeminiAssistant = async (pregunta, productos, historial = []) =>
   
   // Buscar productos relevantes según la pregunta y el historial
   const productosRelevantes = buscarProductosRelevantes(pregunta, productos, historial);
-  console.log("🔍 Productos relevantes encontrados:", productosRelevantes.map(p => p.nombre));
   
   // Crear contexto con TODOS los productos relevantes
   const productosContext = productosRelevantes.map(p => formatearProducto(p)).join('\n');

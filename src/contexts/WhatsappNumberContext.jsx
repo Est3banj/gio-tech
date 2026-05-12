@@ -54,9 +54,9 @@ export const WhatsappNumberProvider = ({ children }) => {
           setAsesorWhatsappNumber(defaultWhatsappNumber); // Fallback al número de la tienda
           // console.warn(`DEBUG [WhatsappContext]: Asesor con ID ${asesorIdFromUrl} no encontrado o sin número. Usando número de la tienda.`); // DEBUG
         }
-      }, (error) => {
-        console.error("DEBUG [WhatsappContext]: Error al obtener número del asesor:", error);
-        setAsesorWhatsappNumber(defaultWhatsappNumber); // Fallback en caso de error
+      }, () => {
+        // Silently fallback to default on error
+        setAsesorWhatsappNumber(defaultWhatsappNumber);
       });
       return () => unsub(); // Limpiar listener
     } else {

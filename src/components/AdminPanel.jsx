@@ -18,6 +18,7 @@ import {
   deleteProduct,
 } from "../services/product.service";
 import { subscribeToConfig, updateConfig } from "../services/config.service";
+
 import { getApp, getApps, initializeApp, deleteApp } from "firebase/app";
 import { getAuth as getAuthSecondary } from "firebase/auth";
 
@@ -90,6 +91,7 @@ function AdminPanel() {
   const [passwordAsesor, setPasswordAsesor] = useState("");
   const [nombreCompletoAsesor, setNombreCompletoAsesor] = useState("");
   const [whatsappAsesor, setWhatsappAsesor] = useState("");
+  const [rolAsesor, setRolAsesor] = useState("asesor");
   const [editandoAsesor, setEditandoAsesor] = useState(null);
 
   // ===== Carrusel Hero =====
@@ -411,7 +413,7 @@ function AdminPanel() {
       await setDoc(doc(db, "usuarios", user.uid), {
         email: emailAsesor,
         nombreCompleto: nombreCompletoAsesor,
-        rol: "asesor",
+        rol: rolAsesor,
         whatsappNumber: whatsappAsesor,
       });
 
@@ -1356,6 +1358,16 @@ function AdminPanel() {
                   placeholder="Ej: 573XXYYYYYYY"
                   required
                 />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Rol</Form.Label>
+                <Form.Select
+                  value={rolAsesor}
+                  onChange={(e) => setRolAsesor(e.target.value)}
+                  disabled={!!editandoAsesor}
+                >
+                  <option value="asesor">Asesor (Acceso total)</option>
+                </Form.Select>
               </Form.Group>
               <Button variant="primary" type="submit" className="me-2">
                 {editandoAsesor ? "Actualizar Asesor" : "Registrar Asesor"}

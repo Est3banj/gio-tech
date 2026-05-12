@@ -9,7 +9,6 @@
 export const trackMetaEvent = (eventName, params = {}) => {
   if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
     window.fbq('track', eventName, params);
-    console.log(`[Meta Pixel] Evento disparado: ${eventName}`, params);
   } else {
     console.warn('[Meta Pixel] Pixel no disponible - asegúrate de que el código está instalado en index.html');
   }

@@ -30,6 +30,10 @@ const AsesorPanel = lazy(() => import("./components/AsesorPanel"));
 const LandingPage = lazy(() => import("./components/LandingPage"));
 const ServicioTecnicoPage = lazy(() => import("./components/ServicioTecnicoPage"));
 
+
+// Contextos
+
+
 // ========================================
 // 🎄 CONFIGURACIÓN DE TEMPORADA NAVIDEÑA
 // ========================================

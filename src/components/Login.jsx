@@ -44,6 +44,8 @@ function Login({ onLogin }) {
       }
 
       onLogin({ uid: user.uid, email: user.email, rol: userRole, nombreCompleto: userName });
+      
+      // Redirigir al panel
       navigate("/panel");
     } catch (err) {
       console.error("Error al iniciar sesión:", err);

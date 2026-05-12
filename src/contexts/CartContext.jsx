@@ -1,6 +1,6 @@
 // src/contexts/CartContext.jsx
 import React, { createContext, useState, useContext, useEffect } from 'react';
-import { trackAddToCart, trackPurchase } from '../utils/metaPixel';
+import { trackAddToCart } from '../utils/metaPixel';
 
 const CartContext = createContext();
 
