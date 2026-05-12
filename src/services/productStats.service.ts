@@ -1,12 +1,24 @@
-import { collection, query, orderBy, limit, getDocs, doc, updateDoc, increment, getDoc, setDoc } from 'firebase/firestore';
+import { 
+  collection, 
+  query, 
+  orderBy, 
+  limit, 
+  getDocs, 
+  doc, 
+  updateDoc, 
+  increment, 
+  getDoc, 
+  setDoc 
+} from 'firebase/firestore';
 import { db } from '../firebase';
+import type { ProductStats } from '../types';
 
 /**
  * Registra una vista de producto.
  * Incrementa el contador en Firebase.
- * @param {string} productId - ID del producto visto
+ * @param productId - ID del producto visto
  */
-export const recordProductView = async (productId) => {
+export const recordProductView = async (productId: string): Promise<void> => {
   if (!productId) return;
   
   try {
@@ -34,10 +46,10 @@ export const recordProductView = async (productId) => {
 
 /**
  * Obtiene los productos más vistos.
- * @param {number} limitCount - Cantidad de productos a retornar
- * @returns {Promise<Array>} - Array de stats de productos
+ * @param limitCount - Cantidad de productos a retornar
+ * @returns Array de stats de productos
  */
-export const getPopularProductsStats = async (limitCount = 4) => {
+export const getPopularProductsStats = async (limitCount = 4): Promise<ProductStats[]> => {
   try {
     const statsRef = collection(db, 'producto_stats');
     const q = query(
@@ -47,10 +59,12 @@ export const getPopularProductsStats = async (limitCount = 4) => {
     );
     
     const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    return querySnapshot.docs.map(docSnap => ({
+      id: docSnap.id,
+      productoId: docSnap.data().productoId || docSnap.id,
+      vistas: docSnap.data().vistas || 0,
+      ultimaVista: docSnap.data().ultimaVista?.toDate()
+    } as ProductStats));
   } catch (error) {
     console.error('Error obteniendo productos populares:', error);
     return [];

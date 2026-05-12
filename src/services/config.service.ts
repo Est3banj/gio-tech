@@ -1,20 +1,23 @@
 import { doc, onSnapshot, setDoc } from "firebase/firestore";
 import { db } from "../firebase";
+import type { StoreConfig } from "../types";
 
 /**
  * Suscribe a los cambios en la configuración general.
- * @param {function} callback - Función que recibe la data de configuración.
- * @param {function} onError - Función de error opcional.
- * @returns {function} - Unsubscribe function.
+ * @param callback - Función que recibe la data de configuración.
+ * @param onError - Función de error opcional.
+ * @returns Unsubscribe function.
  */
-export const subscribeToConfig = (callback, onError) => {
+export const subscribeToConfig = (
+  callback: (config: StoreConfig) => void, 
+  onError?: (error: Error) => void
+): (() => void) => {
     return onSnapshot(
         doc(db, "configuracion", "general"),
         (docSnap) => {
             if (docSnap.exists()) {
-                callback(docSnap.data());
+                callback(docSnap.data() as StoreConfig);
             } else {
-                // Opción: llamar con null o un objeto vacío si no existe
                 callback({});
             }
         },
@@ -27,9 +30,9 @@ export const subscribeToConfig = (callback, onError) => {
 
 /**
  * Actualiza la configuración general.
- * @param {object} configData - Datos de la configuración.
- * @returns {Promise<void>}
+ * @param configData - Datos de la configuración.
+ * @returns Promise<void>
  */
-export const updateConfig = async (configData) => {
+export const updateConfig = async (configData: Partial<StoreConfig>): Promise<void> => {
     await setDoc(doc(db, "configuracion", "general"), configData, { merge: true });
 };

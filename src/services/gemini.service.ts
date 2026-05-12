@@ -1,16 +1,16 @@
-// src/services/gemini.service.js
+// src/services/gemini.service.ts
 // Servicio para integrar IA como asistente de ventas (Groq - gratis y rápido)
 
+import type { Product, ChatMessage } from '../types';
 import { businessInfo } from '../data/business-info';
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
-const CATALOGO_URL = 'https://gio-tech.vercel.app/catalogo';
 
 /**
  * Normaliza el nombre del producto para búsqueda
  */
-const normalizarTexto = (texto) => {
+const normalizarTexto = (texto: string): string => {
   if (!texto) return '';
   return texto.toLowerCase()
     .normalize('NFD')
@@ -23,8 +23,8 @@ const normalizarTexto = (texto) => {
 /**
  * Extrae los productos mencionados en el historial reciente
  */
-const extraerProductosMencionados = (historial) => {
-  const productosMencionados = new Set();
+const extraerProductosMencionados = (historial: ChatMessage[]): string[] => {
+  const productosMencionados = new Set<string>();
   
   // Buscar menciones de marcas/modelos en mensajes recientes del asistente
   historial.slice(-4).forEach(msg => {
@@ -45,12 +45,16 @@ const extraerProductosMencionados = (historial) => {
 
 /**
  * Busca productos relevantes según la pregunta del usuario
- * @param {string} pregunta - La pregunta del usuario
- * @param {Array} productos - Array de productos del catálogo
- * @param {Array} historial - Historial de mensajes para contexto
- * @returns {Array} - Productos relevantes encontrados
+ * @param pregunta - La pregunta del usuario
+ * @param productos - Array de productos del catálogo
+ * @param historial - Historial de mensajes para contexto
+ * @returns Productos relevantes encontrados
  */
-const buscarProductosRelevantes = ( pregunta, productos, historial = []) => {
+const buscarProductosRelevantes = (
+  pregunta: string, 
+  productos: Product[], 
+  historial: ChatMessage[] = []
+): Product[] => {
   const preguntaNorm = normalizarTexto(pregunta);
   const preguntaLower = pregunta.toLowerCase();
   
@@ -65,10 +69,6 @@ const buscarProductosRelevantes = ( pregunta, productos, historial = []) => {
                        preguntaLower.includes('cual me recomiendas') ||
                        preguntaLower.includes('que me recomiendas');
   
-  // Extraer presupuesto si lo hay (para futuro uso en filtrado por rango de precio)
-  // TODO: implementar filtrado por presupuesto cuando se requiera
-  preguntaLower.match(/(\d{1,3})\s*(mil|milés|m)?/);
-  
   // Si pregunta por marca específica, buscar TODOS los productos de esa marca
   const marcasEnPregunta = ['redmi', 'samsung', 'iphone', 'xiaomi', 'tecno', 'infinix', 'motorola', 'oppo', 'huawei', 'apple'];
   const marcaBuscada = marcasEnPregunta.find(m => preguntaLower.includes(m));
@@ -82,7 +82,7 @@ const buscarProductosRelevantes = ( pregunta, productos, historial = []) => {
     });
     
     if (resultados.length > 0) {
-      return resultados.slice(0, 15); // Más productos para mejor contexto
+      return resultados.slice(0, 15);
     }
   }
   
@@ -142,7 +142,7 @@ const buscarProductosRelevantes = ( pregunta, productos, historial = []) => {
 /**
  * Formatea la información completa de un producto para el contexto
  */
-const formatearProducto = (p) => {
+const formatearProducto = (p: Product): string => {
   const nombre = p.nombre || 'Sin nombre';
   const marca = p.marca || '';
   const modelo = p.modelo || '';
@@ -150,7 +150,7 @@ const formatearProducto = (p) => {
   const precioCredito = p.credito ? `$${parseFloat(p.credito).toLocaleString('es-CO')}` : 'Consultar';
   const estado = p.estado || 'nuevo';
   const ram = p.ram || '';
-  const storage = p.storage || p.almacenamiento || '';
+  const storage = p.storage || '';
   
   let info = `${nombre}`;
   if (marca) info += ` [${marca}]`;
@@ -166,12 +166,16 @@ const formatearProducto = (p) => {
 
 /**
  * Envía una pregunta al asistente IA y obtiene una respuesta
- * @param {string} pregunta - La pregunta del usuario
- * @param {Array} productos - Array de productos del catálogo
- * @param {Array} historial - Array de mensajes anteriores [{rol: 'usuario'|'asistente', texto: string}]
- * @returns {Promise<string>} - Respuesta del asistente
+ * @param pregunta - La pregunta del usuario
+ * @param productos - Array de productos del catálogo
+ * @param historial - Array de mensajes anteriores
+ * @returns Respuesta del asistente
  */
-export const askGeminiAssistant = async (pregunta, productos, historial = []) => {
+export const askGeminiAssistant = async (
+  pregunta: string, 
+  productos: Product[], 
+  historial: ChatMessage[] = []
+): Promise<string> => {
   if (!GROQ_API_KEY) {
     return "Lo siento, el asistente no está configurado correctamente. Por favor contáctanos por WhatsApp.";
   }
@@ -189,10 +193,10 @@ export const askGeminiAssistant = async (pregunta, productos, historial = []) =>
   const totalProductos = productos.length;
   
   // Construir historial de conversación para el modelo
-  const historialConversacion = historial.slice(-6).map(msg => {
-    const rol = msg.rol === 'usuario' ? 'user' : 'assistant';
-    return { role: rol, content: msg.texto };
-  }).join('\n');
+  const historialConversacion = historial
+    .slice(-6)
+    .map(msg => `${msg.rol === 'usuario' ? 'Cliente' : 'Asistente'}: ${msg.texto}`)
+    .join('\n');
 
   const systemPrompt = `
 Eres ${businessInfo.nombre}, asistente de ventas experto en celulares y tecnología en Putumayo, Colombia.
@@ -224,7 +228,7 @@ REGLAS CRÍTICAS - DEBES SEGUIR ESTAS A TODA COSTA:
 7. Máximo 150 palabras
 8. Para precios, usa formato COP: $1.500.000
 9. IMPORTANTE - MANTENER CONTEXTO:
-   - Cuando el cliente pregunta "cual es el mejor", "cual me recomiendas", "entre esos cual" o similar, te refieres a LOS PRODUCTOS QUE YA MOSTRÁSTE en la conversación reciente
+   - Cuando el cliente pregunta "cual es el mejor", "cual me recomiendas", "entre esos cual" o similar, te refieres a LOS PRODUCTOS QUE YA MOSTRASTE en la conversación reciente
    - NO cambies de marca si el cliente está viendo opciones de una marca específica
    - Si el cliente dice "pero quiero es en marca samsung", te refieres SOLO a productos Samsung del catálogo
    - Si preguntaste por Samsung A13 y no está, das alternativas Samsung, NO de otras marcas
@@ -284,18 +288,18 @@ Responde solo con productos que existan en el catálogo de arriba. Si no hay pro
     
   } catch (error) {
     console.error("Error en AI assistant:", error);
-    return `Hubo un problema al conectar con el asistente: ${error.message}. Por favor contáctanos por WhatsApp o intenta más tarde.`;
+    return `Hubo un problema al conectar con el asistente: ${(error as Error).message}. Por favor contáctanos por WhatsApp o intenta más tarde.`;
   }
 };
 
 /**
  * Genera un mensaje de WhatsApp con los productos recomendados
- * @param {Array} productos - Array de productos recomendados
- * @returns {string} - Mensaje formateado para WhatsApp
+ * @param productos - Array de productos recomendados
+ * @returns Mensaje formateado para WhatsApp
  */
-export const generateWhatsAppMessage = (productos) => {
+export const generateWhatsAppMessage = (productos: Product[]): string => {
   if (!productos || productos.length === 0) {
-    return "Hola, estoy interesado en conocer los productos disponibles en GIO TECH.";
+    return encodeURIComponent("Hola, estoy interesado en conocer los productos disponibles en GIO TECH.");
   }
 
   let mensaje = "Hola, me interesa conocer más sobre los siguientes productos:\n\n";
