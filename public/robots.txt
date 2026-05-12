@@ -1,0 +1,11 @@
+# https://www.robotstxt.org/robotstxt.html
+User-agent: *
+Allow: /
+
+# Bloquear acceso a paneles administrativos (nuncaindexar)
+Disallow: /login
+Disallow: /panel
+Disallow: /servicio-tecnico
+
+# Sitemap
+Sitemap: https://giotechshop.online/sitemap.xml
