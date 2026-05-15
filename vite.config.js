@@ -21,16 +21,21 @@ export default defineConfig({
     // Chunk size warning limit
     chunkSizeWarningLimit: 600,
     
-    // Manual chunks para mejor splitting
+    // Manual chunks para mejor splitting (Vite 8 / Rolldown API)
     rollupOptions: {
       output: {
-        manualChunks: {
-          // React y React DOM en un chunk
-          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
-          // Firebase en otro chunk
-          'vendor-firebase': ['firebase/app', 'firebase/firestore', 'firebase/auth'],
-          // Bootstrap y icons
-          'vendor-ui': ['react-bootstrap', 'bootstrap'],
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router')) {
+              return 'vendor-react';
+            }
+            if (id.includes('firebase')) {
+              return 'vendor-firebase';
+            }
+            if (id.includes('bootstrap')) {
+              return 'vendor-ui';
+            }
+          }
         },
       },
     },
