@@ -1,222 +1,158 @@
-# Gio-Tech v2 🛒
+# ╔═══════════════════════════════════════════════════════════════════════╗
+# ║                                                                       ║
+# ║   ███╗   ██╗███████╗ ██████╗ ███╗   ██╗                            ║
+# ║   ████╗  ██║██╔════╝██╔═══██╗████╗  ██║                            ║
+# ║   ██╔██╗ ██║█████╗  ██║   ██║██╔██╗ ██║   GIO-TECH v2.0            ║
+# ║   ██║╚██╗██║██╔══╝  ██║   ██║██║╚██╗██║                            ║
+# ║   ██║ ╚████║███████╗╚██████╔╝██║ ╚████║   E-COMMERCE SYSTEM         ║
+# ║   ╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝                            ║
+# ║                         ▀▀█▀▀ █▀▀█▀▀█                              ║
+# ║                           █▄▄█▄▄█▄▄                               ║
+# ║                         ▀▄▄▄▄▄▄▄▄▄▀                               ║
+# ╚═══════════════════════════════════════════════════════════════════════╝
 
-E-commerce de venta de celulares y accesorios en Putumayo (Colombia), con presencia física (local) y tienda online.
+> 🛒 E-commerce de venta de celulares y accesorios en Putumayo (Colombia)
+> 🌐 **Producción**: [giotechshop.online](https://giotechshop.online)
 
-## 🚀 Tecnologías
+---
 
-| Capa | Tecnología |
-|------|------------|
-| Frontend | React 19.1.0 |
-| Build Tool | Vite 6.3.5 |
-| UI Framework | Bootstrap 5.3.6 + React Bootstrap 2.10.10 |
-| Animaciones | Framer Motion 12.18.1 |
-| Backend/DB | Firebase 11.9.1 (Firestore, Auth, Hosting) |
-| Routing | React Router DOM 6.30.1 |
-| Carrusel | Swiper 12.0.3 |
-| IA | Groq API (Llama 3.1 8B Instant) |
-| Scanner | html5-qrcode 2.3.8 |
+## 🚀 Stack Tecnológico
 
-## 📁 Estructura del Proyecto
+| Capa | Tecnología | Versión |
+|------|------------|---------|
+| ⚛️ Frontend | React | 19.1.0 |
+| ⚡ Build | Vite | 8.0.13 |
+| 🎨 UI | Bootstrap + React Bootstrap | 5.3.6 / 2.10.10 |
+| ✨ Animaciones | Framer Motion | 12.18.1 |
+| 🔥 Backend | Firebase (Firestore, Auth, Hosting) | 11.9.1 |
+| 🛣️ Routing | React Router DOM | 7.15.1 |
+| 🎠 Carrusel | Swiper | 12.1.4 |
+| 🤖 IA | Groq API (Llama 3.1 8B) | - |
+| 📷 Scanner | html5-qrcode | 2.3.8 |
+| 🟢 Lenguaje | TypeScript + JavaScript | Hybrid |
+
+---
+
+## 📂 Estructura del Proyecto
 
 ```
 gio-tech-v2/
 ├── src/
-│   ├── components/          # Componentes React
-│   │   ├── inventario/      # Gestión de inventario
-│   │   └── vendedor/        # Panel y herramientas del vendedor
-│   ├── contexts/            # React Context Providers
-│   ├── hooks/               # Custom Hooks
-│   ├── services/           # Servicios Firebase
-│   ├── utils/               # Utilidades
-│   ├── data/                # Datos estáticos
-│   ├── styles/              # Estilos CSS adicionales
-│   ├── App.jsx             # Componente principal
-│   └── main.jsx            # Entry point
-├── public/                  # Archivos estáticos públicos
-├── scripts/                 # Scripts de migración/backfill
-└── package.json
+│   ├── components/          # Componentes React (22 archivos)
+│   │   ├── AdminPanel.tsx          # Panel de administración
+│   │   ├── AsesorPanel.tsx         # Panel de asesores
+│   │   ├── Catalogo.tsx            # Catálogo con filtros
+│   │   ├── LandingPage.tsx         # Landing principal
+│   │   ├── HomePage.tsx            # Página de inicio
+│   │   ├── HeroCarousel.tsx        # Carrusel dinámico
+│   │   ├── ProductCard.tsx         # Tarjeta de producto
+│   │   ├── GeminiChat.tsx          # Chat con IA
+│   │   ├── CompareModal.tsx        # Modal comparador
+│   │   ├── Login.tsx               # Autenticación
+│   │   ├── Header.tsx              # Navegación
+│   │   ├── Footer.tsx              # Pie de página
+│   │   ├── ServicioTecnicoPage.tsx # Servicio técnico
+│   │   ├── WelcomeModal.tsx        # Modal de bienvenida
+│   │   ├── CartFloatingButton.tsx  # Botón flotante carrito
+│   │   ├── WhatsappFloatingButton.tsx # Botón WhatsApp
+│   │   ├── OptimizedImage.tsx      # Imagen optimizada
+│   │   ├── ThemeProvider.tsx      # Provider de tema
+│   │   └── SnowfallEffect.tsx      # Efecto de nieve
+│   ├── contexts/            # React Contexts
+│   │   ├── CartContext.tsx         # Carrito de compras
+│   │   └── WhatsappNumberContext.tsx # Número dinámico
+│   ├── hooks/               # Custom Hooks (TypeScript)
+│   │   ├── useProducts.ts          # Productos desde Firestore
+│   │   ├── usePopularProducts.ts   # Productos populares
+│   │   ├── useAuth.ts              # Autenticación
+│   │   └── useConfig.ts            # Configuración global
+│   ├── services/           # Servicios Firebase (TypeScript)
+│   │   ├── product.service.ts      # CRUD productos
+│   │   ├── productStats.service.ts # Estadísticas
+│   │   ├── config.service.ts       # Configuración
+│   │   └── gemini.service.ts       # Chat IA (Groq)
+│   ├── utils/              # Utilidades
+│   │   ├── specsParser.js          # Parser de specs
+│   │   ├── metaPixel.ts           # Meta Pixel
+│   │   └── formatters.js          # Formateadores
+│   ├── data/               # Datos estáticos
+│   │   ├── productos.js           # Catálogo local
+│   │   └── business-info.js       # Info del negocio
+│   ├── types/              # TypeScript types
+│   │   └── index.ts              # Definiciones de tipos
+│   ├── styles/            # Estilos CSS
+│   ├── App.jsx           # Componente principal
+│   ├── main.jsx          # Entry point
+│   └── firebase.js       # Config Firebase
+├── public/                # Archivos públicos
+│   ├── robots.txt        # SEO
+│   └── sitemap.xml       # Mapa del sitio
+├── vite.config.js        # Config Vite
+├── tsconfig.json         # Config TypeScript
+└── package.json          # Dependencias
 ```
 
-## 🗄️ Base de Datos (Firestore)
+---
 
-### Colecciones
+## 🗄️ Firestore - Colecciones
 
-#### `productos`
-Catálogo de productos/teléfonos para venta.
+| Colección | Descripción |
+|-----------|-------------|
+| `productos` | Catálogo de celulares/accesorios |
+| `usuarios` | Usuarios (admin, asesor, cliente) |
+| `configuracion` | Config global (general) |
+| `carrusel` | Slides del carrusel |
+| `producto_stats` | Vistas de productos |
 
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| nombre | string | Nombre del producto |
-| descripcion | string | Descripción |
-| imagen | string | URL de imagen |
-| cuotas6, cuotas8, cuotas12 | number | Precio en cuotas |
-| cuotaInicial | number | Cuota inicial |
-| promoActive | boolean | Promoción activa |
-| promoPrice | number | Precio promocional |
-| promoLabel, promoBadgeBg | string | Etiqueta de promo |
-| nuevo | boolean | Producto nuevo |
-| badgeMode | string | Modo de badge |
+---
 
-#### `inventario`
-Control de stock de equipos físicos.
+## 🎯 Features
 
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| ean | string | Código EAN |
-| modelo | string | Modelo del equipo |
-| imei1, imei2 | string | IMEIs del equipo |
-| storage, ram | string | Especificaciones |
-| cantidad | number | Stock disponible |
-| estado | string | disponible/vendido |
-| fechaAgregado, fechaVenta | timestamp | Fechas |
+- [x] Catálogo de productos con filtros y búsqueda
+- [x] Chat interactivo con IA (Groq/Llama)
+- [x] Sistema de comparación de productos
+- [x] Carrito persistente (localStorage)
+- [x] Autenticación Firebase (roles: admin/asesor/cliente)
+- [x] Panel de administración
+- [x] Panel de asesores
+- [x] Botón flotante WhatsApp dinámico
+- [x] Dark Mode
+- [x] Hero carrusel dinámico desde Firestore
+- [x] Scanner de códigos QR
+- [x] Meta Pixel integration
+- [x] SEO (robots.txt, sitemap.xml)
+- [x] Optimización de imágenes
 
-#### `ventas`
-Registro de ventas realizadas.
+---
 
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| inventarioId | string | ID del inventario |
-| imei1, imei2 | string | IMEI vendido |
-| modelo | string | Modelo vendido |
-| precioVenta | number | Precio de venta |
-| vendedorUid | string | UID del vendedor |
-| fecha | timestamp | Fecha de venta |
-
-#### `usuarios`
-Usuarios del sistema.
-
-| Campo | Tipo | Descripción |
-|-------|------|-------------|
-| email | string | Email del usuario |
-| rol | string | admin/asesor/vendedor/cliente |
-| nombreCompleto | string | Nombre completo |
-| whatsappNumber | string | Número de WhatsApp |
-
-#### `configuracion` (documento: `general`)
-Configuración global del negocio.
-
-#### `carrusel`
-Slides del carrusel en landing page.
-
-#### `producto_stats`
-Estadísticas de vistas de productos.
-
-## 🧩 Componentes Principales
-
-| Componente | Ruta | Descripción |
-|------------|------|-------------|
-| LandingPage | `/` | Página de inicio con hero, servicios, reseñas |
-| Catalogo | `/catalogo` | Catálogo con filtros, búsqueda y chat IA |
-| ProductCard | - | Tarjeta de producto con modal de detalles |
-| Login | `/login` | Autenticación con Firebase Auth |
-| AdminPanel | `/panel` | Panel de administración (1652 líneas) |
-| AsesorPanel | `/panel` | Panel para asesores |
-| VendedorPanel | `/vendedor` | Panel de ventas con MiniPOS |
-| GeminiChat | - | Chat interactivo con IA (Groq) |
-| HeroCarousel | - | Carrusel dinámico desde Firestore |
-
-## 🧠 Contextos (State Management)
-
-```javascript
-CartContext         // Carrito de compras con persistencia localStorage
-InventoryContext    // Inventario global en tiempo real
-WhatsappNumberContext // Número de WhatsApp dinámico por asesor
-```
-
-## 🪝 Custom Hooks
-
-```javascript
-useProducts         // Suscripción a productos (usa store externo)
-usePopularProducts  // Productos más vistos
-useAuth             // Estado de autenticación
-useConfig           // Configuración global
-```
-
-## 🔌 Servicios
-
-```javascript
-product.service.js       // CRUD productos
-inventario.service.js   // Gestión inventario (EAN/IMEI)
-venta.service.js        // Registro de ventas con transacciones
-config.service.js        // Configuración del negocio
-productStats.service.js // Estadísticas de vistas
-gemini.service.js       // Chat IA (Groq API)
-```
-
-## 🎨 UI/UX
-
-- **CSS**: Bootstrap 5 + Custom CSS con CSS Variables
-- **Dark Mode**: Soporte completo via `.dark-mode` class
-- **Animaciones**: Framer Motion para transiciones
-- **Colores Brand**: Gio Red (#C8102E), Brand Green (#22c55e)
-- **Iconos**: Bootstrap Icons
-
-## 📝 Rutas
-
-| Path | Componente | Tipo |
-|------|------------|------|
-| `/` | LandingPage | Público |
-| `/catalogo` | Catalogo | Público |
-| `/servicio-tecnico` | ServicioTecnicoPage | Público |
-| `/login` | Login | Público |
-| `/panel` | AdminPanel / AsesorPanel | Protegida |
-| `/vendedor` | VendedorPanel | Protegida (rol: vendedor) |
-
-## ⚙️ Scripts
+## 🛠️ Scripts
 
 ```bash
-npm run dev      # Iniciar servidor de desarrollo
-npm run build    # Build de producción
-npm run lint     # Verificar código
-npm run preview  # Preview del build
-npm run deploy   # Build + deploy a Firebase
+npm run dev      # Servidor desarrollo
+npm run build    # Build producción
+npm run preview # Preview build
+npm run deploy  # Build + Firebase deploy
+npm run lint    # Linter
 ```
 
-## 🔧 Variables de Entorno
+---
 
-```env
-VITE_FIREBASE_API_KEY
-VITE_FIREBASE_AUTH_DOMAIN
-VITE_FIREBASE_PROJECT_ID
-VITE_FIREBASE_STORAGE_BUCKET
-VITE_FIREBASE_MESSAGING_SENDER_ID
-VITE_FIREBASE_APP_ID
-VITE_GROQ_API_KEY
-```
+## 🌐 Producción
 
-## 🐛 Issues Conocidos
-
-| Problema | Severidad | Descripción |
-|----------|-----------|-------------|
-| AdminPanel monolítico (1652 líneas) | Media | Debe dividirse en sub-componentes |
-| Sin tests implementados | Alta | No hay tests unitarios ni de integración |
-| Firebase config expuesta | Media | Estructura de reglas debe garantizar seguridad |
-| Hardcoded values en Footer | Baja | WhatsApp/dirección deberían estar en Firestore |
-| Debug console.logs | Baja | Deben removerse en producción |
-| Efecto de nieve deshabilitado | Info | Hardcodeado, debería ser configurable |
-
-## ✅ Features Implementadas
-
-- [x] E-commerce de celulares (contado + crédito)
-- [x] Catálogo con filtros y búsqueda
-- [x] Carrito persistente (localStorage)
-- [x] Chat IA (Gemini/Groq)
-- [x] Sistema de roles (admin/asesor/vendedor/cliente)
-- [x] Panel de administración
-- [x] Panel de vendedor (MiniPOS)
-- [x] Panel de asesor
-- [x] Dark Mode
-- [x] Botón flotante WhatsApp dinámico
-- [x] Estadísticas de productos
-- [x] Hero Carrusel dinámico
-- [x] Scanner de códigos (html5-qrcode)
-- [x] Meta Pixel Integration
-
-## 🔗 Enlaces
-
-- **Producción**: https://giotechshop.online
+- **URL**: https://giotechshop.online
+- **Firebase Hosting**: gio-tech.web.app
 - **Firebase Console**: https://console.firebase.google.com
 
 ---
 
-*Documentación generada automáticamente - 2026*
+## 📝 Notas
+
+- Proyecto migrado parcialmente a TypeScript (servicios y hooks)
+- Sistema MiniPOS e Inventario eliminados del core (desarrollar en proyecto separado)
+- Efecto de nieve季节al (controlado por config)
+- Debug logs removidos en producción
+
+---
+
+*Última actualización: Mayo 2026*
+*Built with 🔥 and ⚛️*
