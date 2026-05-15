@@ -1,18 +1,8 @@
-# ╔═══════════════════════════════════════════════════════════════════════╗
-# ║                                                                       ║
-# ║   ███╗   ██╗███████╗ ██████╗ ███╗   ██╗                            ║
-# ║   ████╗  ██║██╔════╝██╔═══██╗████╗  ██║                            ║
-# ║   ██╔██╗ ██║█████╗  ██║   ██║██╔██╗ ██║   GIO-TECH v2.0            ║
-# ║   ██║╚██╗██║██╔══╝  ██║   ██║██║╚██╗██║                            ║
-# ║   ██║ ╚████║███████╗╚██████╔╝██║ ╚████║   E-COMMERCE SYSTEM         ║
-# ║   ╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═╝  ╚═══╝                            ║
-# ║                         ▀▀█▀▀ █▀▀█▀▀█                              ║
-# ║                           █▄▄█▄▄█▄▄                               ║
-# ║                         ▀▄▄▄▄▄▄▄▄▄▀                               ║
-# ╚═══════════════════════════════════════════════════════════════════════╝
+# ⚡ GIO-TECH v2.0
 
-> 🛒 E-commerce de venta de celulares y accesorios en Putumayo (Colombia)
-> 🌐 **Producción**: [giotechshop.online](https://giotechshop.online)
+**E-commerce de celulares y accesorios** — Putumayo, Colombia
+
+🌐 **Producción**: [giotechshop.online](https://giotechshop.online)
 
 ---
 
