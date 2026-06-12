@@ -23,11 +23,11 @@ const HeroCarousel: React.FC = () => {
           .map((doc) => ({
             id: doc.id,
             ...doc.data(),
-          }))
-          .filter((slide: CarouselSlide) => slide.activo === true)
+          } as CarouselSlide))
+          .filter((slide) => slide.activo === true)
           .sort((a, b) => (a.orden || 0) - (b.orden || 0));
 
-        setSlides(slidesData as CarouselSlide[]);
+        setSlides(slidesData);
         setIsLoading(false);
       },
       (error) => {

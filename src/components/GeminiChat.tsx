@@ -41,6 +41,7 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ productos, onClose }) => {
 
     try {
       const respuesta = await askGeminiAssistant(pregunta, productos, historial);
+
       setMensajes(prev => [...prev, { rol: 'asistente', texto: respuesta }]);
     } catch (error) {
       console.error("Error en chat:", error);

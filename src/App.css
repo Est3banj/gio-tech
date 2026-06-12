@@ -422,28 +422,20 @@ body {
   transform: translateY(-1px) !important;
 }
 
-/* ─── Cards & Services (SINCRONIZADO CON MODO OSCURO) ─── */
+/* ─── Cards (SINCRONIZADO CON MODO OSCURO) ─── */
 .card,
-.services-card,
-.service-card,
-.service-item,
 .product-card {
   border-radius: var(--card-radius) !important;
   border: 1px solid var(--border-color) !important;
   background-color: var(--bg-card) !important;
-  /* Usa tu variable dinámica */
   color: var(--text-primary) !important;
-  /* Texto blanco en dark mode */
   box-shadow: var(--shadow-sm) !important;
 }
 
-/* Forzar que los textos internos no se pierdan */
-.service-title,
 .card-title {
   color: var(--text-primary) !important;
 }
 
-.service-desc,
 .card-text {
   color: var(--text-secondary) !important;
 }
@@ -566,36 +558,6 @@ body {
 }
 
 
-/* ─── Floating Elements ──────────────────────────────────── */
-.floating-chat-btn {
-  position: fixed;
-  bottom: 100px;
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  z-index: 1050;
-  background: linear-gradient(135deg, var(--gio-red), var(--gio-red-dark)) !important;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-white);
-  box-shadow: var(--shadow-red) !important;
-  transition: all var(--trans-base) !important;
-}
-
-.floating-chat-btn:hover {
-  transform: scale(1.1) translateY(-5px) !important;
-}
-
-.floating-gemini-btn {
-  transition: all var(--trans-base) !important;
-}
-
-.floating-gemini-btn:hover {
-  transform: scale(1.1) translateY(-5px) !important;
-}
-
 /* ─── Footer (CONSOLIDADO Y CORREGIDO) ────────────────────── */
 .gio-footer {
   background: var(--bg-card) !important;
@@ -637,28 +599,6 @@ body {
 .login-page {
   background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
   min-height: calc(100vh - 80px);
-}
-
-/* ─── Floating chat button ───────────────────────────────── */
-.floating-chat-btn {
-  position: fixed;
-  bottom: calc(20px + 60px + 12px);
-  right: 20px;
-  width: 60px;
-  height: 60px;
-  z-index: 1050;
-  background: linear-gradient(135deg, var(--gio-red), var(--gio-red-dark)) !important;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--text-white);
-  box-shadow: var(--shadow-red) !important;
-  transition: all var(--trans-base) !important;
-}
-
-.floating-chat-btn:hover {
-  transform: scale(1.08) translateY(-2px) !important;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -765,11 +705,6 @@ body {
 
 .dark-mode .landing-hero {
   background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
-}
-
-.landing-hero-content {
-  max-width: 760px;
-  margin: 0 auto;
 }
 
 .landing-hero-eyebrow {
@@ -1023,11 +958,6 @@ body {
   color: var(--gio-dark-text);
 }
 
-.review-location {
-  font-size: 0.75rem;
-  color: var(--gio-muted);
-}
-
 /* ─── Featured products ──────────────────────────────────── */
 .featured-section {
   background: var(--bg-primary);
@@ -1044,10 +974,6 @@ body {
 .featured-card-wrap {
   display: flex;
   flex-direction: column;
-}
-
-.featured-cta {
-  text-align: center;
 }
 
 /* ══════════════════════════════════════════════════════════
@@ -1306,10 +1232,6 @@ body {
   padding: 8.5rem 0;
 }
 
-.mb-section {
-  margin-bottom: 8.5rem;
-}
-
 @media (max-width: 768px) {
 
   .st-section,
@@ -1382,17 +1304,269 @@ body {
 }
 
 /* 2. Reserva espacio para el Carrusel para que no demore en "abrirse" */
-.carousel-container,
 .hero-carousel-wrapper {
   min-height: 400px;
-  /* Ajusta según la altura de tu carrusel en PC */
   background-color: var(--bg-app);
-  /* Color de fondo mientras carga la imagen */
+}
+
+/* ============================================================
+   Admin Panel Dashboard - Nuevo Diseño
+   ============================================================ */
+
+.admin-dashboard {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: var(--bg-app);
+}
+
+/* Top Navigation Bar */
+.admin-topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  z-index: 1100;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.15);
+}
+
+.admin-topbar-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1.5rem;
+  cursor: pointer;
+  padding: 8px;
+  border-radius: 8px;
+  transition: background 0.2s;
+}
+
+.hamburger-btn:hover {
+  background: rgba(255,255,255,0.1);
+}
+
+.admin-topbar-brand h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.admin-topbar-brand span {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.6);
+  display: block;
+}
+
+.admin-topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.admin-user-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255,255,255,0.8);
+}
+
+.admin-user-info i {
+  font-size: 1.25rem;
+}
+
+.admin-user-info .admin-user-email {
+  font-size: 0.85rem;
+}
+
+.admin-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: rgba(200, 16, 46, 0.2);
+  border: 1px solid rgba(200, 16, 46, 0.3);
+  color: #fff;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.admin-logout-btn:hover {
+  background: #C8102E;
+  border-color: #C8102E;
+}
+
+/* Sidebar */
+.admin-sidebar {
+  position: fixed;
+  top: 60px;
+  left: 0;
+  bottom: 0;
+  width: 260px;
+  background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+  color: white;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 1050;
+  transition: transform 0.3s ease;
+}
+
+.admin-sidebar-nav {
+  flex: 1;
+  padding: 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.admin-sidebar-nav button {
+  width: 100%;
+  padding: 14px 20px;
+  border: none;
+  background: transparent;
+  color: rgba(255,255,255,0.7);
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  transition: all 0.2s ease;
+  border-left: 3px solid transparent;
+}
+
+.admin-sidebar-nav button:hover {
+  background: rgba(255,255,255,0.05);
+  color: #fff;
+}
+
+.admin-sidebar-nav button.active {
+  background: rgba(200, 16, 46, 0.2);
+  color: #fff;
+  border-left-color: #C8102E;
+}
+
+.admin-sidebar-nav button i {
+  font-size: 1.1rem;
+  width: 24px;
+  text-align: center;
+}
+
+.admin-sidebar-nav button span {
+  display: inline;
+}
+
+/* Overlay for mobile */
+.admin-overlay {
+  display: none;
+  position: fixed;
+  top: 60px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 1040;
+}
+
+/* Main Content */
+.admin-main {
+  margin-left: 260px;
+  margin-top: 60px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 60px);
+  position: relative;
+  z-index: 1;
+}
+
+/* Ensure container inside admin panel doesn't add extra padding */
+.admin-main > .container {
+  max-width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-top: 0 !important;
+}
+
+/* Ocultar tabs originales del AdminPanel */
+.admin-tabs-hidden {
+  display: none !important;
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .admin-user-info .admin-user-email {
+    display: none;
+  }
 }
 
 @media (max-width: 768px) {
-  .carousel-container {
-    min-height: 250px;
-    /* Ajuste para móviles */
+  /* Show hamburger */
+  .hamburger-btn {
+    display: block;
   }
+  
+  /* Sidebar becomes off-canvas */
+  .admin-sidebar {
+    transform: translateX(-100%);
+    width: 280px;
+    top: 60px;
+    bottom: 0;
+  }
+  
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  /* Show overlay */
+  .admin-overlay {
+    display: block;
+  }
+  
+  /* Main content adjusts */
+  .admin-main {
+    margin-left: 0;
+  }
+  
+  /* Topbar adjustments */
+  .admin-topbar {
+    padding: 0 12px;
+  }
+  
+  .admin-topbar-brand span {
+    display: none;
+  }
+  
+  .admin-topbar-right {
+    gap: 8px;
+  }
+  
+  .admin-logout-btn .logout-text {
+    display: none;
+  }
+  
+  .admin-logout-btn {
+    padding: 8px 12px;
+  }
+  
+  .admin-logout-btn i {
+    margin: 0;
+  }
+  
 }

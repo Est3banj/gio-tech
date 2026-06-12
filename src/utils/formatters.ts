@@ -1,13 +1,4 @@
-/**
- * Utilidades de formateo para la aplicación.
- */
-
-/**
- * Formatea un número como precio en pesos colombianos.
- * @param {number|string} valor - Valor a formatear.
- * @returns {string} - Precio formateado (ej: "$1.234.567").
- */
-export function formatPrice(valor) {
+export function formatPrice(valor: number | string | null | undefined): string {
   if (valor === null || typeof valor === 'undefined' || valor === '') return '—';
   const numero = typeof valor === 'string' 
     ? parseFloat(valor.replace(/\s+/g, '').replace(/,/, '.')) 
@@ -22,12 +13,7 @@ export function formatPrice(valor) {
   return '—';
 }
 
-/**
- * Normaliza texto para búsquedas (minúsculas, sin acentos, solo ASCII).
- * @param {string} texto - Texto a normalizar.
- * @returns {string} - Texto normalizado.
- */
-export function normalizeText(texto) {
+export function normalizeText(texto: string): string {
   if (typeof texto !== 'string') return '';
   return texto
     .toLowerCase()
@@ -37,12 +23,7 @@ export function normalizeText(texto) {
     .trim();
 }
 
-/**
- * Formatea un número con separador de miles.
- * @param {number|string} valor - Valor a formatear.
- * @returns {string} - Número formateado (ej: "1.234.567").
- */
-export function formatNumber(valor) {
+export function formatNumber(valor: number | string | null | undefined): string {
   const numero = typeof valor === 'string' 
     ? parseFloat(valor.replace(/\s+/g, '').replace(/,/, '.')) 
     : Number(valor);

@@ -1,14 +1,20 @@
-// src/data/business-info.js
-// Información del negocio para el asistente IA
-// EDITÁ ESTA INFO SEGÚN TU NEGOCIO
+export interface BusinessInfo {
+  nombre: string;
+  eslogan: string;
+  ubicacion: string;
+  creditos: string;
+  garantias: string;
+  envios: string;
+  metodosPago: string;
+  servicioTecnico: string;
+  faq: string;
+}
 
-export const businessInfo = {
-  // Información general
+export const businessInfo: BusinessInfo = {
   nombre: "GIO TECH",
   eslogan: "Tu tienda de tecnología de confianza",
   ubicacion: "Colombia",
 
-  // Políticas de crédito
   creditos: `
 FORMAS DE PAGO A CRÉDITO:
 - 16 cuotas quincenales
@@ -27,7 +33,6 @@ REQUISITOS PARA CRÉDITO:
 NOTA: Los intereses y aprobaciones dependen del financiero asignado.
   `,
 
-  // Garantías
   garantias: `
 GARANTÍAS:
 - Todos los celulares nuevos vienen con garantía del fabricante (generalmente 12 meses)
@@ -36,7 +41,6 @@ GARANTÍAS:
 - Para hacer efectiva la garantía, debe presentarse el equipo con sus accesorios originales y la factura de compra
   `,
 
-  // Envíos
   envios: `
 ENVIOS:
 - Envíos a algunos lugares del departamento del putumayo, si estas fuera del departamento podriamos gestionar envio sin problema.
@@ -45,7 +49,6 @@ ENVIOS:
 - Envío gratis en compras mayores a $500.000 (consultar condiciones)
   `,
 
-  // Métodos de pago
   metodosPago: `
 MÉTODOS DE PAGO:
 - Efectivo
@@ -56,7 +59,6 @@ MÉTODOS DE PAGO:
 - Financiación con proveedores externos
   `,
 
-  // Servicio técnico
   servicioTecnico: `
 SERVICIO TÉCNICO:
 - Cambio de pantallas
@@ -67,7 +69,6 @@ SERVICIO TÉCNICO:
 - Servicio con garantía de 15 días en reparaciones
   `,
 
-  // Preguntas frecuentes adicionales
   faq: `
 PREGUNTAS FRECUENTES:
 - ¿Los equipos son nuevos o seminuevos? Nuevos sellados, también tenemos seminuevos con descuento

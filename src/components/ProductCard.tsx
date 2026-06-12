@@ -37,9 +37,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     cuotas8,
     imagen,
     promoPrice,
-    promoLabel,
-    promoStart,
-    promoEnd,
     promoBadgeBg,
     promoBadgeText,
     promoHighlight,
@@ -51,11 +48,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     cuotas12,
   } = producto || {};
 
-  const effectivePromoActive = producto?.promoActive !== undefined 
-    ? producto.promoActive
-    : producto?.promo !== undefined 
-      ? producto.promo 
-      : undefined;
+  const productAny = producto as unknown as Record<string, unknown>;
+  const promoStart = productAny.promoStart;
+  const promoEnd = productAny.promoEnd;
+
+  const effectivePromoActive = producto?.promo;
 
   const getMillis = (ts: unknown): number | null => {
     if (!ts) return null;
@@ -101,7 +98,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
   const handleSeleccionTipo = (tipo: CotizacionType) => {
     if (tipoSeleccionado === 'comprar') {
       const mensaje = tipo === 'contado' ? mensajeWhatsAppContadoDirecto : mensajeWhatsAppCreditoDirecto;
-      phoneNumber && window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, "_blank");
+      if (phoneNumber) window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, "_blank");
     } else if (tipoSeleccionado === 'carrito') {
       addToCart(producto, tipo);
       cerrar();
@@ -250,7 +247,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                 color: '#ffffff',
               }}
             >
-              {promoLabel || promoBadgeText || 'PROMO'}
+              {promoBadgeText || 'PROMO'}
             </span>
           </div>
 
@@ -336,7 +333,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
           {showPromoPrice ? (
             <>
               <p className="mb-2"><strong>Precio regular:</strong> <del>{priceRegularStr}</del></p>
-              <p className="mb-3"><strong>Precio promocional:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{pricePromoStr}</span> {promoLabel ? <span className="badge ms-2" style={{ backgroundColor: promoBadgeBg || badgeBg, color: '#fff' }}>{promoLabel}</span> : null}</p>
+              <p className="mb-3"><strong>Precio promocional:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{pricePromoStr}</span> {promoBadgeText ? <span className="badge ms-2" style={{ backgroundColor: promoBadgeBg || badgeBg, color: '#fff' }}>{promoBadgeText}</span> : null}</p>
             </>
           ) : (
             <p className="mb-3"><strong>Precio contado:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{priceRegularStr}</span></p>

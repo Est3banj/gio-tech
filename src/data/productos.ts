@@ -1,4 +1,13 @@
-const productos = [
+interface StaticProduct {
+  nombre: string;
+  descripcion: string;
+  precioContado: number;
+  cuotas6: number;
+  cuotas8: number;
+  imagen: string;
+}
+
+const productos: StaticProduct[] = [
   {
     nombre: "Redmi Note 13 Pro",
     descripcion: "256 GB, 8 GB de RAM, cámara de 200 MP",

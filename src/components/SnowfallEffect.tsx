@@ -44,22 +44,24 @@ const SnowfallEffect: React.FC<SnowfallEffectProps> = ({ enabled = false }) => {
             maxOpacity: 0.8,
         };
 
-        // Clase Copo de Nieve
+        const cvs = canvas!;
+        const context = ctx!;
+
         class Snowflake {
-            x: number;
-            y: number;
-            size: number;
-            speed: number;
-            opacity: number;
-            drift: number;
+            x: number = 0;
+            y: number = 0;
+            size: number = 0;
+            speed: number = 0;
+            opacity: number = 0;
+            drift: number = 0;
 
             constructor() {
                 this.reset();
-                this.y = Math.random() * canvas.height;
+                this.y = Math.random() * cvs.height;
             }
 
             reset() {
-                this.x = Math.random() * canvas.width;
+                this.x = Math.random() * cvs.width;
                 this.y = -10;
                 this.size = Math.random() * (config.maxSize - config.minSize) + config.minSize;
                 this.speed = Math.random() * (config.maxSpeed - config.minSpeed) + config.minSpeed;
@@ -71,22 +73,22 @@ const SnowfallEffect: React.FC<SnowfallEffectProps> = ({ enabled = false }) => {
                 this.y += this.speed;
                 this.x += this.drift;
 
-                if (this.y > canvas.height) {
+                if (this.y > cvs.height) {
                     this.reset();
                 }
 
-                if (this.x > canvas.width) {
+                if (this.x > cvs.width) {
                     this.x = 0;
                 } else if (this.x < 0) {
-                    this.x = canvas.width;
+                    this.x = cvs.width;
                 }
             }
 
             draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
-                ctx.fill();
+                context.beginPath();
+                context.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                context.fillStyle = `rgba(255, 255, 255, ${this.opacity})`;
+                context.fill();
             }
         }
 

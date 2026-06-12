@@ -36,3 +36,6 @@ __MACOSX/
 # Credenciales
 *.service-account.json
 scripts/service-account.json
+
+# ATL / Agent skills
+.atl/

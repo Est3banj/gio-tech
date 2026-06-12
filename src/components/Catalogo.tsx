@@ -4,7 +4,7 @@ import { useProducts } from "../hooks/useProducts";
 import { useConfig } from "../hooks/useConfig";
 import { normalizeText } from "../utils/formatters";
 import ProductCard from "./ProductCard";
-import { Container, Row, Col, Form, Spinner, Card } from 'react-bootstrap';
+import { Row, Col, Form, Spinner, Card } from 'react-bootstrap';
 import HeroCarousel from "./HeroCarousel";
 import GeminiChat from "./GeminiChat";
 

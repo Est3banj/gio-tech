@@ -60,9 +60,9 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
           productId: product.id,
           nombre: product.nombre,
           imagen: product.imagen,
-          contado: product.contado,
-          cuotas6: product.cuotas6,
-          cuotas8: product.cuotas8,
+          contado: product.contado ?? 0,
+          cuotas6: product.cuotas6 ?? 0,
+          cuotas8: product.cuotas8 ?? 0,
           cotizacionType: type
         };
         

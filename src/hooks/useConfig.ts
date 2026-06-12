@@ -4,7 +4,7 @@ import type { StoreConfig } from '../types';
 
 // Store externo para compartir estado entre componentes (singleton pattern)
 let configStore: StoreConfig = {};
-let configListeners = new Set<() => void>();
+const configListeners = new Set<() => void>();
 
 function notifyConfigListeners(): void {
   configListeners.forEach((listener) => listener());

@@ -20,9 +20,9 @@
     "jsx": "react-jsx",
     
     /* Linting - LAX para migración gradual */
-    "strict": false,
-    "noUnusedLocals": false,
-    "noUnusedParameters": false,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],

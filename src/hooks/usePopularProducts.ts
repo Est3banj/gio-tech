@@ -24,7 +24,7 @@ export function usePopularProducts(): UsePopularProductsReturn {
         // Los IDs pueden venir como id (document ID) o productoId
         const ids = stats
           .filter(s => s.vistas > 0)
-          .map(s => s.productoId || s.id);
+          .map(s => s.productoId || s.id || '');
         
         // Verificar qué IDs hacen match con los productos disponibles
         const matchingIds = ids.filter(id => products?.some(p => p.id === id));

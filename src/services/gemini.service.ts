@@ -146,11 +146,12 @@ const formatearProducto = (p: Product): string => {
   const nombre = p.nombre || 'Sin nombre';
   const marca = p.marca || '';
   const modelo = p.modelo || '';
-  const precioContado = p.contado ? `$${parseFloat(p.contado).toLocaleString('es-CO')}` : 'Consultar';
-  const precioCredito = p.credito ? `$${parseFloat(p.credito).toLocaleString('es-CO')}` : 'Consultar';
-  const estado = p.estado || 'nuevo';
-  const ram = p.ram || '';
-  const storage = p.storage || '';
+  const precioContado = p.contado ? `$${(p.contado).toLocaleString('es-CO')}` : 'Consultar';
+  const extra = p as unknown as Record<string, unknown>;
+  const precioCredito = extra.credito ? `$${parseFloat(String(extra.credito)).toLocaleString('es-CO')}` : 'Consultar';
+  const estado = (extra.estado as string) || 'nuevo';
+  const ram = (extra.ram as string) || '';
+  const storage = (extra.storage as string) || '';
   
   let info = `${nombre}`;
   if (marca) info += ` [${marca}]`;
@@ -305,7 +306,7 @@ export const generateWhatsAppMessage = (productos: Product[]): string => {
   let mensaje = "Hola, me interesa conocer más sobre los siguientes productos:\n\n";
   
   productos.forEach((p, index) => {
-    const precio = p.contado ? `$${parseFloat(p.contado).toLocaleString('es-CO')}` : 'Consultar';
+    const precio = p.contado ? `$${(p.contado).toLocaleString('es-CO')}` : 'Consultar';
     mensaje += `${index + 1}. ${p.nombre} - ${precio}\n`;
   });
   

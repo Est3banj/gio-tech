@@ -4,7 +4,7 @@ import type { Product } from '../types';
 
 // Store externo para compartir estado entre componentes (singleton pattern)
 let productsStore: Product[] = [];
-let productsListeners = new Set<() => void>();
+const productsListeners = new Set<() => void>();
 
 function notifyProductsListeners(): void {
   productsListeners.forEach((listener) => listener());

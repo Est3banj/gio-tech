@@ -48,7 +48,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         userName = userData.nombreCompleto || user.email;
       }
 
-      onLogin({ uid: user.uid, email: user.email || '', rol: userRole as User['rol'], nombreCompleto: userName });
+      onLogin({ uid: user.uid, email: user.email || '', rol: userRole as User['rol'], nombreCompleto: userName ?? undefined });
       
       navigate("/panel");
     } catch (err) {

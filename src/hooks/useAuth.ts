@@ -25,7 +25,7 @@ export function useAuth(): UseAuthReturn {
         setUser({ 
           uid: currentUser.uid, 
           email: currentUser.email || '', 
-          rol: 'cargando' 
+          rol: 'cargando' as User['rol']
         });
         
         const userDocRef = doc(db, 'usuarios', currentUser.uid);
