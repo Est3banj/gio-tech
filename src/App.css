@@ -185,30 +185,6 @@ body {
   }
 }
 
-/* ─── Typography helpers ─────────────────────────────────── */
-.text-primary {
-  color: var(--gio-red) !important;
-}
-
-.text-secondary {
-  color: var(--text-secondary) !important;
-}
-
-.text-muted {
-  color: var(--text-muted) !important;
-}
-
-/* ─── Buttons (Se mantiene estructura original) ──────────── */
-.btn-primary {
-  background-color: var(--gio-red) !important;
-  border-color: var(--gio-red) !important;
-  color: var(--text-white) !important;
-  border-radius: var(--radius-sm) !important;
-  font-weight: 600 !important;
-  letter-spacing: 0.01em !important;
-  transition: all var(--trans-base) !important;
-}
-
 .btn-primary:hover {
   background-color: var(--gio-red-dark) !important;
   border-color: var(--gio-red-dark) !important;
@@ -394,20 +370,21 @@ body {
 }
 
 /* ─── Typography & Helpers ───────────────────────────────── */
-.text-primary {
+/* #root prefix: gana especificidad sobre Bootstrap .text-primary (0-2-0 vs 0-1-0) */
+#root .text-primary {
   color: var(--gio-red) !important;
 }
 
-.text-secondary {
+#root .text-secondary {
   color: var(--text-secondary) !important;
 }
 
-.text-muted {
+#root .text-muted {
   color: var(--text-muted) !important;
 }
 
 /* ─── Buttons ────────────────────────────────────────────── */
-.btn-primary {
+#root .btn-primary {
   background-color: var(--gio-red) !important;
   border-color: var(--gio-red) !important;
   color: var(--text-white) !important;
