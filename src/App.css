@@ -1333,12 +1333,6 @@ body {
   }
 }
 
-@media (min-width: 768px) {
-  .banner-slider {
-    height: 24rem;
-  }
-}
-
 .banner-slide {
   position: absolute;
   inset: 0;
@@ -1353,7 +1347,13 @@ body {
 .banner-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.4) 50%, transparent 100%);
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.85) 0%,
+    rgba(0,0,0,0.45) 40%,
+    rgba(0,0,0,0.15) 70%,
+    transparent 100%
+  );
   display: flex;
   align-items: flex-end;
 }
@@ -1371,6 +1371,7 @@ body {
   font-weight: 700;
   color: #ffffff;
   margin-bottom: 0.5rem;
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
 }
 
 @media (min-width: 768px) {
@@ -1383,6 +1384,7 @@ body {
   color: rgba(255, 255, 255, 0.9);
   font-size: 1.125rem;
   margin: 0;
+  text-shadow: 0 1px 8px rgba(0, 0, 0, 0.5);
 }
 
 /* Glass utility (reusable) */
