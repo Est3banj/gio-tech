@@ -14,10 +14,6 @@ const slideVariants = {
   exit: { opacity: 0 },
 };
 
-const imageVariants = {
-  center: { scale: 1.12 },
-};
-
 const titleVariants = {
   hidden: { opacity: 0, y: 32 },
   visible: { opacity: 1, y: 0 },
@@ -98,18 +94,10 @@ const BannerSlider = () => {
           transition={{ duration: 0.55, ease: [0.25, 0.1, 0.25, 1] }}
           className="banner-slide"
         >
-          {/* Ken Burns — slow zoom while visible */}
-          <motion.img
+          <img
             src={currentBanner.image || currentBanner.imageUrl}
             alt={currentBanner.title || 'Banner'}
             className="banner-slide-img"
-            variants={imageVariants}
-            initial={{ scale: 1 }}
-            animate="center"
-            transition={{
-              duration: AUTOPLAY_DURATION / 1000,
-              ease: 'linear',
-            }}
           />
 
           {/* Overlay + animated text */}
