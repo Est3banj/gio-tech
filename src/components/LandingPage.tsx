@@ -5,7 +5,7 @@ import { useProducts } from "../hooks/useProducts";
 import { usePopularProducts } from "../hooks/usePopularProducts";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import ProductCard from "./ProductCard";
-import HeroCarousel from "./HeroCarousel";
+import BannerSlider from "./BannerSlider";
 import type { Product } from "../types";
 
 interface TrustItem {
@@ -67,9 +67,9 @@ const LandingPage: React.FC = () => {
     return (
         <div className="landing-wrapper" style={{ backgroundColor: '#020617', minHeight: '100vh' }}>
 
-            <div style={{ minHeight: '400px', backgroundColor: '#020617' }}>
-                <HeroCarousel />
-            </div>
+            <section className="banner-section">
+                <BannerSlider />
+            </section>
 
             <section className="landing-hero section-padding-lg">
                 <div className="section-inner">

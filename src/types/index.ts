@@ -123,7 +123,20 @@ export interface StoreConfig {
 }
 
 // ---------------------------------------------------------------------
-// 🎠 CARRUSEL
+// 🎠 BANNER (para BannerSlider)
+// ---------------------------------------------------------------------
+export interface Banner {
+  id: string;
+  title?: string;
+  description?: string;
+  imageUrl: string;
+  image?: string;
+  link?: string;
+  order: number;
+  isActive: boolean;
+}
+
+// 🎠 CARRUSEL (Admin legacy)
 // ---------------------------------------------------------------------
 export interface CarouselSlide {
   id: string;

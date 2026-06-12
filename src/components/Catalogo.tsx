@@ -5,7 +5,7 @@ import { useConfig } from "../hooks/useConfig";
 import { normalizeText } from "../utils/formatters";
 import ProductCard from "./ProductCard";
 import { Row, Col, Form, Spinner, Card } from 'react-bootstrap';
-import HeroCarousel from "./HeroCarousel";
+import BannerSlider from "./BannerSlider";
 import GeminiChat from "./GeminiChat";
 
 const WelcomeModal = React.lazy(() => import('./WelcomeModal'));
@@ -105,9 +105,11 @@ const Catalogo: React.FC = () => {
         />
       </React.Suspense>
 
-      <HeroCarousel />
+      <div className="banner-section">
+        <BannerSlider />
+      </div>
 
-      <div className="section-inner py-4 header-offset">
+      <section className="catalogo-section section-inner py-4">
         <Row className="mb-5 justify-content-center">
           <Col xs={12} md={10} lg={8} className="text-center">
             <h2 className="display-5 fw-bold mb-3 text-primary">Nuestros Productos</h2>
@@ -269,7 +271,7 @@ const Catalogo: React.FC = () => {
             onClose={() => setShowGeminiChat(false)} 
           />
         )}
-      </div>
+      </section>
     </>
   );
 };
