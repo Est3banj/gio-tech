@@ -897,7 +897,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                       {validResultType === 'no-aplica' ? (
                         <>
                           <div className="icon"><i className="bi bi-x-circle-fill"></i></div>
-                          <div className="fw-bold fs-6">{validResultMsg}</div>
+                          <div className="fw-bold fs-6">Cupo denegado</div>
+                          <div className="reason">{validResultMsg}</div>
+                          <div className="mt-2" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
+                            No te preocupes, puedes probar con otra financiera
+                          </div>
                         </>
                       ) : (
                         <>
