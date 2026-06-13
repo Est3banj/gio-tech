@@ -6,8 +6,6 @@ import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { formatPrice } from "../utils/formatters";
 import { recordProductView } from "../services/productStats.service";
 import { getFinancierasForProduct } from "../data/financieras";
-import CreditModal from "./CreditModal";
-import CreditFormModal from "./CreditFormModal";
 import type { Product, CotizacionType, Financiera } from "../types";
 
 interface ProductCardProps {
@@ -17,10 +15,11 @@ interface ProductCardProps {
 
 const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }) => {
   const [mostrar, setMostrar] = useState(false);
-  const [tipoSeleccionado, setTipoSeleccionado] = useState<null | 'comprar' | 'carrito'>(null);
-  const [showCreditModal, setShowCreditModal] = useState(false);
-  const [showCreditForm, setShowCreditForm] = useState(false);
+  const [step, setStep] = useState<'product' | 'payment' | 'credito-financieras' | 'credito-form'>('product');
+  const [paymentAction, setPaymentAction] = useState<'comprar' | 'carrito'>('comprar');
   const [selectedFinanciera, setSelectedFinanciera] = useState<Financiera | null>(null);
+  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [linkOpened, setLinkOpened] = useState(false);
   const { addToCart } = useCart();
   const rawPhoneNumber = useWhatsappNumber();
   const phoneNumber = rawPhoneNumber || '573248022632';
@@ -32,8 +31,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     }
   }, [producto?.id]);
 
-  const abrir = () => { setMostrar(true); setTipoSeleccionado(null); };
-  const cerrar = () => { setMostrar(false); setTipoSeleccionado(null); };
+  const abrir = () => { setMostrar(true); setStep('product'); };
+  const cerrar = () => {
+    setMostrar(false);
+    setStep('product');
+    setSelectedFinanciera(null);
+    setFormData({});
+    setLinkOpened(false);
+  };
 
   const {
     nombre = "Producto sin nombre",
@@ -101,39 +106,48 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     ? `Hola, estoy interesado en el ${nombre} con el plan especial de 12 meses.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatPrice(cuotaInicial)}\n12 cuotas mensuales: ${formatPrice(cuotas12)}\n¿Me pueden dar más información?`
     : `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatPrice(cuotaInicial)}\n16 cuotas quincenales: ${formatPrice(cuotas6)}\n8 cuotas mensuales: ${formatPrice(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
 
+  const financierasDisponibles = getFinancierasForProduct(producto.marca, producto.categoria);
+
   const handleSeleccionTipo = (tipo: CotizacionType) => {
     if (tipo === 'contado') {
-      if (tipoSeleccionado === 'comprar') {
-        if (phoneNumber) window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensajeWhatsAppContadoDirecto)}`, "_blank");
-      } else if (tipoSeleccionado === 'carrito') {
+      if (paymentAction === 'comprar') {
+        if (phoneNumber) {
+          window.open(
+            `https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensajeWhatsAppContadoDirecto)}`,
+            '_blank'
+          );
+        }
+      } else {
         addToCart(producto, tipo);
         cerrar();
       }
-    } else if (tipo === 'credito') {
-      // Show credit modal with financieras
-      setShowCreditModal(true);
+    } else {
+      setStep('credito-financieras');
     }
   };
 
   const handleSelectFinanciera = (financiera: Financiera) => {
     setSelectedFinanciera(financiera);
-    setShowCreditModal(false);
-    setShowCreditForm(true);
+    setFormData({});
+    setLinkOpened(false);
+    setStep('credito-form');
   };
 
-  const handleBackFromForm = () => {
-    setShowCreditForm(false);
-    setSelectedFinanciera(null);
-    setShowCreditModal(true);
+  const handleFieldChange = (name: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCloseCreditFlow = () => {
-    setShowCreditModal(false);
-    setShowCreditForm(false);
-    setSelectedFinanciera(null);
+  const isFormValid = (): boolean => {
+    if (!selectedFinanciera) return false;
+    for (const campo of selectedFinanciera.campos) {
+      if (campo.required && !formData[campo.name]?.trim()) return false;
+    }
+    return true;
   };
 
-  const handleCreditFormSubmit = (data: Record<string, string>) => {
+  const handleEnviarWhatsApp = () => {
+    if (!selectedFinanciera) return;
+
     const lineLabel = (key: string): string => {
       const labels: Record<string, string> = {
         nombres: 'Nombres y apellidos',
@@ -148,34 +162,27 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
       return labels[key] || key;
     };
 
-    let mensaje = `🧾 *Solicitud de crédito - ${selectedFinanciera?.nombre}*\n\n`;
+    let mensaje = `🧾 *Solicitud de crédito - ${selectedFinanciera.nombre}*\n\n`;
     mensaje += `📱 *Producto:* ${nombre}\n`;
     mensaje += `💰 *Precio:* ${showPromoPrice ? pricePromoStr : priceRegularStr}\n`;
-
-    if (cuotaInicial > 0) {
-      mensaje += `💵 *Cuota inicial:* ${formatPrice(cuotaInicial)}\n`;
-    }
+    if (cuotaInicial > 0) mensaje += `💵 *Cuota inicial:* ${formatPrice(cuotaInicial)}\n`;
     if (solo12Meses && cuotas12) {
       mensaje += `📆 *12 cuotas mensuales:* ${formatPrice(cuotas12)}\n`;
     } else {
       mensaje += `📆 *16 cuotas quincenales:* ${formatPrice(cuotas6)}\n`;
       mensaje += `📆 *8 cuotas mensuales:* ${formatPrice(cuotas8)}\n`;
     }
-
     mensaje += `\n👤 *Datos del cliente:*\n`;
-    for (const [key, value] of Object.entries(data)) {
+    for (const [key, value] of Object.entries(formData)) {
       mensaje += `▸ ${lineLabel(key)}: ${value}\n`;
     }
 
     if (phoneNumber) {
-      window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, "_blank");
+      window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, '_blank');
     }
-
-    // If it was "Añadir al Carrito", add to cart after WhatsApp
-    if (tipoSeleccionado === 'carrito') {
+    if (paymentAction === 'carrito') {
       addToCart(producto, 'credito');
     }
-
     cerrar();
   };
 
@@ -227,6 +234,94 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
         .btn-comprar-animate:hover {
           animation: none;
           transform: scale(1.05);
+        }
+
+        .financiera-card {
+          background: var(--bg-hover);
+          border: 2px solid var(--border-color);
+          border-radius: var(--radius-md);
+          padding: 1rem;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          text-align: center;
+        }
+        .financiera-card:hover {
+          border-color: var(--brand-blue);
+          box-shadow: 0 0 12px rgba(13, 110, 253, 0.15);
+          transform: translateY(-2px);
+        }
+        .financiera-card img {
+          max-height: 48px;
+          max-width: 100%;
+          object-fit: contain;
+          margin-bottom: 0.5rem;
+        }
+        .financiera-card .financiera-name {
+          font-weight: 600;
+          font-size: 0.9rem;
+          color: var(--text-primary);
+        }
+        .financiera-card .financiera-badge {
+          font-size: 0.75rem;
+          padding: 2px 8px;
+          border-radius: 20px;
+          display: inline-block;
+          margin-top: 4px;
+        }
+        .badge-autovalidacion {
+          background: #fff3cd;
+          color: #856404;
+        }
+        .badge-asesor {
+          background: #d1e7dd;
+          color: #0f5132;
+        }
+        .autovalidacion-note {
+          font-size: 0.85rem;
+          color: var(--text-muted);
+          background: var(--bg-hover);
+          padding: 0.75rem 1rem;
+          border-radius: var(--radius-sm);
+          border: 1px dashed var(--border-color);
+          margin-top: 0.5rem;
+        }
+
+        .form-field-group {
+          margin-bottom: 1rem;
+        }
+        .form-field-group label {
+          font-weight: 600;
+          font-size: 0.9rem;
+          color: var(--text-primary);
+          margin-bottom: 0.35rem;
+          display: block;
+        }
+        .form-field-group input,
+        .form-field-group select {
+          width: 100%;
+          padding: 0.6rem 0.75rem;
+          border: 1.5px solid var(--border-color);
+          border-radius: var(--radius-sm);
+          background: var(--bg-secondary);
+          color: var(--text-primary);
+          font-size: 0.95rem;
+        }
+        .form-field-group input:focus {
+          outline: none;
+          border-color: var(--brand-blue);
+          box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
+        }
+        .radio-group {
+          display: flex;
+          gap: 1rem;
+          margin-top: 0.25rem;
+        }
+        .radio-group label {
+          font-weight: 400;
+          display: flex;
+          align-items: center;
+          gap: 0.35rem;
+          cursor: pointer;
         }
 
         @media (max-width: 480px) {
@@ -402,48 +497,136 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
           <Modal.Title>{nombre}</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p style={{ fontSize: '0.95rem' }}>{descripcion && descripcion.trim() !== "" ? descripcion : "Sin descripción."}</p>
-
-          {showPromoPrice ? (
+          {/* ─── Step: product | payment — show product info ─── */}
+          {(step === 'product' || step === 'payment') && (
             <>
-              <p className="mb-2"><strong>Precio regular:</strong> <del>{priceRegularStr}</del></p>
-              <p className="mb-3"><strong>Precio promocional:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{pricePromoStr}</span> {promoBadgeText ? <span className="badge ms-2" style={{ backgroundColor: promoBadgeBg || badgeBg, color: '#fff' }}>{promoBadgeText}</span> : null}</p>
+              <p style={{ fontSize: '0.95rem' }}>{descripcion && descripcion.trim() !== "" ? descripcion : "Sin descripción."}</p>
+
+              {showPromoPrice ? (
+                <>
+                  <p className="mb-2"><strong>Precio regular:</strong> <del>{priceRegularStr}</del></p>
+                  <p className="mb-3"><strong>Precio promocional:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{pricePromoStr}</span> {promoBadgeText ? <span className="badge ms-2" style={{ backgroundColor: promoBadgeBg || badgeBg, color: '#fff' }}>{promoBadgeText}</span> : null}</p>
+                </>
+              ) : (
+                <p className="mb-3"><strong>Precio contado:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{priceRegularStr}</span></p>
+              )}
+
+              {cuotaInicial > 0 && (
+                <p className="mb-2"><strong>Cuota inicial:</strong> {formatPrice(cuotaInicial)}</p>
+              )}
+
+              {solo12Meses && cuotas12 ? (
+                <div className="plan-special-box">
+                  <div className="text-center mb-2">
+                    <Badge bg="info" style={{ fontSize: '0.85rem', padding: '7px 16px', borderRadius: '8px', letterSpacing: '0.03em' }}>
+                      PLAN ESPECIAL
+                    </Badge>
+                  </div>
+                  <p className="mb-0 text-center" style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--brand-blue)' }}>
+                    12 cuotas mensuales de {formatPrice(cuotas12)}
+                  </p>
+                </div>
+              ) : (
+                <div className="plan-standard-box">
+                  <p className="mb-2"><strong>16 cuotas quincenales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatPrice(cuotas6)}</span></p>
+                  <p className="mb-0"><strong>8 cuotas mensuales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatPrice(cuotas8)}</span></p>
+                </div>
+              )}
             </>
-          ) : (
-            <p className="mb-3"><strong>Precio contado:</strong> <span style={{ color: 'var(--gio-red)', fontSize: '1.15em' }}>{priceRegularStr}</span></p>
           )}
 
-          {cuotaInicial > 0 && (
-            <p className="mb-2"><strong>Cuota inicial:</strong> {formatPrice(cuotaInicial)}</p>
+          {/* ─── Step: credito-financieras — pick a financiera ─── */}
+          {step === 'credito-financieras' && (
+            <>
+              <h6 className="modal-section-title">Elige una financiera</h6>
+              <Row className="g-3">
+                {financierasDisponibles.map((f) => (
+                  <Col xs={6} key={f.id}>
+                    <div className="financiera-card" onClick={() => handleSelectFinanciera(f)}>
+                      <img src={f.logo} alt={f.nombre} loading="lazy" />
+                      <div className="financiera-name">{f.nombre}</div>
+                      <span className={`financiera-badge ${f.tipo === 'autovalidacion' ? 'badge-autovalidacion' : 'badge-asesor'}`}>
+                        {f.tipo === 'autovalidacion' ? 'Autovalidación' : 'Asesor'}
+                      </span>
+                    </div>
+                  </Col>
+                ))}
+              </Row>
+            </>
           )}
 
-          {solo12Meses && cuotas12 ? (
-            <div className="plan-special-box">
-              <div className="text-center mb-2">
-                <Badge bg="info" style={{ fontSize: '0.85rem', padding: '7px 16px', borderRadius: '8px', letterSpacing: '0.03em' }}>
-                  PLAN ESPECIAL
-                </Badge>
+          {/* ─── Step: credito-form — fill form ─── */}
+          {step === 'credito-form' && selectedFinanciera && (
+            <>
+              <div className="text-center mb-3">
+                <img src={selectedFinanciera.logo} alt={selectedFinanciera.nombre} style={{ maxHeight: 40, objectFit: 'contain' }} />
+                <h6 className="mt-2 fw-bold">{selectedFinanciera.nombre}</h6>
               </div>
-              <p className="mb-0 text-center" style={{ fontSize: '1.2rem', fontWeight: '700', color: 'var(--brand-blue)' }}>
-                12 cuotas mensuales de {formatPrice(cuotas12)}
-              </p>
-            </div>
-          ) : (
-            <div className="plan-standard-box">
-              <p className="mb-2"><strong>16 cuotas quincenales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatPrice(cuotas6)}</span></p>
-              <p className="mb-0"><strong>8 cuotas mensuales:</strong> <span style={{ fontSize: '1.1em', color: 'var(--text-primary)' }}>{formatPrice(cuotas8)}</span></p>
-            </div>
+
+              {selectedFinanciera.tipo === 'autovalidacion' && !linkOpened && (
+                <div className="autovalidacion-note text-center">
+                  <p className="mb-2">Primero valida tu crédito:</p>
+                  <Button
+                    variant=""
+                    size="sm"
+                    onClick={() => {
+                      window.open(selectedFinanciera.urlAutovalidacion, '_blank');
+                      setLinkOpened(true);
+                    }}
+                    style={{ background: '#ffc107', borderColor: '#ffc107', color: '#000', fontWeight: 600 }}
+                  >
+                    <i className="bi bi-box-arrow-up-right me-1"></i> Ir a {selectedFinanciera.nombre}
+                  </Button>
+                </div>
+              )}
+
+              {(!(selectedFinanciera.tipo === 'autovalidacion') || linkOpened) && (
+                <div className="mt-2">
+                  {selectedFinanciera.campos.map((campo) => (
+                    <div className="form-field-group" key={campo.name}>
+                      <label>
+                        {campo.label}
+                        {campo.required && <span style={{ color: 'var(--gio-red)' }}> *</span>}
+                      </label>
+                      {campo.type === 'radio' && campo.options ? (
+                        <div className="radio-group">
+                          {campo.options.map((opt) => (
+                            <label key={opt}>
+                              <input
+                                type="radio"
+                                name={campo.name}
+                                value={opt}
+                                checked={formData[campo.name] === opt}
+                                onChange={(e) => handleFieldChange(campo.name, e.target.value)}
+                              />
+                              {opt}
+                            </label>
+                          ))}
+                        </div>
+                      ) : (
+                        <input
+                          type={campo.type || 'text'}
+                          placeholder={campo.label}
+                          value={formData[campo.name] || ''}
+                          onChange={(e) => handleFieldChange(campo.name, e.target.value)}
+                        />
+                      )}
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
           )}
         </Modal.Body>
         <Modal.Footer className="d-flex flex-column">
-          {!tipoSeleccionado ? (
+          {step === 'product' && (
             <>
               <h6 className="modal-section-title">¿Qué quieres hacer?</h6>
               <Row className="g-3 w-100 mb-4">
                 <Col xs={12} md={6}>
                   <Button
                     variant=""
-                    onClick={() => setTipoSeleccionado('comprar')}
+                    onClick={() => { setPaymentAction('comprar'); setStep('payment'); }}
                     className="w-100 btn-comprar-animate"
                     style={{ background: '#28a745', borderColor: '#28a745', color: '#fff', padding: '15px' }}
                   >
@@ -453,7 +636,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                 <Col xs={12} md={6}>
                   <Button
                     variant=""
-                    onClick={() => setTipoSeleccionado('carrito')}
+                    onClick={() => { setPaymentAction('carrito'); setStep('payment'); }}
                     className="w-100"
                     style={{ background: '#0d6efd', borderColor: '#0d6efd', color: '#fff', padding: '15px' }}
                   >
@@ -465,10 +648,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                 Cerrar
               </Button>
             </>
-          ) : (
+          )}
+
+          {step === 'payment' && (
             <>
               <h6 className="modal-section-title">
-                {tipoSeleccionado === 'comprar' ? '💬 Elige cómo pagar:' : '🛒 Elige cómo pagar:'}
+                {paymentAction === 'comprar' ? '💬 Elige cómo pagar:' : '🛒 Elige cómo pagar:'}
               </h6>
               <Row className="g-3 w-100 mb-4">
                 <Col xs={12} md={6}>
@@ -492,7 +677,38 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                   </Button>
                 </Col>
               </Row>
-              <Button variant="outline-secondary" onClick={() => setTipoSeleccionado(null)} className="mt-2 w-100">
+              <Button variant="outline-secondary" onClick={() => setStep('product')} className="mt-2 w-100">
+                ← Volver
+              </Button>
+            </>
+          )}
+
+          {step === 'credito-financieras' && (
+            <>
+              <Button variant="outline-secondary" onClick={() => setStep('payment')} className="w-100">
+                ← Volver
+              </Button>
+            </>
+          )}
+
+          {step === 'credito-form' && (
+            <>
+              <Button
+                variant=""
+                onClick={handleEnviarWhatsApp}
+                className="w-100"
+                disabled={!isFormValid()}
+                style={{
+                  background: isFormValid() ? '#25D366' : '#6c757d',
+                  borderColor: isFormValid() ? '#25D366' : '#6c757d',
+                  color: '#fff',
+                  padding: '12px',
+                  fontWeight: 600
+                }}
+              >
+                <i className="bi bi-whatsapp me-2"></i> Enviar solicitud por WhatsApp
+              </Button>
+              <Button variant="outline-secondary" onClick={() => setStep('credito-financieras')} className="mt-2 w-100">
                 ← Volver
               </Button>
             </>
@@ -500,26 +716,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
         </Modal.Footer>
       </Modal>
 
-      {/* 💳 Credit modals */}
-      <CreditModal
-        show={showCreditModal}
-        onHide={handleCloseCreditFlow}
-        financieras={getFinancierasForProduct(producto.marca, producto.categoria)}
-        productoNombre={nombre}
-        onSelect={handleSelectFinanciera}
-      />
-
-      {selectedFinanciera && (
-        <CreditFormModal
-          show={showCreditForm}
-          onHide={handleCloseCreditFlow}
-          onBack={handleBackFromForm}
-          financiera={selectedFinanciera}
-          productoNombre={nombre}
-          productoPrecio={showPromoPrice ? pricePromoStr : priceRegularStr}
-          onSubmit={handleCreditFormSubmit}
-        />
-      )}
+      {/* 💳 Credit flow is now handled inline via step wizard above */}
     </>
   );
 };
