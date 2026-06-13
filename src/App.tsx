@@ -25,6 +25,7 @@ const AdminPanel = lazy(() => import("./components/AdminPanel"));
 const AsesorPanel = lazy(() => import("./components/AsesorPanel"));
 const LandingPage = lazy(() => import("./components/LandingPage"));
 const ServicioTecnicoPage = lazy(() => import("./components/ServicioTecnicoPage"));
+const TerminosPage = lazy(() => import("./components/TerminosPage"));
 
 const ACTIVAR_NIEVE = false;
 
@@ -90,7 +91,7 @@ function App() {
 
   const routesToHideSessionInfo = ["/", "/login", "/servicio-tecnico", "/panel"];
   const showSessionInfo = usuario && !routesToHideSessionInfo.includes(location.pathname);
-  const showHeaderAndFooter = location.pathname !== "/login" && !location.pathname.startsWith("/panel");
+  const showHeaderAndFooter = location.pathname !== "/login" && !location.pathname.startsWith("/panel") && location.pathname !== "/terminos";
 
   return (
     <WhatsappNumberProvider>
@@ -133,6 +134,18 @@ function App() {
                     </div>
                   }>
                     <ServicioTecnicoPage />
+                  </Suspense>
+                }
+              />
+              <Route
+                path="/terminos"
+                element={
+                  <Suspense fallback={
+                    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+                      <p className="lead mb-0">Cargando…</p>
+                    </div>
+                  }>
+                    <TerminosPage />
                   </Suspense>
                 }
               />

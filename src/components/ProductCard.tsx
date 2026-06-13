@@ -21,6 +21,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [linkOpened, setLinkOpened] = useState(false);
   const [autovalidacionStatus, setAutovalidacionStatus] = useState<'pendiente' | 'aprobado' | 'denegado'>('pendiente');
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
   // Sistecredito validation state
   const [validPhase, setValidPhase] = useState<'idle' | 'running' | 'done'>('idle');
   const [validStep, setValidStep] = useState(0); // 0=datos, 1=cupo, 2=historial, 3=resultado
@@ -153,6 +154,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     setFormData({});
     setLinkOpened(false);
     setAutovalidacionStatus('pendiente');
+    setAceptaTerminos(false);
     resetValid();
     setStep('credito-form');
   };
@@ -166,8 +168,18 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     for (const campo of selectedFinanciera.campos) {
       if (campo.required && !formData[campo.name]?.trim()) return false;
     }
+    // Nombre completo: al menos 2 palabras (solo Sistecredito)
+    if (selectedFinanciera.id === 'sistecredito') {
+      const words = (formData.nombres || '').trim().split(/\s+/).filter(Boolean);
+      if (words.length < 2) return false;
+    }
+    // Todas las financieras: debe aceptar términos
+    if (!aceptaTerminos) return false;
     return true;
   };
+
+  const nombreCompletoWords = (formData.nombres || '').trim().split(/\s+/).filter(Boolean).length;
+  const nombreCompletoInvalido = selectedFinanciera?.id === 'sistecredito' && (formData.nombres?.trim() || '') && nombreCompletoWords < 2;
 
   const handleEnviarWhatsApp = () => {
     if (!selectedFinanciera) return;
@@ -218,6 +230,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
   /** Validación progresiva para Sistecredito con pasos animados */
   const handleSistecreditoValidar = () => {
     if (validPhase !== 'idle') return;
+    if (!isFormValid()) return;
 
     const cupoStr = (formData.cupo || '').replace(/[^0-9]/g, '');
     const cupo = cupoStr ? parseInt(cupoStr, 10) : null;
@@ -398,6 +411,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
           border-color: var(--brand-blue);
           box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.15);
         }
+        .form-field-group input.is-invalid {
+          border-color: var(--gio-red);
+          box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.15);
+        }
+        .form-field-group input.is-invalid:focus {
+          border-color: var(--gio-red);
+          box-shadow: 0 0 0 3px rgba(220, 53, 69, 0.25);
+        }
         .radio-group {
           display: flex;
           gap: 1rem;
@@ -409,6 +430,35 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
           align-items: center;
           gap: 0.35rem;
           cursor: pointer;
+        }
+
+        .terminos-checkbox {
+          margin-top: 0.5rem;
+          padding-top: 0.75rem;
+          border-top: 1px solid var(--border-color, #e0e0e0);
+        }
+        .terminos-checkbox .checkbox-label {
+          display: flex;
+          align-items: flex-start;
+          gap: 0.5rem;
+          cursor: pointer;
+          font-weight: 400;
+          font-size: 0.85rem;
+          line-height: 1.4;
+        }
+        .terminos-checkbox .checkbox-label input[type="checkbox"] {
+          margin-top: 0.15rem;
+          width: 1rem;
+          height: 1rem;
+          cursor: pointer;
+          flex-shrink: 0;
+        }
+        .terminos-checkbox .checkbox-label a {
+          color: var(--brand-blue, #0d6efd);
+          text-decoration: underline;
+        }
+        .terminos-checkbox .checkbox-label a:hover {
+          color: var(--brand-blue-dark, #0a58ca);
         }
 
         .valid-steps {
@@ -487,9 +537,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
           color: #fff;
           transition: transform 0.2s, box-shadow 0.2s;
         }
-        .btn-validar:hover {
+        .btn-validar:hover:not(:disabled) {
           transform: translateY(-2px);
           box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        .btn-validar:disabled {
+          opacity: 0.5;
+          cursor: not-allowed;
+          transform: none;
+          box-shadow: none;
         }
 
         @media (max-width: 480px) {
@@ -846,17 +902,49 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                           placeholder={campo.label}
                           value={formData[campo.name] || ''}
                           onChange={(e) => handleFieldChange(campo.name, e.target.value)}
+                          className={nombreCompletoInvalido ? 'is-invalid' : ''}
                         />
+                      )}
+                      {/* Sistecredito: hint de nombre completo */}
+                      {selectedFinanciera.id === 'sistecredito' && campo.name === 'nombres' && (
+                        <small
+                          className={`d-block mt-1 ${
+                            nombreCompletoInvalido ? 'text-danger' : 'text-muted'
+                          }`}
+                          style={{ fontSize: '0.75rem' }}
+                        >
+                          {nombreCompletoInvalido
+                            ? 'Ingresá tu nombre y apellido completo'
+                            : 'Ej: Juan Pérez'}
+                        </small>
                       )}
                     </div>
                   ))}
+
+                  {/* Términos y condiciones (para todas las financieras) */}
+                  <div className="form-field-group terminos-checkbox">
+                    <label className="checkbox-label">
+                      <input
+                        type="checkbox"
+                        checked={aceptaTerminos}
+                        onChange={(e) => setAceptaTerminos(e.target.checked)}
+                      />
+                      <span>
+                        Autorizo el tratamiento de mis datos personales de acuerdo con los{' '}
+                        <a href="/terminos" target="_blank" rel="noopener noreferrer">
+                          Términos y Condiciones
+                        </a>{' '}
+                        de GIO TECH
+                      </span>
+                    </label>
+                  </div>
                 </div>
               )}
 
               {/* ─── Sistecredito: validation button ─── */}
               {selectedFinanciera.id === 'sistecredito' && validPhase === 'idle' && (
                 <div className="text-center mt-3">
-                  <button className="btn-validar" onClick={handleSistecreditoValidar}>
+                  <button className="btn-validar" onClick={handleSistecreditoValidar} disabled={!isFormValid()}>
                     <i className="bi bi-shield-check me-2"></i> Validar
                   </button>
                 </div>
