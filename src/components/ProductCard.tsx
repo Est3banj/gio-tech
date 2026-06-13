@@ -183,6 +183,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
 
   const handleEnviarWhatsApp = () => {
     if (!selectedFinanciera) return;
+    if (!isFormValid()) return;
 
     const lineLabel = (key: string): string => {
       const labels: Record<string, string> = {
