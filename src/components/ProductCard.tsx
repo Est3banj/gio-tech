@@ -20,6 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
   const [selectedFinanciera, setSelectedFinanciera] = useState<Financiera | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [linkOpened, setLinkOpened] = useState(false);
+  const [sistecreditoValidation, setSistecreditoValidation] = useState<'idle' | 'validating' | 'aplica' | 'no-aplica'>('idle');
   const { addToCart } = useCart();
   const rawPhoneNumber = useWhatsappNumber();
   const phoneNumber = rawPhoneNumber || '573248022632';
@@ -38,6 +39,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     setSelectedFinanciera(null);
     setFormData({});
     setLinkOpened(false);
+    setSistecreditoValidation('idle');
   };
 
   const {
@@ -130,6 +132,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     setSelectedFinanciera(financiera);
     setFormData({});
     setLinkOpened(false);
+    setSistecreditoValidation('idle');
     setStep('credito-form');
   };
 
@@ -185,6 +188,39 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     }
     cerrar();
   };
+
+  /** Validación específica para Sistecredito */
+  const handleSistecreditoValidar = () => {
+    setSistecreditoValidation('validating');
+
+    // Simular delay de validación (2 segundos)
+    setTimeout(() => {
+      const esPrimeraCompra = formData.primeraCompra === 'Sí';
+
+      if (esPrimeraCompra) {
+        setSistecreditoValidation('no-aplica');
+        return;
+      }
+
+      // Parsear cupo: limpiar no-numéricos
+      const cupoStr = (formData.cupo || '').replace(/[^0-9]/g, '');
+      const cupo = cupoStr ? parseInt(cupoStr, 10) : null;
+
+      if (cupo === null || cupo >= 600000) {
+        setSistecreditoValidation('aplica');
+        handleEnviarWhatsApp();
+      } else {
+        setSistecreditoValidation('no-aplica');
+      }
+    }, 2000);
+  };
+
+  const validationNoAplicaReason =
+    sistecreditoValidation === 'no-aplica'
+      ? formData.primeraCompra === 'Sí'
+        ? 'No aplica para tecnología'
+        : 'Cupo insuficiente (mínimo $600.000)'
+      : '';
 
   return (
     <>
@@ -333,6 +369,57 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
           align-items: center;
           gap: 0.35rem;
           cursor: pointer;
+        }
+
+        .validation-spinner {
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          padding: 2rem 0;
+        }
+        .validation-spinner .spinner-border {
+          width: 3rem;
+          height: 3rem;
+        }
+        .validation-result {
+          text-align: center;
+          padding: 1.25rem;
+          border-radius: var(--radius-md);
+          margin-top: 1rem;
+        }
+        .validation-result.aplica {
+          background: #d1e7dd;
+          border: 1.5px solid #0f5132;
+          color: #0f5132;
+        }
+        .validation-result.no-aplica {
+          background: #f8d7da;
+          border: 1.5px solid #842029;
+          color: #842029;
+        }
+        .validation-result .icon {
+          font-size: 2.5rem;
+          margin-bottom: 0.5rem;
+        }
+        .validation-result .reason {
+          font-size: 0.85rem;
+          margin-top: 0.35rem;
+          opacity: 0.85;
+        }
+        .btn-validar {
+          padding: 12px 40px;
+          font-weight: 700;
+          font-size: 1.05rem;
+          border-radius: var(--radius-sm);
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          border: none;
+          color: #fff;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn-validar:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
         }
 
         @media (max-width: 480px) {
@@ -637,6 +724,46 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                   ))}
                 </div>
               )}
+
+              {/* ─── Sistecredito: validation button ─── */}
+              {selectedFinanciera.id === 'sistecredito' && sistecreditoValidation === 'idle' && (
+                <div className="text-center mt-3">
+                  <button className="btn-validar" onClick={handleSistecreditoValidar}>
+                    <i className="bi bi-shield-check me-2"></i> Validar
+                  </button>
+                </div>
+              )}
+
+              {/* ─── Sistecredito: validating spinner ─── */}
+              {selectedFinanciera.id === 'sistecredito' && sistecreditoValidation === 'validating' && (
+                <div className="validation-spinner">
+                  <div className="spinner-border text-primary" role="status">
+                    <span className="visually-hidden">Validando...</span>
+                  </div>
+                  <p className="mt-3 mb-0 fw-semibold" style={{ color: 'var(--text-primary)' }}>
+                    Validando información...
+                  </p>
+                </div>
+              )}
+
+              {/* ─── Sistecredito: validation result ─── */}
+              {selectedFinanciera.id === 'sistecredito' && sistecreditoValidation !== 'idle' && sistecreditoValidation !== 'validating' && (
+                <div className={`validation-result ${sistecreditoValidation}`}>
+                  {sistecreditoValidation === 'aplica' ? (
+                    <>
+                      <div className="icon">✅</div>
+                      <div className="fw-bold fs-6">¡Aplicas para Sistecredito!</div>
+                      <div className="reason">Te redirigimos a WhatsApp...</div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="icon">❌</div>
+                      <div className="fw-bold fs-6">No aplicas para Sistecredito</div>
+                      <div className="reason">{validationNoAplicaReason}</div>
+                    </>
+                  )}
+                </div>
+              )}
             </>
           )}
         </Modal.Body>
@@ -713,7 +840,27 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
             </>
           )}
 
-          {step === 'credito-form' && (
+          {step === 'credito-form' && selectedFinanciera && selectedFinanciera.id === 'sistecredito' && (
+            <>
+              {sistecreditoValidation === 'no-aplica' && (
+                <Button
+                  variant=""
+                  onClick={() => { setStep('credito-financieras'); setSistecreditoValidation('idle'); }}
+                  className="w-100"
+                  style={{ background: '#6f42c1', borderColor: '#6f42c1', color: '#fff', padding: '12px', fontWeight: 600 }}
+                >
+                  <i className="bi bi-arrow-left me-2"></i> Intentar con otra financiera
+                </Button>
+              )}
+              {(sistecreditoValidation === 'idle' || sistecreditoValidation === 'validating') && (
+                <Button variant="outline-secondary" onClick={() => { setStep('credito-financieras'); setSistecreditoValidation('idle'); }} className="mt-2 w-100">
+                  ← Volver
+                </Button>
+              )}
+            </>
+          )}
+
+          {step === 'credito-form' && selectedFinanciera && selectedFinanciera.id !== 'sistecredito' && (
             <>
               <Button
                 variant=""

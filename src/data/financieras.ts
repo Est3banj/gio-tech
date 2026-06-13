@@ -13,6 +13,8 @@ export const FINANCIERAS: Financiera[] = [
     campos: [
       { name: 'nombres', label: 'Nombres y apellidos', type: 'text', required: true },
       { name: 'cedula', label: 'Número de cédula', type: 'text', required: true },
+      { name: 'cupo', label: 'Cupo disponible ($)', type: 'text', required: false },
+      { name: 'primeraCompra', label: '¿Es tu primera compra?', type: 'radio', required: true, options: ['Sí', 'No'] },
     ],
   },
   {
