@@ -20,7 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
   const [selectedFinanciera, setSelectedFinanciera] = useState<Financiera | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [linkOpened, setLinkOpened] = useState(false);
-  const [autovalidacionConfirmada, setAutovalidacionConfirmada] = useState(false);
+  const [autovalidacionStatus, setAutovalidacionStatus] = useState<'pendiente' | 'aprobado' | 'denegado'>('pendiente');
   // Sistecredito validation state
   const [validPhase, setValidPhase] = useState<'idle' | 'running' | 'done'>('idle');
   const [validStep, setValidStep] = useState(0); // 0=datos, 1=cupo, 2=historial, 3=resultado
@@ -47,7 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     setSelectedFinanciera(null);
     setFormData({});
     setLinkOpened(false);
-    setAutovalidacionConfirmada(false);
+    setAutovalidacionStatus('pendiente');
     resetValid();
   };
 
@@ -152,6 +152,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     setSelectedFinanciera(financiera);
     setFormData({});
     setLinkOpened(false);
+    setAutovalidacionStatus('pendiente');
     resetValid();
     setStep('credito-form');
   };
@@ -759,31 +760,45 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                 </div>
               )}
 
-              {/* ─── Autovalidación: paso 2 — checkpoint "Ya validé" ─── */}
-              {selectedFinanciera.tipo === 'autovalidacion' && linkOpened && !autovalidacionConfirmada && (
+              {/* ─── Autovalidación: paso 2 — elegir resultado ─── */}
+              {selectedFinanciera.tipo === 'autovalidacion' && linkOpened && autovalidacionStatus === 'pendiente' && (
                 <div className="autovalidacion-note text-center">
                   <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
                     <i className="bi bi-check-circle-fill text-success"></i>
                     <span className="fw-semibold" style={{ color: 'var(--text-primary)' }}>Enlace abierto en {selectedFinanciera.nombre}</span>
                   </div>
                   <p className="mb-2" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
-                    ¿Ya completaste la validación en el sitio externo?
+                    ¿Cómo te fue en la validación?
                   </p>
-                  <Button
-                    variant=""
-                    size="sm"
-                    onClick={() => setAutovalidacionConfirmada(true)}
-                    style={{ background: '#28a745', borderColor: '#28a745', color: '#fff', fontWeight: 600, padding: '8px 24px' }}
-                  >
-                    <i className="bi bi-check-lg me-1"></i> Sí, ya validé mi crédito
-                  </Button>
+                  <Row className="g-2">
+                    <Col xs={6}>
+                      <Button
+                        variant=""
+                        size="sm"
+                        onClick={() => setAutovalidacionStatus('aprobado')}
+                        className="w-100"
+                        style={{ background: '#28a745', borderColor: '#28a745', color: '#fff', fontWeight: 600, padding: '10px 8px' }}
+                      >
+                        <i className="bi bi-check-circle me-1"></i> Aprobado
+                      </Button>
+                    </Col>
+                    <Col xs={6}>
+                      <Button
+                        variant=""
+                        size="sm"
+                        onClick={() => setAutovalidacionStatus('denegado')}
+                        className="w-100"
+                        style={{ background: '#dc3545', borderColor: '#dc3545', color: '#fff', fontWeight: 600, padding: '10px 8px' }}
+                      >
+                        <i className="bi bi-x-circle me-1"></i> Denegado
+                      </Button>
+                    </Col>
+                  </Row>
                   <div className="mt-2">
                     <Button
                       variant="link"
                       size="sm"
-                      onClick={() => {
-                        window.open(selectedFinanciera.urlAutovalidacion, '_blank');
-                      }}
+                      onClick={() => { window.open(selectedFinanciera.urlAutovalidacion, '_blank'); }}
                       style={{ color: 'var(--brand-blue)', textDecoration: 'none', fontSize: '0.85rem' }}
                     >
                       <i className="bi bi-box-arrow-up-right me-1"></i> Volver a abrir {selectedFinanciera.nombre}
@@ -792,8 +807,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                 </div>
               )}
 
-              {/* ─── Formulario: se muestra solo si no es autovalidación o ya confirmó ─── */}
-              {(selectedFinanciera.tipo !== 'autovalidacion' || autovalidacionConfirmada) && (
+              {/* ─── Autovalidación: resultado denegado ─── */}
+              {selectedFinanciera.tipo === 'autovalidacion' && autovalidacionStatus === 'denegado' && (
+                <div className="validation-result no-aplica mt-2">
+                  <div className="icon"><i className="bi bi-x-circle-fill"></i></div>
+                  <div className="fw-bold fs-6">Cupo denegado</div>
+                  <div className="reason">No te preocupes, puedes probar con otra financiera</div>
+                </div>
+              )}
+
+              {/* ─── Formulario: se muestra si no es autovalidación, o si aprobó ─── */}
+              {(selectedFinanciera.tipo !== 'autovalidacion' || autovalidacionStatus === 'aprobado') && (
                 <div className="mt-2">
                   {selectedFinanciera.campos.map((campo) => (
                     <div className="form-field-group" key={campo.name}>
@@ -1012,24 +1036,37 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
 
           {step === 'credito-form' && selectedFinanciera && selectedFinanciera.id !== 'sistecredito' && (
             <>
-              <Button
-                variant=""
-                onClick={handleEnviarWhatsApp}
-                className="w-100"
-                disabled={!isFormValid()}
-                style={{
-                  background: isFormValid() ? '#25D366' : '#6c757d',
-                  borderColor: isFormValid() ? '#25D366' : '#6c757d',
-                  color: '#fff',
-                  padding: '12px',
-                  fontWeight: 600
-                }}
-              >
-                <i className="bi bi-whatsapp me-2"></i> Enviar solicitud por WhatsApp
-              </Button>
-              <Button variant="outline-secondary" onClick={() => setStep('credito-financieras')} className="mt-2 w-100">
-                ← Volver
-              </Button>
+              {autovalidacionStatus === 'denegado' ? (
+                <Button
+                  variant=""
+                  onClick={() => { setStep('credito-financieras'); setAutovalidacionStatus('pendiente'); setLinkOpened(false); }}
+                  className="w-100"
+                  style={{ background: '#6f42c1', borderColor: '#6f42c1', color: '#fff', padding: '12px', fontWeight: 600 }}
+                >
+                  <i className="bi bi-arrow-left me-2"></i> Intentar con otra financiera
+                </Button>
+              ) : (
+                <>
+                  <Button
+                    variant=""
+                    onClick={handleEnviarWhatsApp}
+                    className="w-100"
+                    disabled={!isFormValid()}
+                    style={{
+                      background: isFormValid() ? '#25D366' : '#6c757d',
+                      borderColor: isFormValid() ? '#25D366' : '#6c757d',
+                      color: '#fff',
+                      padding: '12px',
+                      fontWeight: 600
+                    }}
+                  >
+                    <i className="bi bi-whatsapp me-2"></i> Enviar solicitud por WhatsApp
+                  </Button>
+                  <Button variant="outline-secondary" onClick={() => setStep('credito-financieras')} className="mt-2 w-100">
+                    ← Volver
+                  </Button>
+                </>
+              )}
             </>
           )}
         </Modal.Footer>
