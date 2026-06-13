@@ -182,6 +182,8 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
         email: 'Correo electrónico',
         compradoAntes: '¿Ha comprado antes?',
         reportesNegativos: '¿Reportes negativos?',
+        cupo: 'Cupo disponible',
+        primeraCompra: 'Primera compra',
       };
       return labels[key] || key;
     };
@@ -189,13 +191,6 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     let mensaje = `🧾 *Solicitud de crédito - ${selectedFinanciera.nombre}*\n\n`;
     mensaje += `📱 *Producto:* ${nombre}\n`;
     mensaje += `💰 *Precio:* ${showPromoPrice ? pricePromoStr : priceRegularStr}\n`;
-    if (cuotaInicial > 0) mensaje += `💵 *Cuota inicial:* ${formatPrice(cuotaInicial)}\n`;
-    if (solo12Meses && cuotas12) {
-      mensaje += `📆 *12 cuotas mensuales:* ${formatPrice(cuotas12)}\n`;
-    } else {
-      mensaje += `📆 *16 cuotas quincenales:* ${formatPrice(cuotas6)}\n`;
-      mensaje += `📆 *8 cuotas mensuales:* ${formatPrice(cuotas8)}\n`;
-    }
     mensaje += `\n👤 *Datos del cliente:*\n`;
     for (const [key, value] of Object.entries(formData)) {
       mensaje += `▸ ${lineLabel(key)}: ${value}\n`;
@@ -858,8 +853,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                       {validResultType === 'no-aplica' ? (
                         <>
                           <div className="icon"><i className="bi bi-x-circle-fill"></i></div>
-                          <div className="fw-bold fs-6">No aplicas para Sistecredito</div>
-                          <div className="reason">{validResultMsg}</div>
+                          <div className="fw-bold fs-6">{validResultMsg}</div>
                         </>
                       ) : (
                         <>
