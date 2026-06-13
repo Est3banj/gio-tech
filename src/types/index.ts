@@ -67,6 +67,31 @@ export interface User {
 }
 
 // ---------------------------------------------------------------------
+// 💳 FINANCIERAS (Crédito)
+// ---------------------------------------------------------------------
+export interface CampoFormulario {
+  name: string;
+  label: string;
+  type: 'text' | 'email' | 'radio';
+  required?: boolean;
+  options?: string[];
+}
+
+export interface Financiera {
+  id: string;
+  nombre: string;
+  logo: string;
+  tipo: 'autovalidacion' | 'asesor';
+  urlAutovalidacion?: string;
+  aplicaEn: {
+    iphone: boolean;
+    android: boolean;
+    electrodomestico: boolean;
+  };
+  campos: CampoFormulario[];
+}
+
+// ---------------------------------------------------------------------
 // 🛒 CARRITO
 // ---------------------------------------------------------------------
 export type CotizacionType = 'contado' | 'credito';
