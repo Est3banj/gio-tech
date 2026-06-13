@@ -5,7 +5,7 @@ import { useCart } from "../contexts/CartContext";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { formatPrice } from "../utils/formatters";
 import { recordProductView } from "../services/productStats.service";
-import { getFinancierasForProduct } from "../data/financieras";
+import { FINANCIERAS, getFinancierasForProduct } from "../data/financieras";
 import type { Product, CotizacionType, Financiera } from "../types";
 
 interface ProductCardProps {
@@ -276,6 +276,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
           background: #d1e7dd;
           color: #0f5132;
         }
+        .financiera-card-disabled {
+          opacity: 0.45;
+          cursor: not-allowed !important;
+          filter: grayscale(0.8);
+          border-color: var(--border-subtle, #e0e0e0) !important;
+        }
+        .financiera-card-disabled:hover {
+          transform: none !important;
+          box-shadow: none !important;
+          border-color: var(--border-subtle, #e0e0e0) !important;
+        }
         .autovalidacion-note {
           font-size: 0.85rem;
           color: var(--text-muted);
@@ -540,17 +551,28 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
             <>
               <h6 className="modal-section-title">Elige una financiera</h6>
               <Row className="g-3">
-                {financierasDisponibles.map((f) => (
-                  <Col xs={6} key={f.id}>
-                    <div className="financiera-card" onClick={() => handleSelectFinanciera(f)}>
-                      <img src={f.logo} alt={f.nombre} loading="lazy" />
-                      <div className="financiera-name">{f.nombre}</div>
-                      <span className={`financiera-badge ${f.tipo === 'autovalidacion' ? 'badge-autovalidacion' : 'badge-asesor'}`}>
-                        {f.tipo === 'autovalidacion' ? 'Autovalidación' : 'Asesor'}
-                      </span>
-                    </div>
-                  </Col>
-                ))}
+                {FINANCIERAS.map((f) => {
+                  const isAvailable = financierasDisponibles.some((df) => df.id === f.id);
+                  return (
+                    <Col xs={6} key={f.id}>
+                      <div
+                        className={`financiera-card${!isAvailable ? ' financiera-card-disabled' : ''}`}
+                        onClick={() => isAvailable && handleSelectFinanciera(f)}
+                      >
+                        <img src={f.logo} alt={f.nombre} loading="lazy" />
+                        <div className="financiera-name">{f.nombre}</div>
+                        <span className={`financiera-badge ${f.tipo === 'autovalidacion' ? 'badge-autovalidacion' : 'badge-asesor'}`}>
+                          {f.tipo === 'autovalidacion' ? 'Autovalidación' : 'Asesor'}
+                        </span>
+                        {!isAvailable && (
+                          <div className="text-muted small mt-1" style={{ fontSize: '0.7rem', lineHeight: 1.2 }}>
+                            No disponible<br />para este producto
+                          </div>
+                        )}
+                      </div>
+                    </Col>
+                  );
+                })}
               </Row>
             </>
           )}
