@@ -49,9 +49,9 @@ const Footer: React.FC = () => {
 
             {/* Links legales */}
             <p className="mb-2" style={{ fontSize: '0.8rem' }}>
-              <a href="#" className="footer-link mx-2">Términos y Condiciones</a>
+              <a href="/terminos" className="footer-link mx-2">Términos y Condiciones</a>
               <span style={{ color: 'var(--border-color)' }}>|</span>
-              <a href="#" className="footer-link mx-2">Política de Privacidad</a>
+              <a href="/terminos" className="footer-link mx-2">Política de Privacidad</a>
             </p>
 
             {/* Copyright */}
