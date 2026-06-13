@@ -1447,6 +1447,153 @@ body {
   background-color: rgba(255, 255, 255, 0.5);
 }
 
+/* ══════════════════════════════════════════════════════════
+   CRÉDITO — Financieras Modal
+   ═══════════════════════════════════════════════════════════ */
+
+.credit-modal .modal-content {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+}
+
+.credit-modal .modal-header {
+  border-bottom: 1px solid var(--border-color);
+  padding: 1.25rem 1.5rem;
+}
+
+.credit-modal .modal-title {
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--text-primary);
+}
+
+.credit-subtitle {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+.credit-card {
+  position: relative;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 1.25rem 1rem;
+  cursor: pointer;
+  transition: all var(--trans-base);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  text-align: center;
+  height: 100%;
+}
+
+.credit-card:hover {
+  border-color: var(--gio-red);
+  background: var(--gio-red-light);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(200, 16, 46, 0.12);
+}
+
+.credit-card-logo {
+  width: 100%;
+  height: 60px;
+  object-fit: contain;
+  display: block;
+}
+
+.credit-card-name {
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  line-height: 1.2;
+}
+
+.credit-card-badge {
+  font-size: 0.65rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+}
+
+.credit-card-badge--autovalidacion {
+  background: rgba(34, 197, 94, 0.12);
+  color: var(--brand-green);
+}
+
+.credit-card-badge--asesor {
+  background: rgba(200, 16, 46, 0.1);
+  color: var(--gio-red);
+}
+
+/* Form modal */
+
+.credit-form-section-title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  margin-bottom: 0.75rem;
+}
+
+.credit-form-redirect-box {
+  background: var(--gio-red-light);
+  border: 1px solid rgba(200, 16, 46, 0.15);
+  border-radius: var(--radius-sm);
+  padding: 1rem;
+  text-align: center;
+}
+
+.credit-form-redirect-box p {
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.credit-form-label {
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.credit-form-radio-group {
+  display: flex;
+  gap: 1rem;
+  padding-top: 0.25rem;
+}
+
+.credit-form-radio-group .form-check {
+  padding-left: 1.5rem;
+}
+
+.credit-form-radio-group .form-check-input:checked {
+  background-color: var(--gio-red);
+  border-color: var(--gio-red);
+}
+
+.credit-btn-submit {
+  background-color: var(--gio-red) !important;
+  border-color: var(--gio-red) !important;
+  color: #ffffff !important;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 600 !important;
+  padding: 0.6rem 1.5rem !important;
+  width: 100%;
+  transition: all var(--trans-base) !important;
+}
+
+.credit-btn-submit:hover {
+  background-color: var(--gio-red-dark) !important;
+  border-color: var(--gio-red-dark) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(200, 16, 46, 0.3);
+}
+
 /* ============================================================
    Admin Panel Dashboard - Nuevo Diseño
    ============================================================ */

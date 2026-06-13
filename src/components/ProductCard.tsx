@@ -5,7 +5,10 @@ import { useCart } from "../contexts/CartContext";
 import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
 import { formatPrice } from "../utils/formatters";
 import { recordProductView } from "../services/productStats.service";
-import type { Product, CotizacionType } from "../types";
+import { getFinancierasForProduct } from "../data/financieras";
+import CreditModal from "./CreditModal";
+import CreditFormModal from "./CreditFormModal";
+import type { Product, CotizacionType, Financiera } from "../types";
 
 interface ProductCardProps {
   producto: Product;
@@ -15,6 +18,9 @@ interface ProductCardProps {
 const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }) => {
   const [mostrar, setMostrar] = useState(false);
   const [tipoSeleccionado, setTipoSeleccionado] = useState<null | 'comprar' | 'carrito'>(null);
+  const [showCreditModal, setShowCreditModal] = useState(false);
+  const [showCreditForm, setShowCreditForm] = useState(false);
+  const [selectedFinanciera, setSelectedFinanciera] = useState<Financiera | null>(null);
   const { addToCart } = useCart();
   const rawPhoneNumber = useWhatsappNumber();
   const phoneNumber = rawPhoneNumber || '573248022632';
@@ -96,13 +102,81 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     : `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatPrice(cuotaInicial)}\n16 cuotas quincenales: ${formatPrice(cuotas6)}\n8 cuotas mensuales: ${formatPrice(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
 
   const handleSeleccionTipo = (tipo: CotizacionType) => {
-    if (tipoSeleccionado === 'comprar') {
-      const mensaje = tipo === 'contado' ? mensajeWhatsAppContadoDirecto : mensajeWhatsAppCreditoDirecto;
-      if (phoneNumber) window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, "_blank");
-    } else if (tipoSeleccionado === 'carrito') {
-      addToCart(producto, tipo);
-      cerrar();
+    if (tipo === 'contado') {
+      if (tipoSeleccionado === 'comprar') {
+        if (phoneNumber) window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensajeWhatsAppContadoDirecto)}`, "_blank");
+      } else if (tipoSeleccionado === 'carrito') {
+        addToCart(producto, tipo);
+        cerrar();
+      }
+    } else if (tipo === 'credito') {
+      // Show credit modal with financieras
+      setShowCreditModal(true);
     }
+  };
+
+  const handleSelectFinanciera = (financiera: Financiera) => {
+    setSelectedFinanciera(financiera);
+    setShowCreditModal(false);
+    setShowCreditForm(true);
+  };
+
+  const handleBackFromForm = () => {
+    setShowCreditForm(false);
+    setSelectedFinanciera(null);
+    setShowCreditModal(true);
+  };
+
+  const handleCloseCreditFlow = () => {
+    setShowCreditModal(false);
+    setShowCreditForm(false);
+    setSelectedFinanciera(null);
+  };
+
+  const handleCreditFormSubmit = (data: Record<string, string>) => {
+    const lineLabel = (key: string): string => {
+      const labels: Record<string, string> = {
+        nombres: 'Nombres y apellidos',
+        cedula: 'Cédula',
+        fechaNacimiento: 'Fecha y lugar de nacimiento',
+        fechaExpedicion: 'Fecha y lugar de expedición',
+        celular: 'Celular',
+        email: 'Correo electrónico',
+        compradoAntes: '¿Ha comprado antes?',
+        reportesNegativos: '¿Reportes negativos?',
+      };
+      return labels[key] || key;
+    };
+
+    let mensaje = `🧾 *Solicitud de crédito - ${selectedFinanciera?.nombre}*\n\n`;
+    mensaje += `📱 *Producto:* ${nombre}\n`;
+    mensaje += `💰 *Precio:* ${showPromoPrice ? pricePromoStr : priceRegularStr}\n`;
+
+    if (cuotaInicial > 0) {
+      mensaje += `💵 *Cuota inicial:* ${formatPrice(cuotaInicial)}\n`;
+    }
+    if (solo12Meses && cuotas12) {
+      mensaje += `📆 *12 cuotas mensuales:* ${formatPrice(cuotas12)}\n`;
+    } else {
+      mensaje += `📆 *16 cuotas quincenales:* ${formatPrice(cuotas6)}\n`;
+      mensaje += `📆 *8 cuotas mensuales:* ${formatPrice(cuotas8)}\n`;
+    }
+
+    mensaje += `\n👤 *Datos del cliente:*\n`;
+    for (const [key, value] of Object.entries(data)) {
+      mensaje += `▸ ${lineLabel(key)}: ${value}\n`;
+    }
+
+    if (phoneNumber) {
+      window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, "_blank");
+    }
+
+    // If it was "Añadir al Carrito", add to cart after WhatsApp
+    if (tipoSeleccionado === 'carrito') {
+      addToCart(producto, 'credito');
+    }
+
+    cerrar();
   };
 
   return (
@@ -425,6 +499,27 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
           )}
         </Modal.Footer>
       </Modal>
+
+      {/* 💳 Credit modals */}
+      <CreditModal
+        show={showCreditModal}
+        onHide={handleCloseCreditFlow}
+        financieras={getFinancierasForProduct(producto.marca, producto.categoria)}
+        productoNombre={nombre}
+        onSelect={handleSelectFinanciera}
+      />
+
+      {selectedFinanciera && (
+        <CreditFormModal
+          show={showCreditForm}
+          onHide={handleCloseCreditFlow}
+          onBack={handleBackFromForm}
+          financiera={selectedFinanciera}
+          productoNombre={nombre}
+          productoPrecio={showPromoPrice ? pricePromoStr : priceRegularStr}
+          onSubmit={handleCreditFormSubmit}
+        />
+      )}
     </>
   );
 };
