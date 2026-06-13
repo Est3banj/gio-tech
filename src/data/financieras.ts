@@ -100,21 +100,26 @@ export const FINANCIERAS: Financiera[] = [
 
 export type ProductType = 'iphone' | 'android' | 'electrodomestico';
 
-/** Determina el tipo de producto según marca y categoría */
-export function getProductType(marca?: string, categoria?: string): ProductType {
+/** Determina el tipo de producto según marca, nombre y categoría */
+export function getProductType(marca?: string, nombre?: string, categoria?: string): ProductType {
+  // 1) Marca explícita "iPhone"
   if (marca?.toLowerCase() === 'iphone') return 'iphone';
+  // 2) Nombre del producto contiene "iphone" (cubre casos como marca="Apple")
+  if (nombre?.toLowerCase().includes('iphone')) return 'iphone';
+  // 3) Categoría de electrodoméstico
   if (categoria) {
     const cat = categoria.toLowerCase();
     if (['electrodomestico', 'tv', 'lavadora', 'nevera', 'hogar'].includes(cat)) {
       return 'electrodomestico';
     }
   }
+  // 4) Por defecto: Android / celulares genéricos
   return 'android';
 }
 
 /** Filtra las financieras que aplican para un producto */
-export function getFinancierasForProduct(marca?: string, categoria?: string): Financiera[] {
-  const type = getProductType(marca, categoria);
+export function getFinancierasForProduct(marca?: string, categoria?: string, nombre?: string): Financiera[] {
+  const type = getProductType(marca, nombre, categoria);
   const keyMap: Record<ProductType, keyof Financiera['aplicaEn']> = {
     iphone: 'iphone',
     android: 'android',

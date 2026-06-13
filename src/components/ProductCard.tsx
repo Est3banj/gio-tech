@@ -106,7 +106,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     ? `Hola, estoy interesado en el ${nombre} con el plan especial de 12 meses.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatPrice(cuotaInicial)}\n12 cuotas mensuales: ${formatPrice(cuotas12)}\n¿Me pueden dar más información?`
     : `Hola, estoy interesado en el ${nombre} y me gustaría cotizarlo a crédito.\nPrecio ${showPromoPrice ? 'promocional' : 'contado'}: ${showPromoPrice ? pricePromoStr : priceRegularStr}\nCuota inicial: ${formatPrice(cuotaInicial)}\n16 cuotas quincenales: ${formatPrice(cuotas6)}\n8 cuotas mensuales: ${formatPrice(cuotas8)}\n¿Me pueden dar más información sobre el crédito?`;
 
-  const financierasDisponibles = getFinancierasForProduct(producto.marca, producto.categoria);
+  const financierasDisponibles = getFinancierasForProduct(producto.marca, producto.categoria, producto.nombre);
 
   const handleSeleccionTipo = (tipo: CotizacionType) => {
     if (tipo === 'contado') {
