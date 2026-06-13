@@ -239,30 +239,17 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
 
     t.push(setTimeout(() => {                                  // paso 3: resultado final
       const esPrimeraCompra = formData.primeraCompra === 'Sí';
-
-      let type: 'aplica' | 'no-aplica' | 'condiciones';
-      let msg: string;
-
-      if (esPrimeraCompra) {
-        type = 'no-aplica';
-        msg = 'No aplica para tecnología';
-      } else if (cupo !== null && cupo < 300000) {
-        type = 'no-aplica';
-        msg = 'Cupo muy bajo (mínimo $300.000)';
-      } else if (cupo !== null && cupo < 600000) {
-        type = 'condiciones';
-        msg = 'Aplica con condiciones';
-      } else {
-        type = 'aplica';
-        msg = 'Cupo suficiente';
-      }
+      // Unica regla real: primera compra = no aplica para tecnologia
+      // El cupo es solo informativo para el asesor, no lo validamos
+      const type = esPrimeraCompra ? 'no-aplica' : 'aplica';
+      const msg = esPrimeraCompra ? 'No aplica para tecnología' : 'Aplica';
 
       setValidResultType(type);
       setValidResultMsg(msg);
       setValidStep(3);
       setValidPhase('done');
 
-      if (type === 'aplica' || type === 'condiciones') {
+      if (type === 'aplica') {
         t.push(setTimeout(() => handleEnviarWhatsApp(), 2000));
       }
     }, 3500));
@@ -818,7 +805,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                   {/* Paso 1: Datos básicos */}
                   <div className={`valid-step ${validStep >= 1 ? 'done' : validStep === 0 ? 'active' : 'pending'}`}>
                     <span className="valid-step-icon">
-                      {validStep >= 1 ? '✅' : validStep === 0 && validPhase === 'running' ? '⏳' : '○'}
+                      {validStep >= 1
+                        ? <i className="bi bi-check-circle-fill text-success"></i>
+                        : validStep === 0 && validPhase === 'running'
+                        ? <i className="bi bi-hourglass-split text-primary"></i>
+                        : <i className="bi bi-circle text-secondary" style={{ opacity: 0.3 }}></i>}
                     </span>
                     <span className="valid-step-text">Datos básicos verificados</span>
                   </div>
@@ -826,7 +817,11 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                   {/* Paso 2: Cupo */}
                   <div className={`valid-step ${validStep >= 2 ? 'done' : validStep === 1 ? 'active' : 'pending'}`}>
                     <span className="valid-step-icon">
-                      {validStep >= 2 ? '✅' : validStep === 1 ? '⏳' : '○'}
+                      {validStep >= 2
+                        ? <i className="bi bi-check-circle-fill text-success"></i>
+                        : validStep === 1
+                        ? <i className="bi bi-hourglass-split text-primary"></i>
+                        : <i className="bi bi-circle text-secondary" style={{ opacity: 0.3 }}></i>}
                     </span>
                     <span className="valid-step-text">
                       {validStep < 2 ? 'Consultando cupo...' : `Cupo disponible: ${validCupoText}`}
@@ -836,7 +831,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                   {/* Advertencia producto/cupo */}
                   {validStep >= 2 && validAdvertencia && (
                     <div className="valid-advertencia">
-                      <i className="bi bi-exclamation-triangle me-1"></i>
+                      <i className="bi bi-exclamation-triangle-fill text-warning me-1"></i>
                       {validAdvertencia}
                     </div>
                   )}
@@ -845,12 +840,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                   <div className={`valid-step ${validStep >= 3 ? 'done' : validStep === 2 ? 'active' : 'pending'}`}>
                     <span className="valid-step-icon">
                       {validStep >= 3
-                        ? validResultType === 'aplica' || validResultType === 'condiciones'
-                          ? '✅'
-                          : '❌'
+                        ? validResultType === 'aplica'
+                          ? <i className="bi bi-check-circle-fill text-success"></i>
+                          : <i className="bi bi-x-circle-fill text-danger"></i>
                         : validStep === 2
-                        ? '⏳'
-                        : '○'}
+                        ? <i className="bi bi-hourglass-split text-primary"></i>
+                        : <i className="bi bi-circle text-secondary" style={{ opacity: 0.3 }}></i>}
                     </span>
                     <span className="valid-step-text">
                       {validStep >= 3 ? validResultMsg : 'Validando historial...'}
@@ -862,19 +857,15 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                     <div className={`validation-result ${validResultType === 'no-aplica' ? 'no-aplica' : 'aplica'}`}>
                       {validResultType === 'no-aplica' ? (
                         <>
-                          <div className="icon">❌</div>
+                          <div className="icon"><i className="bi bi-x-circle-fill"></i></div>
                           <div className="fw-bold fs-6">No aplicas para Sistecredito</div>
                           <div className="reason">{validResultMsg}</div>
                         </>
                       ) : (
                         <>
-                          <div className="icon">✅</div>
-                          <div className="fw-bold fs-6">
-                            {validResultType === 'condiciones' ? 'Aplica con condiciones' : '¡Aplicas para Sistecredito!'}
-                          </div>
-                          <div className="reason">
-                            {validResultType === 'condiciones' ? validResultMsg : 'Te redirigimos a WhatsApp...'}
-                          </div>
+                          <div className="icon"><i className="bi bi-check-circle-fill"></i></div>
+                          <div className="fw-bold fs-6">¡Aplicas para Sistecredito!</div>
+                          <div className="reason">Te redirigimos a WhatsApp...</div>
                         </>
                       )}
                     </div>
