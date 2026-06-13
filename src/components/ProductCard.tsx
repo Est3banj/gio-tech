@@ -20,6 +20,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
   const [selectedFinanciera, setSelectedFinanciera] = useState<Financiera | null>(null);
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [linkOpened, setLinkOpened] = useState(false);
+  const [autovalidacionConfirmada, setAutovalidacionConfirmada] = useState(false);
   // Sistecredito validation state
   const [validPhase, setValidPhase] = useState<'idle' | 'running' | 'done'>('idle');
   const [validStep, setValidStep] = useState(0); // 0=datos, 1=cupo, 2=historial, 3=resultado
@@ -46,9 +47,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     setSelectedFinanciera(null);
     setFormData({});
     setLinkOpened(false);
-    // Limpiar timers de validación Sistecredito
-    validTimers.current.forEach(clearTimeout);
-    validTimers.current = [];
+    setAutovalidacionConfirmada(false);
     resetValid();
   };
 
@@ -742,6 +741,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                 <h6 className="mt-2 fw-bold">{selectedFinanciera.nombre}</h6>
               </div>
 
+              {/* ─── Autovalidación: paso 1 — ir al sitio externo ─── */}
               {selectedFinanciera.tipo === 'autovalidacion' && !linkOpened && (
                 <div className="autovalidacion-note text-center">
                   <p className="mb-2">Primero valida tu crédito:</p>
@@ -759,7 +759,41 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
                 </div>
               )}
 
-              {(!(selectedFinanciera.tipo === 'autovalidacion') || linkOpened) && (
+              {/* ─── Autovalidación: paso 2 — checkpoint "Ya validé" ─── */}
+              {selectedFinanciera.tipo === 'autovalidacion' && linkOpened && !autovalidacionConfirmada && (
+                <div className="autovalidacion-note text-center">
+                  <div className="d-flex align-items-center justify-content-center gap-2 mb-2">
+                    <i className="bi bi-check-circle-fill text-success"></i>
+                    <span className="fw-semibold" style={{ color: 'var(--text-primary)' }}>Enlace abierto en {selectedFinanciera.nombre}</span>
+                  </div>
+                  <p className="mb-2" style={{ fontSize: '0.9rem', color: 'var(--text-muted)' }}>
+                    ¿Ya completaste la validación en el sitio externo?
+                  </p>
+                  <Button
+                    variant=""
+                    size="sm"
+                    onClick={() => setAutovalidacionConfirmada(true)}
+                    style={{ background: '#28a745', borderColor: '#28a745', color: '#fff', fontWeight: 600, padding: '8px 24px' }}
+                  >
+                    <i className="bi bi-check-lg me-1"></i> Sí, ya validé mi crédito
+                  </Button>
+                  <div className="mt-2">
+                    <Button
+                      variant="link"
+                      size="sm"
+                      onClick={() => {
+                        window.open(selectedFinanciera.urlAutovalidacion, '_blank');
+                      }}
+                      style={{ color: 'var(--brand-blue)', textDecoration: 'none', fontSize: '0.85rem' }}
+                    >
+                      <i className="bi bi-box-arrow-up-right me-1"></i> Volver a abrir {selectedFinanciera.nombre}
+                    </Button>
+                  </div>
+                </div>
+              )}
+
+              {/* ─── Formulario: se muestra solo si no es autovalidación o ya confirmó ─── */}
+              {(selectedFinanciera.tipo !== 'autovalidacion' || autovalidacionConfirmada) && (
                 <div className="mt-2">
                   {selectedFinanciera.campos.map((campo) => (
                     <div className="form-field-group" key={campo.name}>
