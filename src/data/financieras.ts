@@ -100,20 +100,21 @@ export const FINANCIERAS: Financiera[] = [
 
 export type ProductType = 'iphone' | 'android' | 'electrodomestico';
 
+const APPLE_KEYWORDS = ['iphone', 'ipad', 'macbook', 'airtag'];
+
 /** Determina el tipo de producto según marca, nombre y categoría */
 export function getProductType(marca?: string, nombre?: string, categoria?: string): ProductType {
-  // 1) Marca explícita "iPhone"
-  if (marca?.toLowerCase() === 'iphone') return 'iphone';
-  // 2) Nombre del producto contiene "iphone" (cubre casos como marca="Apple")
-  if (nombre?.toLowerCase().includes('iphone')) return 'iphone';
-  // 3) Categoría de electrodoméstico
+  // 1) Apple products: marca "Apple" o nombre contiene keyword Apple (iPhone, iPad, MacBook, AirTag...)
+  if (marca?.toLowerCase() === 'apple') return 'iphone';
+  if (nombre && APPLE_KEYWORDS.some((kw) => nombre.toLowerCase().includes(kw))) return 'iphone';
+  // 2) Categoría de electrodoméstico
   if (categoria) {
     const cat = categoria.toLowerCase();
     if (['electrodomestico', 'tv', 'lavadora', 'nevera', 'hogar'].includes(cat)) {
       return 'electrodomestico';
     }
   }
-  // 4) Por defecto: Android / celulares genéricos
+  // 3) Por defecto: Android / celulares genéricos
   return 'android';
 }
 
