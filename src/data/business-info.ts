@@ -16,21 +16,38 @@ export const businessInfo: BusinessInfo = {
   ubicacion: "Colombia",
 
   creditos: `
+POLÍTICA DE CRÉDITO:
+- SÍ aceptamos personas reportadas (con historial crediticio negativo) a través de financieras como Krediya, Pajoy, Celya, entre otras
+- Personas que apenas van a iniciar su vida crediticia también aplican
+- Requisitos generales: cédula original colombiana y una pequeña cuota inicial
+
+FINANCIERAS DISPONIBLES:
+- Krediya: acepta reportados
+- Pajoy: acepta reportados
+- Celya: acepta reportados
+- Sistecredito: requiere buena conducta de pago, haber realizado mínimo 3 compras de cualquier producto
+- Es mi opción: requiere NO tener reportes negativos
+
+iPhone A CRÉDITO:
+- Solo por Sistecredito o Es mi opción
+- Por Sistecredito: requiere buen cupo (recomendable mayor a $1.000.000) y no tener reportes negativos
+- Por Es mi opción: requiere no tener reportes
+
 FORMAS DE PAGO A CRÉDITO:
 - 16 cuotas quincenales
 - 12 cuotas mensuales
 - 8 cuotas mensuales
-- 6 meses mesuales
+- 6 meses mensuales
 - Plan especial de 12 meses (solo en productos seleccionados)
-- sistcredito de 1 a 6 meses
+- Sistecredito de 1 a 6 meses
 
-REQUISITOS PARA CRÉDITO:
+REQUISITOS GENERALES:
 - Ser mayor de edad
-- Tener documento de identidad vigente o ppt
+- Tener cédula original colombiana vigente o PPT
 - Referencias personales
-- Ability to pay (capacidad de pago)
-- iphone a credito solo por sistecredito, teniendo un buen cupo recomendable mayor a 1,000,000 pesos colom
-NOTA: Los intereses y aprobaciones dependen del financiero asignado.
+- Capacidad de pago
+
+NOTA: Los intereses y aprobaciones dependen del financiero asignado. En la web hay enlaces de autovalidación para cada financiera.
   `,
 
   garantias: `

@@ -206,62 +206,75 @@ const Catalogo: React.FC = () => {
           type="button"
           onClick={() => setShowGeminiChat(true)}
           aria-label="Abrir chat con IA"
-          title="🤖 Chatea con nuestro asistente IA - Te ayudamos a encontrar el celular perfecto"
+          title="Chatea con nuestro asistente IA"
+          className="gio-chat-fab"
           style={{
             position: 'fixed',
             bottom: '100px',
             right: '20px',
-            width: '60px',
-            height: '60px',
+            width: '56px',
+            height: '56px',
             padding: 0,
-            fontSize: '1.6rem',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 1050,
-            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
+            background: '#0d6efd',
             borderRadius: '50%',
             border: 'none',
-            boxShadow: '0 4px 15px rgba(30, 58, 138, 0.4)',
+            boxShadow: '0 4px 20px rgba(13,110,253,0.4)',
             cursor: 'pointer',
-            animation: 'pulse-glow 2s infinite',
             color: 'white',
+            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+          }}
+          onMouseEnter={e => {
+            e.currentTarget.style.transform = 'scale(1.08)';
+            e.currentTarget.style.boxShadow = '0 6px 28px rgba(13,110,253,0.5)';
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.boxShadow = '0 4px 20px rgba(13,110,253,0.4)';
           }}
         >
-          🤖
+          <i className="bi bi-chat-dots-fill" style={{ fontSize: '1.5rem', lineHeight: 1 }} />
         </button>
 
         <div
           onClick={() => setShowGeminiChat(true)}
+          className="gio-chat-tooltip"
           style={{
             position: 'fixed',
-            bottom: '115px',
-            right: '95px',
-            background: 'linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%)',
-            color: 'white',
-            padding: '8px 14px',
+            bottom: '117px',
+            right: '90px',
+            background: '#fff',
+            color: '#212529',
+            padding: '8px 16px 8px 14px',
             borderRadius: '20px',
             fontSize: '0.85rem',
-            fontWeight: '500',
-            boxShadow: '0 4px 15px rgba(30, 58, 138, 0.4)',
+            fontWeight: 500,
+            boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
             cursor: 'pointer',
-            animation: 'float-tip 3s ease-in-out infinite',
             zIndex: 1049,
-            whiteSpace: 'nowrap'
+            whiteSpace: 'nowrap',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            border: '1px solid #e9ecef',
+            transition: 'opacity 0.3s ease',
           }}
         >
-          💬 Te ayudo a elegir
+          <i className="bi bi-chat-dots" style={{ color: '#0d6efd', fontSize: '1rem' }} />
+          Te ayudamos a elegir
         </div>
 
         <style>{`
-          @keyframes pulse-glow {
-            0% { box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5), 0 0 0 0 rgba(30, 58, 138, 0.4); }
-            50% { box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5), 0 0 0 10px rgba(30, 58, 138, 0); }
-            100% { box-shadow: 0 8px 25px rgba(30, 58, 138, 0.5), 0 0 0 0 rgba(30, 58, 138, 0); }
+          .gio-chat-fab {
+            animation: gio-fab-pulse 2.5s ease-in-out infinite;
           }
-          @keyframes float-tip {
-            0%, 100% { transform: translateX(0); }
-            50% { transform: translateX(-5px); }
+          @keyframes gio-fab-pulse {
+            0% { box-shadow: 0 4px 20px rgba(13,110,253,0.4); }
+            50% { box-shadow: 0 4px 28px rgba(13,110,253,0.55); }
+            100% { box-shadow: 0 4px 20px rgba(13,110,253,0.4); }
           }
         `}</style>
 
