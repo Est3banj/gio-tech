@@ -1,0 +1,35 @@
+schema: spec-driven
+
+context: |
+  Tech stack: React 19 + Vite 8 + TypeScript 6 + Firebase 11 (Hosting, Firestore, Functions v1 Node 20) + Bootstrap 5.3 + React Router 7 + Framer Motion
+  Architecture: src/ organizado en components/ contexts/ hooks/ services/ (TypeScript) utils/ data/ types/
+  Testing: Vitest 4 + Testing Library + jsdom (script: npm test = vitest run)
+  Style: ESLint 9 flat config (npm run lint)
+  Apps: app web (raiz) + functions/ (Cloud Functions CommonJS, Firebase Admin SDK)
+
+rules:
+  proposal:
+    - Include rollback plan for risky changes
+    - Identify affected modules/packages
+  specs:
+    - Use Given/When/Then format for scenarios
+    - Use RFC 2119 keywords (MUST, SHALL, SHOULD, MAY)
+    - Write specs in Spanish (project docs are in Spanish)
+  design:
+    - Include sequence diagrams for complex flows
+    - Document architecture decisions with rationale
+  tasks:
+    - Group tasks by phase (infrastructure, implementation, testing)
+    - Use hierarchical numbering (1.1, 1.2, etc.)
+    - Keep tasks small enough to complete in one session
+  apply:
+    - Follow existing code patterns and conventions
+    - Load relevant coding skills for the project stack
+    tdd: false
+    test_command: "npm test"
+  verify:
+    test_command: "npm test"
+    build_command: "npm run build"
+    coverage_threshold: 0
+  archive:
+    - Warn before merging destructive deltas (large removals)
