@@ -45,7 +45,7 @@ export const WhatsappNumberProvider: React.FC<WhatsappNumberProviderProps> = ({ 
   // Obtener número de WhatsApp del asesor desde Firestore
   useEffect(() => {
     if (asesorIdFromUrl) {
-      const userDocRef = doc(db, "usuarios", asesorIdFromUrl);
+      const userDocRef = doc(db, "perfiles_publicos", asesorIdFromUrl);
       const unsub = onSnapshot(userDocRef, (docSnap) => {
         if (docSnap.exists() && docSnap.data().whatsappNumber) {
           setAsesorWhatsappNumber(docSnap.data().whatsappNumber);

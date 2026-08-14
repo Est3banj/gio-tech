@@ -63,6 +63,16 @@ const AsesorPanel: React.FC = () => {
       await updateDoc(doc(db, "usuarios", currentUser.uid), {
         whatsappNumber: whatsappNumber
       });
+      try {
+        await updateDoc(doc(db, "perfiles_publicos", currentUser.uid), {
+          whatsappNumber: whatsappNumber
+        });
+      } catch (mirrorErr) {
+        console.error(
+          "Error al sincronizar perfiles_publicos (remediar con backfill):",
+          mirrorErr,
+        );
+      }
       setSuccess("Número de WhatsApp actualizado exitosamente!");
     } catch (err) {
       console.error("Error al actualizar WhatsApp:", err);

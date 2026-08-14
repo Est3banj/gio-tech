@@ -75,6 +75,18 @@ function AdminAsesoresTab({
       });
 
       try {
+        await setDoc(doc(db, "perfiles_publicos", user.uid), {
+          nombreCompleto: nombreCompletoAsesor,
+          whatsappNumber: whatsappAsesor,
+        });
+      } catch (mirrorErr) {
+        console.error(
+          "Error al sincronizar perfiles_publicos (remediar con backfill):",
+          mirrorErr,
+        );
+      }
+
+      try {
         await secondaryAuth.signOut?.();
       } catch { /* ignore logout errors */ }
       try {
@@ -112,6 +124,17 @@ function AdminAsesoresTab({
         nombreCompleto: nombreCompletoAsesor,
         whatsappNumber: whatsappAsesor,
       });
+      try {
+        await updateDoc(doc(db, "perfiles_publicos", editandoAsesor.id), {
+          nombreCompleto: nombreCompletoAsesor,
+          whatsappNumber: whatsappAsesor,
+        });
+      } catch (mirrorErr) {
+        console.error(
+          "Error al sincronizar perfiles_publicos (remediar con backfill):",
+          mirrorErr,
+        );
+      }
       setSuccess("Asesor actualizado exitosamente!");
       setEditandoAsesor(null);
       setEmailAsesor("");
@@ -135,6 +158,14 @@ function AdminAsesoresTab({
     ) {
       try {
         await deleteDoc(doc(db, "usuarios", id));
+        try {
+          await deleteDoc(doc(db, "perfiles_publicos", id));
+        } catch (mirrorErr) {
+          console.error(
+            "Error al borrar perfiles_publicos (queda doc huérfano del perfil):",
+            mirrorErr,
+          );
+        }
         setSuccess("Asesor eliminado exitosamente del listado.");
       } catch (err: unknown) {
         console.error("Error al eliminar asesor:", err);

@@ -3,6 +3,8 @@ import { db } from "../firebase";
 import {
   collection,
   onSnapshot,
+  query,
+  where,
   DocumentData,
   QueryDocumentSnapshot,
 } from "firebase/firestore";
@@ -119,7 +121,9 @@ function AdminPanel() {
       }
     });
 
-    const unsubAsesores = onSnapshot(collection(db, "usuarios"), (snapshot) => {
+    const unsubAsesores = onSnapshot(
+      query(collection(db, "usuarios"), where("rol", "in", ["admin", "asesor"])),
+      (snapshot) => {
       const listaAsesores: Asesor[] = snapshot.docs.map((doc: QueryDocumentSnapshot<DocumentData>) => ({
         id: doc.id,
         ...doc.data(),
