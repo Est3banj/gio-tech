@@ -16,8 +16,12 @@
  * usa SOLO para el cleanup de emergencia del doc de test (service-account.json).
  *
  * Seguridad:
- *   - NINGUN write permitido se ejecuta: el unico write es el caso 12, que DEBE
- *     ser rechazado (si por bug fuera permitido, cleanup inmediato via admin SDK).
+ *   - Los UNICOS writes permitidos son los casos 13 y 14 (crear y actualizar un
+ *     doc de test ANÓNIMO, por diseño del fix REQ-013): el doc es ENTERAMENTE
+ *     nuestro artefacto (productoId sentinel "__verify__") y se limpia con
+ *     admin SDK al inicio y al final de la corrida.
+ *   - Los casos 12 y 15 DEBEN ser rechazados (create con campo extra): si por
+ *     bug fueran permitidos, cleanup inmediato via admin SDK.
  *   - Nunca se loguean tokens completos ni credenciales (solo email enmascarado).
  *   - Timeout 15s por request, retry una vez ante 429/5xx.
  */
@@ -47,13 +51,15 @@ const OTROS_ASESORES = [
   "u06BSWw4Z2ZgbVI0vQmUWwiVjbM2", // Lina
 ];
 
-// Doc de test para el caso 12: prefijo verify_ para identificación inmediata.
-// NOTA: Firestore RESERVA los ids que empiezan con "__" (p. ej. __name__) —
-// un id tipo __verify_prod_test__ no se puede ni crear ni borrar (400
-// INVALID_ARGUMENT: reserved id), por eso se usa verify_prod_test. El campo
-// sentinel productoId == "__verify__" garantiza que el cleanup jamás borre
-// un doc real que casualmente tenga ese id.
+// Docs de test para los casos 12-15: prefijo verify_ para identificación
+// inmediata. NOTA: Firestore RESERVA los ids que empiezan con "__" (p. ej.
+// __name__) — un id tipo __verify_prod_test__ no se puede ni crear ni borrar
+// (400 INVALID_ARGUMENT: reserved id), por eso se usa verify_prod_test. El
+// campo sentinel productoId == "__verify__" garantiza que el cleanup jamás
+// borre un doc real que casualmente tenga ese id.
 const TEST_DOC_ID = "verify_prod_test";
+const TEST_DOC_ID_2 = "verify_prod_test2";
+const TEST_DOC_IDS = [TEST_DOC_ID, TEST_DOC_ID_2];
 const TEST_SENTINEL = "__verify__";
 
 // ---------------------------------------------------------------------------
@@ -128,19 +134,19 @@ async function login(apiKey, email, password, label) {
 // firebase-admin se carga LAZY: solo se toca si hay algo que limpiar.
 // Traba de seguridad: SOLO borra el doc si es NUESTRO artefacto de test
 // (productoId sentinel) — jamás toca un doc real con ese id.
-async function deleteTestDoc() {
+async function deleteTestDoc(docId = TEST_DOC_ID) {
   const admin = require("firebase-admin");
   const serviceAccount = require("./service-account.json");
   if (!admin.apps.length) {
     admin.initializeApp({ credential: admin.credential.cert(serviceAccount) });
   }
-  const ref = admin.firestore().collection("producto_stats").doc(TEST_DOC_ID);
+  const ref = admin.firestore().collection("producto_stats").doc(docId);
   const snap = await ref.get();
   if (!snap.exists) return false;
   const data = snap.data() || {};
   if (data.productoId !== TEST_SENTINEL) {
     throw new Error(
-      `SEGURIDAD: ${TEST_DOC_ID} NO es el artefacto de test (productoId=${JSON.stringify(data.productoId)}) — NO se borra`
+      `SEGURIDAD: ${docId} NO es el artefacto de test (productoId=${JSON.stringify(data.productoId)}) — NO se borra`
     );
   }
   await ref.delete();
@@ -187,14 +193,17 @@ async function main() {
 
   const apiKey = loadApiKey();
 
-  // Pre-flight: limpiar un doc de test stale de una corrida anterior (idempotencia).
-  let deletedStale = false;
-  try {
-    deletedStale = await deleteTestDoc();
-  } catch (err) {
-    console.error(`AVISO: pre-cleanup de ${TEST_DOC_ID} falló: ${err.message} (se reintenta en el caso 12)`);
+  // Pre-flight: limpiar docs de test stale de una corrida anterior (idempotencia).
+  for (const docId of TEST_DOC_IDS) {
+    try {
+      const deleted = await deleteTestDoc(docId);
+      if (deleted) {
+        console.log(`Pre-cleanup: ${docId} existía de una corrida anterior — eliminado.`);
+      }
+    } catch (err) {
+      console.error(`AVISO: pre-cleanup de ${docId} falló: ${err.message} (se reintenta en la verificación final)`);
+    }
   }
-  if (deletedStale) console.log(`Pre-cleanup: ${TEST_DOC_ID} existía de una corrida anterior — eliminado.`);
 
   console.log("=== Verificación de Firestore Rules en producción (gio-tech) ===");
   console.log(`Identidades: admin=${maskEmail(GIO_PROD_ADMIN_EMAIL)} asesor=${maskEmail(GIO_PROD_ASESOR_EMAIL)}`);
@@ -225,7 +234,7 @@ async function main() {
   }
 
   // -------------------------------------------------------------------------
-  // Definición de los 12 casos. cada uno devuelve { status, json, extra }.
+  // Definición de los 15 casos. cada uno devuelve { status, json, extra }.
   // -------------------------------------------------------------------------
 
   const cases = [
@@ -378,6 +387,93 @@ async function main() {
         return { pass: r.status === 403, severo: false };
       },
     },
+    {
+      id: 13,
+      desc: "anónimo POST producto_stats?documentId=verify_prod_test (create válido)",
+      esperado: "ALLOW 200",
+      expectAllow: true,
+      run: () =>
+        http(
+          "POST",
+          `${BASE_URL}/producto_stats?documentId=${TEST_DOC_ID}`,
+          {
+            body: {
+              fields: {
+                vistas: { integerValue: "1" },
+                productoId: { stringValue: TEST_SENTINEL },
+                ultimaVista: { timestampValue: "2026-08-14T00:00:00Z" },
+              },
+            },
+          }
+        ),
+      // FIX REQ-013: create SIN auth con estructura EXACTA (vistas==1, string,
+      // timestamp, hasOnly) -> ALLOW. ESTE CASO CREA UN DOC REAL por diseño:
+      // el caso 14 lo usa como resource (vistas 1 -> 2) y el cleanup pre/post
+      // lo elimina (productoId sentinel "__verify__"). Sin token -> anónimo.
+      // Si este caso fallara (403), el 14 recibirá 404 (dependencia encadenada).
+    },
+    {
+      id: 14,
+      desc: "anónimo PATCH producto_stats/verify_prod_test (update +1)",
+      esperado: "ALLOW 200",
+      expectAllow: true,
+      run: () =>
+        http(
+          "PATCH",
+          `${BASE_URL}/producto_stats/${TEST_DOC_ID}?updateMask.fieldPaths=vistas&updateMask.fieldPaths=ultimaVista`,
+          {
+            body: {
+              fields: {
+                vistas: { integerValue: "2" },
+                ultimaVista: { timestampValue: "2026-08-14T00:00:00Z" },
+              },
+            },
+          }
+        ),
+      // FIX REQ-013: update SIN auth, affectedKeys == [vistas, ultimaVista] y
+      // vistas == resource + 1 (el caso 13 dejó vistas=1 -> 2 cumple) -> ALLOW.
+      // Encadenado al caso 13: si ese falló, este recibe 404 (FAIL informativo).
+    },
+    {
+      id: 15,
+      desc: "anónimo POST producto_stats?documentId=verify_prod_test2 (+campo extra)",
+      esperado: "DENY 403",
+      expectAllow: false,
+      run: () =>
+        http(
+          "POST",
+          `${BASE_URL}/producto_stats?documentId=${TEST_DOC_ID_2}`,
+          {
+            body: {
+              fields: {
+                vistas: { integerValue: "1" },
+                productoId: { stringValue: TEST_SENTINEL },
+                ultimaVista: { timestampValue: "2026-08-14T00:00:00Z" },
+                basura: { stringValue: "campo no permitido" },
+              },
+            },
+          }
+        ),
+      // FIX REQ-013: AUNQUE el create anónimo esté permitido (caso 13), la
+      // validación estructural sigue vigente: "basura" rompe hasOnly -> DENY.
+      // Si por bug diera 200, cleanup inmediato (admin SDK) + FAIL severo.
+      isPass: async (r) => {
+        if (r.status === 200) {
+          const deleted = await deleteTestDoc(TEST_DOC_ID_2).catch((err) => {
+            console.error(`  SEVERO: cleanup de ${TEST_DOC_ID_2} FALLÓ: ${err.message}`);
+            return false;
+          });
+          return {
+            pass: false,
+            severo: true,
+            note: deleted
+              ? `cleanup ejecutado: ${TEST_DOC_ID_2} eliminado vía admin SDK`
+              : `cleanup falló: ${TEST_DOC_ID_2} puede seguir existiendo — REVISAR MANUALMENTE`,
+          };
+        }
+        return { pass: r.status === 403, severo: false };
+      },
+    },
   ];
 
   // -------------------------------------------------------------------------
@@ -438,16 +534,18 @@ async function main() {
   console.log("");
   console.log(`Resumen: ${ok}/${total} PASS${aborted ? " (corrida abortada)" : ""}`);
 
-  // Verificación final de que NO quedó el doc de test (post-casos).
-  try {
-    const exists = await deleteTestDoc();
-    if (exists) {
-      console.error(`SEVERO: ${TEST_DOC_ID} reapareció tras el caso 12 — eliminado por segunda vez.`);
-    } else {
-      console.log(`Cleanup verificado: ${TEST_DOC_ID} no existe en producción.`);
+  // Verificación final de que NO quedó ningún doc de test (post-casos).
+  for (const docId of TEST_DOC_IDS) {
+    try {
+      const exists = await deleteTestDoc(docId);
+      if (exists) {
+        console.error(`SEVERO: ${docId} reapareció tras los casos 13-15 — eliminado por segunda vez.`);
+      } else {
+        console.log(`Cleanup verificado: ${docId} no existe en producción.`);
+      }
+    } catch (err) {
+      console.error(`AVISO: verificación final de cleanup falló (${docId}): ${err.message}`);
     }
-  } catch (err) {
-    console.error(`AVISO: verificación final de cleanup falló: ${err.message}`);
   }
 
   process.exit(ok === total && !aborted ? 0 : 1);

@@ -9,15 +9,13 @@ service cloud.firestore {
     // --- PRODUCTO_STATS ---
     match /producto_stats/{statId} {
       allow read: if true;  // Público POR DISEÑO: consistencia con orderBy('vistas','desc')
-      allow create: if request.auth != null &&
-        request.resource.data.keys().hasOnly(['vistas', 'productoId', 'ultimaVista']) &&
-        request.resource.data.vistas == 1 &&
-        request.resource.data.productoId is string &&
-        request.resource.data.ultimaVista is timestamp;
-      allow update: if request.auth != null &&
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['vistas', 'ultimaVista']) &&
-        request.resource.data.vistas == resource.data.vistas + 1 &&
-        request.resource.data.ultimaVista is timestamp;
+      allow create: if request.resource.data.keys().hasOnly(['vistas', 'productoId', 'ultimaVista'])
+        && request.resource.data.vistas == 1
+        && request.resource.data.productoId is string
+        && request.resource.data.ultimaVista is timestamp;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['vistas', 'ultimaVista'])
+        && request.resource.data.vistas == resource.data.vistas + 1
+        && request.resource.data.ultimaVista is timestamp;
     }
 
     // --- NUEVA REGLA PARA EL CARRUSEL ---
