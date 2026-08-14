@@ -1,0 +1,19 @@
+change: secure-firestore-usuarios
+status: ARCHIVED
+archived_date: "2026-08-14"
+dag:
+  explore: done
+  propose: done
+  spec: done
+  design: done
+  tasks: done
+  apply: done
+  verify: done
+  archive: done
+main_specs_updated:
+  - openspec/specs/firestore/spec.md
+notes: >
+  Change implementado y verificado (15/15 en producción, 6 commits en main).
+  Spec delta sincronizada a main specs (13 requirements finales:
+  REQ-001..REQ-013, incluyendo ADDED REQ-013 y MODIFIED REQ-003 del fix de producto_stats).
+  Carpeta movida a archive con prefijo ISO 2026-08-14.
