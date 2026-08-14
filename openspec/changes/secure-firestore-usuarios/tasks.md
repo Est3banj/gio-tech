@@ -119,6 +119,21 @@
   - Dependencias: 1.6
   - NOTA BATCH 4: NO ejecutable por agente (consola web). Checklist de 10 casos listo para el dueño (reporte de batch). Pendiente de corrida del dueño.
 
+- [x] **1.8** Fix: quitar gate auth de `producto_stats` manteniendo validación estructural (ranking público de vistas)
+  - REQ: REQ-013, REQ-003
+  - Archivo: `firestore.rules` (bloque `producto_stats`)
+  - Done: eliminado `request.auth != null` de `create`/`update` — el write real del front va ANÓNIMO (`ProductCard.tsx:38-42` → `productStats.service.ts:30-40`) y la regla con auth producía 403 preexistente que mataba el ranking desde mayo. Validación estructural INTACTA: `create` con `keys().hasOnly(['vistas','productoId','ultimaVista'])` && `vistas == 1` && tipos (string/timestamp); `update` con `affectedKeys().hasOnly(['vistas','ultimaVista'])` && `vistas == resource.data.vistas + 1` (anti-inflación) && `ultimaVista` timestamp. SIN `allow delete` (deny implícito). Bloque EXACTO según criterio del dueño (Opción A). Las demás secciones (carrusel/productos/configuracion/usuarios/perfiles_publicos) NO se tocaron.
+  - Estimación: S
+  - Dependencias: 1.7
+
+- [ ] **1.9** Ampliar `verify-rules-prod.js` de 12 a 15 casos (3 nuevos anónimos) + re-corrida
+  - REQ: REQ-013
+  - Archivo: `scripts/verify-rules-prod.js`
+  - Done: casos 13 (anónimo POST create válido → ALLOW 200, crea doc real con sentinel `productoId == "__verify__"`), 14 (anónimo PATCH update +1 sobre el mismo doc → ALLOW 200, encadenado al 13), 15 (anónimo POST con campo extra en `verify_prod_test2` → DENIED 403). Cleanup admin SDK (pre y post) extendido a AMBOS ids de test con guard sentinel. `node --check` OK.
+  - Estimación: M
+  - Dependencias: 1.8
+  - NOTA BATCH 6: script ACTUALIZADO y verificado (`node --check`); la CORRIDA contra producción queda PENDIENTE del orquestador (credenciales GIO_PROD_* de env) — NO la ejecuta el agente.
+
 ## Fase 2 — Front (requiere Fase 1 deployada: la colección nueva debe existir en rules)
 
 - [x] **2.1** Migrar `WhatsappNumberContext` a `perfiles_publicos` con fallback intacto

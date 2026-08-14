@@ -212,6 +212,28 @@ El sistema DEBE conservar sin cambios las reglas de `carrusel`, `productos` y `c
 - WHEN un visitante anónimo lee `productos` o `configuracion`, o un no-admin intenta escribirlas
 - THEN la lectura es permitida y la escritura DENEGADA (comportamiento idéntico al actual)
 
+### REQ-013: `producto_stats` — registro de vistas ANÓNIMO con validación estructural (fix del 403 preexistente)
+
+El sistema DEBE permitir el registro de vistas de `producto_stats` SIN autenticación, con validación estructural completa: `create` solo con `{ vistas: 1, productoId, ultimaVista }` (hasOnly + tipos), `update` solo con `affectedKeys().hasOnly(['vistas', 'ultimaVista'])` y `vistas == resource.data.vistas + 1` (incremento de exactamente 1), `ultimaVista` siempre timestamp. El gate `request.auth != null` DEBE quedar eliminado de create/update porque el flujo real del front escribe ANÓNIMO (`ProductCard.tsx:38-42` → `productStats.service.ts:30-40`, formato exacto: `increment(1)` + campos whitelist) — el 403 preexistente mata el ranking público de vistas. `delete` DEBE seguir denegado (deny implícito). El anti-inflación DEBE mantenerse por validación estructural (solo +1, solo campos whitelist), no por auth.
+
+#### Scenario: Anónimo crea un stat de vistas válido
+
+- GIVEN un visitante sin autenticación y el formato exacto del service (`{ vistas: 1, productoId, ultimaVista }`)
+- WHEN ejecuta `setDoc(producto_stats/{productId}, ...)` (POST anónimo, sin token)
+- THEN la operación es permitida (ALLOW 200) y el doc queda con `vistas == 1`
+
+#### Scenario: Anónimo actualiza vistas con incremento de exactamente 1
+
+- GIVEN un visitante sin autenticación y un doc `producto_stats/{productId}` existente con `vistas == 1`
+- WHEN ejecuta `updateDoc` con `vistas: FieldValue.increment(1)` (PATCH anónimo sobre `vistas` y `ultimaVista`)
+- THEN la operación es permitida (ALLOW 200) y `vistas` pasa a 2 (`resource.data.vistas + 1`)
+
+#### Scenario: Anónimo intenta crear un stat con campos extra
+
+- GIVEN un visitante sin autenticación
+- WHEN ejecuta `setDoc(producto_stats/{id}, { vistas: 1, productoId, ultimaVista, basura: 'x' })`
+- THEN la operación es DENEGADA aun sin auth (DENIED 403 — la validación estructural se mantiene anónima)
+
 ## MODIFIED Requirements
 
 ### REQ-001: `usuarios` — get solo owner/admin, list solo admin
@@ -292,12 +314,12 @@ El sistema DEBE denegar el `update` de un usuario sobre su propio doc a menos qu
 
 ### REQ-003: `producto_stats` — read público preservado, write validado
 
-(Previously: `allow write: if request.auth != null` en `firestore.rules:8` — cualquier usuario autenticado podía crear docs basura o escribir `vistas` con valores arbitrarios, inflando el ranking de populares.)
+(Previously: `allow write: if request.auth != null` en `firestore.rules:8` — cualquier usuario autenticado podía crear docs basura o escribir `vistas` con valores arbitrarios, inflando el ranking de populares. En el estado desplegado del change (Batch 4) el write exigía `request.auth != null`, pero el flujo real del front escribe ANÓNIMO (`ProductCard.tsx:38-42` → `productStats.service.ts:30-40`, sin token) → 403 preexistente que mató el ranking público de vistas. Ver REQ-013: el registro de vistas queda SIN auth, con validación estructural.)
 
-El sistema DEBE mantener `read` público en `producto_stats` (condición "siempre true") para que la query `orderBy('vistas', 'desc')` de `getPopularProductsStats` siga siendo consistente con las reglas y no sea denegada. El sistema DEBE validar los writes:
+El sistema DEBE mantener `read` público en `producto_stats` (condición "siempre true") para que la query `orderBy('vistas', 'desc')` de `getPopularProductsStats` siga siendo consistente con las reglas y no sea denegada. El sistema DEBE validar los writes SIN gate de autenticación (registro anónimo, REQ-013):
 
-- `create` DEBE requerir autenticación y estructura EXACTA: `keys().hasOnly(['vistas', 'productoId', 'ultimaVista'])`, con `vistas == 1` (número), `productoId` string y `ultimaVista` timestamp.
-- `update` DEBE requerir autenticación, afectar SOLO `['vistas', 'ultimaVista']` (hasOnly), exigir `vistas == resource.data.vistas + 1` (incremento de exactamente 1, compatible con `FieldValue.increment(1)`) y `ultimaVista` timestamp.
+- `create` NO DEBE requerir autenticación (Previously: requería auth) y DEBE exigir estructura EXACTA: `keys().hasOnly(['vistas', 'productoId', 'ultimaVista'])`, con `vistas == 1` (número), `productoId` string y `ultimaVista` timestamp.
+- `update` NO DEBE requerir autenticación (Previously: requería auth), DEBE afectar SOLO `['vistas', 'ultimaVista']` (hasOnly), exigir `vistas == resource.data.vistas + 1` (incremento de exactamente 1, compatible con `FieldValue.increment(1)`) y `ultimaVista` timestamp.
 - `delete` DEBE quedar denegado (sin regla explícita → deny implícito).
 - Sobrescribir `vistas` con valores absolutos arbitrarios o crear docs con campos extra DEBE ser denegado.
 
@@ -307,27 +329,28 @@ El sistema DEBE mantener `read` público en `producto_stats` (condición "siempr
 - WHEN ejecuta la query `orderBy('vistas', 'desc')` con `limit(4)` sobre `producto_stats`
 - THEN la operación es permitida y devuelve resultados ordenados (sin permission-denied)
 
-#### Scenario: Usuario logueado registra una vista (update +1)
+#### Scenario: Visitante anónimo registra una vista (update +1)
 
-- GIVEN un usuario autenticado y un doc `producto_stats/{productId}` existente
+- GIVEN un visitante sin autenticación y un doc `producto_stats/{productId}` existente
 - WHEN ejecuta `updateDoc` con `vistas: FieldValue.increment(1)` y `ultimaVista`
 - THEN la operación es permitida y `vistas` aumenta en exactamente 1
+- NOTA (Previously: requería auth): el flujo real del front escribe ANÓNIMO — la regla sin `request.auth != null` es la única forma de que el ranking funcione (REQ-013).
 
 #### Scenario: Create válido de un stat nuevo
 
-- GIVEN un usuario autenticado
+- GIVEN un visitante sin autenticación (Previously: requería auth)
 - WHEN ejecuta `setDoc(producto_stats/{productId}, { vistas: 1, productoId, ultimaVista })`
 - THEN la operación es permitida
 
 #### Scenario: Create con campos extra es denegado
 
-- GIVEN un usuario autenticado
+- GIVEN un visitante sin autenticación (Previously: requería auth)
 - WHEN ejecuta `setDoc(producto_stats/{id}, { vistas: 1, productoId, ultimaVista, camposBasura: 'x' })`
 - THEN la operación es DENEGADA
 
 #### Scenario: Update con valor absoluto arbitrario es denegado
 
-- GIVEN un usuario autenticado y `resource.data.vistas == 10`
+- GIVEN un visitante sin autenticación y `resource.data.vistas == 10` (Previously: requería auth)
 - WHEN ejecuta `updateDoc(producto_stats/{productId}, { vistas: 999 })`
 - THEN la operación es DENEGADA (`vistas != resource.data.vistas + 1`)
 
