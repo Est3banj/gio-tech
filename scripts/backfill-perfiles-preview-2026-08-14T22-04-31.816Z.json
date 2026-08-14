@@ -1,0 +1,79 @@
+[
+  {
+    "uid": "0FQmJN8yPsZvPMZAm1rTsmrjG5d2",
+    "nombreCompleto": "Luis Carlos",
+    "whatsappNumber": "3104559630",
+    "willCreate": false,
+    "willUpdate": false,
+    "write": {
+      "nombreCompleto": "Luis Carlos",
+      "whatsappNumber": "3104559630"
+    }
+  },
+  {
+    "uid": "LZmMv5RaIGWD0xfFycXSSpgP0EC3",
+    "nombreCompleto": "Camila muñoz",
+    "whatsappNumber": "573123924134",
+    "willCreate": false,
+    "willUpdate": false,
+    "write": {
+      "nombreCompleto": "Camila muñoz",
+      "whatsappNumber": "573123924134"
+    }
+  },
+  {
+    "uid": "OPBGgnnpDYTPGkkpAzQruYOJL8K2",
+    "nombreCompleto": "Camilo Vallejo",
+    "whatsappNumber": "573223126755",
+    "willCreate": false,
+    "willUpdate": false,
+    "write": {
+      "nombreCompleto": "Camilo Vallejo",
+      "whatsappNumber": "573223126755"
+    }
+  },
+  {
+    "uid": "PYCu9m7EfKXnRrK6qj8jVLttfXx2",
+    "nombreCompleto": "Corymar Skarleth Pérez Perdomo",
+    "whatsappNumber": "573247980815",
+    "willCreate": false,
+    "willUpdate": false,
+    "write": {
+      "nombreCompleto": "Corymar Skarleth Pérez Perdomo",
+      "whatsappNumber": "573247980815"
+    }
+  },
+  {
+    "uid": "Rh8p9XTdGEhe8t4b7lTed3jSKRH2",
+    "nombreCompleto": "Giovanni Andrade",
+    "whatsappNumber": "573208075465",
+    "willCreate": false,
+    "willUpdate": false,
+    "write": {
+      "nombreCompleto": "Giovanni Andrade",
+      "whatsappNumber": "573208075465"
+    }
+  },
+  {
+    "uid": "VhNc1nqYz7OnQAabxy8zqQ0bXK22",
+    "nombreCompleto": "STEVEN CAMILO MUÑOZ CALDERON",
+    "whatsappNumber": "573125242351",
+    "willCreate": false,
+    "willUpdate": false,
+    "write": {
+      "nombreCompleto": "STEVEN CAMILO MUÑOZ CALDERON",
+      "whatsappNumber": "573125242351"
+    }
+  },
+  {
+    "uid": "u06BSWw4Z2ZgbVI0vQmUWwiVjbM2",
+    "nombreCompleto": "Lina Gonzales",
+    "whatsappNumber": "573204159158",
+    "willCreate": false,
+    "willUpdate": false,
+    "write": {
+      "nombreCompleto": "Lina Gonzales",
+      "whatsappNumber": "573204159158"
+    }
+  }
+]

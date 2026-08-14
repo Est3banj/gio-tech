@@ -6,7 +6,9 @@
   "scripts": {
     "backfill:preview": "node backfillSpecs.js",
     "backfill:apply": "node backfillSpecs.js --apply",
-    "backfill:force": "node backfillSpecs.js --apply --force"
+    "backfill:force": "node backfillSpecs.js --apply --force",
+    "backfill:perfiles:preview": "node backfillPerfilesPublicos.js",
+    "backfill:perfiles:apply": "node backfillPerfilesPublicos.js --apply"
   },
   "dependencies": {
     "firebase-admin": "^12.5.0"
