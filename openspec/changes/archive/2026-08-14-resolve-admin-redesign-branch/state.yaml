@@ -1,0 +1,24 @@
+change: resolve-admin-redesign-branch
+status: ARCHIVED
+archived_date: "2026-08-14"
+dag:
+  explore: done
+  propose: done
+  spec: done
+  design: "skip - no aplica (gestión de repo sin diseño técnico; plan operativo en proposal.md §Implementation Plan)"
+  tasks: done
+  apply: done
+  verify: done
+  archive: done
+main_specs_updated:
+  - openspec/specs/repo/spec.md
+notes: >
+  Change implementado y verificado: branches refactor/admin-panel-redesign y
+  chore/security-updates-may-2026 borradas local y remotamente (0 restantes en
+  git branch -a, origin/main intacta == main).
+  Decisión del dueño 2026-08-14 documentada en proposal + spec (REQ-002):
+  descarte del respaldo del wizard de AssistantChat.tsx (código muerto, no
+  importado) — sin artefacto de respaldo.
+  Spec delta sincronizada a openspec/specs/repo/spec.md (primera spec del
+  dominio repo: REQ-001..REQ-003). Carpeta movida a archive con prefijo ISO
+  2026-08-14. Sin commits ni push (los realiza el orquestador).
