@@ -1,0 +1,30 @@
+change: secure-chat-logs
+status: ARCHIVED
+archived_date: "2026-08-15"
+dag:
+  explore: done
+  propose: done
+  spec: done
+  design: "skip - no aplica (borrado de código muerto sin diseño técnico; plan operativo en proposal.md §Implementation Plan y tasks.md fases 1-4)"
+  tasks: done
+  apply: done
+  verify: done
+  archive: done
+main_specs_updated:
+  - openspec/specs/assistant/spec.md
+notes: >
+  Change implementado y verificado (apply 2026-08-15): logChatInteraction
+  eliminado de src/services/ai-assistant.service.ts con sus 2 call sites y
+  imports huérfanos (grep 'chat_logs' en src/ = 0, bundle deployado sin la
+  cadena, npm test/lint/build en verde), firestore.rules SIN cambios
+  (default-deny permanente de chat_logs, REQ-003) y deploy de hosting hecho.
+  Decisión del dueño (14-08-2026) documentada en proposal.md y spec.md
+  (REQ-001): Opción C - borrar la feature muerta SIN afectar funcionalidades;
+  el chat flotante del catálogo queda 100% funcional (REQ-002).
+  Evidencia de la colección: REQ-004 escenarios cubren colección vacía/
+  inexistente -> "cero docs" registrado (conteo = 0, sin borrados; idempotencia
+  re-corrida verificada). Verificación final: 0 docs en chat_logs.
+  Spec delta sincronizada a openspec/specs/assistant/spec.md (primera spec del
+  dominio assistant: REQ-001..REQ-005). Carpeta movida a archive con prefijo
+  ISO 2026-08-15 (fecha del apply). Sin commits ni push (los realiza el
+  orquestador).
