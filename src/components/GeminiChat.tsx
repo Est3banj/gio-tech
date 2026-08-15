@@ -2,8 +2,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Form, Card, Badge } from 'react-bootstrap';
 import { askAssistant, generateWhatsAppMessage } from '../services/ai-assistant.service';
-import { useWhatsappNumber } from '../contexts/WhatsappNumberContext';
-import { useCart } from '../contexts/CartContext';
+import { useWhatsappNumber } from '../contexts/whatsapp-number-context';
+import { useCart } from '../contexts/cart-context';
 import { formatPrice } from '../utils/formatters';
 import { extractMatchedProducts } from '../utils/product-matcher';
 import type { Product, ChatMessage } from '../types';

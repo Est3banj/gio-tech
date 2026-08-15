@@ -1,4 +1,4 @@
-import { useState, useEffect, lazy, Suspense } from "react";
+import { useState, useEffect, useRef, lazy, Suspense } from "react";
 import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
 import { signOut, onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "./firebase";
@@ -36,15 +36,15 @@ function App() {
   const location = useLocation();
   const [isLoadingAuth, setIsLoadingAuth] = useState(true);
 
-  let userUnsub: (() => void) | null = null;
+  const userUnsubRef = useRef<(() => void) | null>(null);
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (currentUser) => {
         if (currentUser) {
-        if (userUnsub) { try { userUnsub(); } catch { userUnsub = null; } }
+        if (userUnsubRef.current) { try { userUnsubRef.current(); } catch { userUnsubRef.current = null; } }
         setUsuario({ uid: currentUser.uid, email: currentUser.email || '', rol: "cargando..." } as unknown as User);
         const userDocRef = doc(db, "usuarios", currentUser.uid);
-        userUnsub = onSnapshot(userDocRef, (docSnap) => {
+        userUnsubRef.current = onSnapshot(userDocRef, (docSnap) => {
           if (docSnap.exists() && docSnap.data().rol) {
             setUsuario(prev => ({ ...prev!, rol: docSnap.data().rol, nombreCompleto: docSnap.data().nombreCompleto }));
           } else {
@@ -57,7 +57,7 @@ function App() {
           setIsLoadingAuth(false);
         });
       } else {
-        if (userUnsub) { try { userUnsub(); } catch { userUnsub = null; } }
+        if (userUnsubRef.current) { try { userUnsubRef.current(); } catch { userUnsubRef.current = null; } }
         setUsuario(null);
         setIsLoadingAuth(false);
       }
@@ -73,7 +73,7 @@ function App() {
     );
 
     return () => {
-      if (userUnsub) { try { userUnsub(); } catch { userUnsub = null; } }
+      if (userUnsubRef.current) { try { userUnsubRef.current(); } catch { userUnsubRef.current = null; } }
       unsubAuth();
       unsubConfig();
     };

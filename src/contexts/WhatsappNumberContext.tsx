@@ -1,19 +1,9 @@
 // src/contexts/WhatsappNumberContext.tsx
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
+import React, { useState, useEffect, type ReactNode } from 'react';
 import { doc, onSnapshot } from 'firebase/firestore';
+import { useLocation } from 'react-router-dom';
 import { db } from '../firebase';
-
-const DEFAULT_WHATSAPP_NUMBER = '573223652569';
-
-const WhatsappNumberContext = createContext<string | null>(null);
-
-export const useWhatsappNumber = (): string => {
-  const context = useContext(WhatsappNumberContext);
-  if (!context) {
-    throw new Error('useWhatsappNumber must be used within WhatsappNumberProvider');
-  }
-  return context;
-};
+import { WhatsappNumberContext, DEFAULT_WHATSAPP_NUMBER } from './whatsapp-number-context';
 
 interface WhatsappNumberProviderProps {
   children: ReactNode;
@@ -22,10 +12,11 @@ interface WhatsappNumberProviderProps {
 export const WhatsappNumberProvider: React.FC<WhatsappNumberProviderProps> = ({ children }) => {
   const [asesorWhatsappNumber, setAsesorWhatsappNumber] = useState(DEFAULT_WHATSAPP_NUMBER);
   const [asesorIdFromUrl, setAsesorIdFromUrl] = useState<string | null>(null);
+  const location = useLocation();
 
   // Leer parámetro 'asesor' de la URL y persistir en localStorage
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
+    const params = new URLSearchParams(location.search);
     const asesorId = params.get('asesor');
 
     if (asesorId) {
@@ -33,14 +24,14 @@ export const WhatsappNumberProvider: React.FC<WhatsappNumberProviderProps> = ({ 
       localStorage.setItem('currentAsesorId', asesorId);
     } else {
       const storedAsesorId = localStorage.getItem('currentAsesorId');
-      if (storedAsesorId && window.location.pathname !== '/') {
+      if (storedAsesorId && location.pathname !== '/') {
         setAsesorIdFromUrl(storedAsesorId);
       } else {
         setAsesorIdFromUrl(null);
         localStorage.removeItem('currentAsesorId');
       }
     }
-  }, [window.location.search, window.location.pathname]);
+  }, [location.search, location.pathname]);
 
   // Obtener número de WhatsApp del asesor desde Firestore
   useEffect(() => {

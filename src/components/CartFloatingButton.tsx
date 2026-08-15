@@ -1,8 +1,8 @@
 // src/components/CartFloatingButton.tsx
 import React, { useState } from 'react';
 import { Button, Offcanvas, ListGroup } from 'react-bootstrap';
-import { useCart } from '../contexts/CartContext';
-import { useWhatsappNumber } from '../contexts/WhatsappNumberContext';
+import { useCart } from '../contexts/cart-context';
+import { useWhatsappNumber } from '../contexts/whatsapp-number-context';
 import { formatPrice } from '../utils/formatters';
 import { trackPurchase, trackLead } from '../utils/metaPixel';
 

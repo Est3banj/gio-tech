@@ -1,6 +1,6 @@
 // src/components/WhatsappFloatingButton.tsx
 import React from 'react';
-import { useWhatsappNumber } from '../contexts/WhatsappNumberContext';
+import { useWhatsappNumber } from '../contexts/whatsapp-number-context';
 
 const WhatsAppFloatingButton: React.FC = () => {
   const phoneNumber = useWhatsappNumber();

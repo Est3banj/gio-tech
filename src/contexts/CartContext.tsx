@@ -1,19 +1,9 @@
 // src/contexts/CartContext.tsx
-import React, { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
-import type { CartContextType, CartItem, CotizacionType } from '../types';
+import React, { useState, useEffect, type ReactNode } from 'react';
+import type { CartItem, CotizacionType } from '../types';
 import type { Product } from '../types';
 import { trackAddToCart } from '../utils/metaPixel';
-
-const CartContext = createContext<CartContextType | null>(null);
-
-// Hook personalizado para usar el carrito
-export const useCart = (): CartContextType => {
-  const context = useContext(CartContext);
-  if (!context) {
-    throw new Error('useCart must be used within CartProvider');
-  }
-  return context;
-};
+import { CartContext } from './cart-context';
 
 // Props para el Provider
 interface CartProviderProps {

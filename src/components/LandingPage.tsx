@@ -3,7 +3,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import { usePopularProducts } from "../hooks/usePopularProducts";
-import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
+import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
 import ProductCard from "./ProductCard";
 import BannerSlider from "./BannerSlider";
 import type { Product } from "../types";

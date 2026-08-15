@@ -1,7 +1,9 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, act } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 import { doc, onSnapshot } from 'firebase/firestore'
-import { WhatsappNumberProvider, useWhatsappNumber } from './WhatsappNumberContext'
+import { WhatsappNumberProvider } from './WhatsappNumberContext'
+import { useWhatsappNumber } from './whatsapp-number-context'
 
 vi.mock('firebase/firestore', () => ({
   doc: vi.fn((_db: unknown, collection: string, id: string) => ({ collection, id })),
@@ -34,9 +36,11 @@ beforeEach(() => {
 describe('WhatsappNumberContext', () => {
   it('lee el whatsappNumber desde perfiles_publicos y lo expone', async () => {
     render(
-      <WhatsappNumberProvider>
-        <WhatsappProbe />
-      </WhatsappNumberProvider>,
+      <MemoryRouter initialEntries={['/?asesor=asesor-1']}>
+        <WhatsappNumberProvider>
+          <WhatsappProbe />
+        </WhatsappNumberProvider>
+      </MemoryRouter>,
     )
 
     await waitFor(() => {
@@ -58,9 +62,11 @@ describe('WhatsappNumberContext', () => {
 
   it('usa el número default cuando el snapshot no existe', async () => {
     render(
-      <WhatsappNumberProvider>
-        <WhatsappProbe />
-      </WhatsappNumberProvider>,
+      <MemoryRouter initialEntries={['/?asesor=asesor-1']}>
+        <WhatsappNumberProvider>
+          <WhatsappProbe />
+        </WhatsappNumberProvider>
+      </MemoryRouter>,
     )
 
     await waitFor(() => {
@@ -79,9 +85,11 @@ describe('WhatsappNumberContext', () => {
 
   it('usa el número default cuando el snapshot existe sin campo whatsappNumber', async () => {
     render(
-      <WhatsappNumberProvider>
-        <WhatsappProbe />
-      </WhatsappNumberProvider>,
+      <MemoryRouter initialEntries={['/?asesor=asesor-1']}>
+        <WhatsappNumberProvider>
+          <WhatsappProbe />
+        </WhatsappNumberProvider>
+      </MemoryRouter>,
     )
 
     await waitFor(() => {
@@ -100,9 +108,11 @@ describe('WhatsappNumberContext', () => {
 
   it('usa el número default cuando el snapshot falla con error', async () => {
     render(
-      <WhatsappNumberProvider>
-        <WhatsappProbe />
-      </WhatsappNumberProvider>,
+      <MemoryRouter initialEntries={['/?asesor=asesor-1']}>
+        <WhatsappNumberProvider>
+          <WhatsappProbe />
+        </WhatsappNumberProvider>
+      </MemoryRouter>,
     )
 
     await waitFor(() => {

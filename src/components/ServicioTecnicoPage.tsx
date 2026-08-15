@@ -1,6 +1,6 @@
 // src/components/ServicioTecnicoPage.tsx
 import React from "react";
-import { useWhatsappNumber } from "../contexts/WhatsappNumberContext";
+import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
 
 interface Reparacion {
     icon: string;
