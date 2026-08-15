@@ -1,4 +1,4 @@
-import { useState, useEffect, FormEvent } from "react";
+import { useState, useEffect } from "react";
 import { db } from "../firebase";
 import {
   collection,
@@ -22,16 +22,10 @@ import SimpleModal from "./SimpleModal";
 
 import {
   Container,
-  Row,
-  Col,
-  Form,
   Button,
-  Card,
-  Table,
   Alert,
   Tabs,
   Tab,
-  Badge,
 } from "react-bootstrap";
 
 import { Product, Asesor, CarouselSlideAdmin, ThemeVars } from "../types";

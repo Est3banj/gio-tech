@@ -2,6 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 import { doc, onSnapshot } from 'firebase/firestore'
+import type { DocumentSnapshot, DocumentData } from 'firebase/firestore'
 import { WhatsappNumberProvider } from './WhatsappNumberContext'
 import { useWhatsappNumber } from './whatsapp-number-context'
 
@@ -24,7 +25,11 @@ function WhatsappProbe() {
 function getSnapshotCallbacks() {
   const call = vi.mocked(onSnapshot).mock.lastCall
   if (!call) throw new Error('onSnapshot not called')
-  return { docRef: call[0], next: call[1], error: call[2] }
+  return {
+    docRef: call[0],
+    next: call[1] as unknown as (snap: DocumentSnapshot<DocumentData>) => void,
+    error: call[2] as unknown as (error: Error) => void,
+  }
 }
 
 beforeEach(() => {
@@ -52,7 +57,7 @@ describe('WhatsappNumberContext', () => {
     expect(docRef).toEqual({ collection: 'perfiles_publicos', id: 'asesor-1' })
 
     act(() => {
-      next({ exists: () => true, data: () => ({ whatsappNumber: '573123456789' }) })
+      next({ exists: () => true, data: () => ({ whatsappNumber: '573123456789' }) } as unknown as DocumentSnapshot<DocumentData>)
     })
 
     await waitFor(() => {
@@ -75,7 +80,7 @@ describe('WhatsappNumberContext', () => {
 
     const { next } = getSnapshotCallbacks()
     act(() => {
-      next({ exists: () => false })
+      next({ exists: () => false } as unknown as DocumentSnapshot<DocumentData>)
     })
 
     await waitFor(() => {
@@ -98,7 +103,7 @@ describe('WhatsappNumberContext', () => {
 
     const { next } = getSnapshotCallbacks()
     act(() => {
-      next({ exists: () => true, data: () => ({ nombreCompleto: 'Sin WhatsApp' }) })
+      next({ exists: () => true, data: () => ({ nombreCompleto: 'Sin WhatsApp' }) } as unknown as DocumentSnapshot<DocumentData>)
     })
 
     await waitFor(() => {
