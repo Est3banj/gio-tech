@@ -1,0 +1,33 @@
+change: refactor-product-card
+status: PLANNED
+change_date: "2026-08-15"
+dag:
+  explore: done
+  propose: done
+  spec: done
+  design: done
+  tasks: done
+  apply: pending
+  verify: pending
+  archive: pending
+main_specs_updated: []
+notes: >
+  Change en fase de PLANIFICACIÓN (15-08-2026): split de
+  src/components/ProductCard.tsx (1165 lineas verificadas con wc -l; el
+  orquestador reporto 1169) en helpers puros de mensajes WhatsApp
+  (src/utils/whatsapp-messages.ts + promo.ts, golden tests byte-identicos
+  ANTES de tocar la implementacion - REQ-001/REQ-006) y sub-componentes
+  presentacionales en src/components/product-card/ (ProductCardView,
+  ProductBadges, PriceDisplay, PlanCuotas, FinancieraGrid, CreditForm,
+  SistecreditoValidation, useProductPricing, product-card.css), dejando
+  ProductCard.tsx como container orquestador (~350-400 lineas). Estrategia:
+  Opcion C (split por fases con gates, proposal) - Fase 0 goldens sobre
+  codigo viejo intacto, Fase 1 rewiring WhatsApp, Fase 2 presentacionales +
+  smoke tests, Fase 3 limpieza + verificacion (lint 0/0, 28+N tests, tsc
+  --noEmit, sin vite build por regla del orquestador), Fase 4 commit +
+  archive. SIN deploy, SIN tocar firebase.json/rules/functions (REQ-008);
+  call sites LandingPage.tsx:180 y Catalogo.tsx:199 intactos (REQ-003).
+  Pendientes de apply: escribir utils + goldens (Fase 0) y ejecutar las
+  fases con sus gates. Al archivar: sincronizar spec a
+  openspec/specs/ui/spec.md (primer spec del dominio ui) y mover la carpeta
+  a archive/2026-08-15-refactor-product-card/.
