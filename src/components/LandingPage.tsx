@@ -6,6 +6,7 @@ import { usePopularProducts } from "../hooks/usePopularProducts";
 import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
 import ProductCard from "./ProductCard";
 import BannerSlider from "./BannerSlider";
+import { seleccionarDestacados } from "../utils/featured-products";
 import type { Product } from "../types";
 
 interface TrustItem {
@@ -58,9 +59,7 @@ const LandingPage: React.FC = () => {
     const { popularIds } = usePopularProducts();
     const phoneNumber = useWhatsappNumber() || "573223652569";
 
-    const productosDestacados: Product[] = popularIds.length > 0 
-        ? products.filter(p => popularIds.includes(p.id)).slice(0, 4)
-        : products.slice(0, 4);
+    const productosDestacados: Product[] = seleccionarDestacados(products, popularIds);
     
     const waLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent("Hola GIO TECH, me gustaría recibir asesoría personalizada")}`;
 
