@@ -121,8 +121,12 @@ describe('ProductCard', () => {
     expect(screen.getByText(/Cuota inicial:/)).toBeInTheDocument()
   })
 
-  it('registers the product view on mount', () => {
+  it('registers the product view only when opening details, not on mount', async () => {
     renderCard(baseProduct())
+
+    expect(recordProductView).not.toHaveBeenCalled()
+
+    await abrirModal()
 
     expect(recordProductView).toHaveBeenCalledTimes(1)
     expect(recordProductView).toHaveBeenCalledWith('prod-1')
