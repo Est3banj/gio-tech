@@ -105,7 +105,7 @@ const BannerSlider = () => {
             <div className="banner-overlay">
               <div className="banner-content">
                 {currentBanner.title && (
-                  <motion.h2
+                  <motion.div
                     className="banner-title"
                     variants={titleVariants}
                     initial="hidden"
@@ -117,7 +117,7 @@ const BannerSlider = () => {
                     }}
                   >
                     {currentBanner.title}
-                  </motion.h2>
+                  </motion.div>
                 )}
                 {currentBanner.description && (
                   <motion.p

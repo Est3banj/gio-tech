@@ -105,6 +105,10 @@ const Catalogo: React.FC = () => {
         />
       </React.Suspense>
 
+      <div className="banner-section">
+        <BannerSlider />
+      </div>
+
       <section className="catalogo-section section-inner py-4">
         <Row className="mb-5 justify-content-center">
           <Col xs={12} md={10} lg={8} className="text-center">
@@ -170,10 +174,6 @@ const Catalogo: React.FC = () => {
             </Card>
           </Col>
         </Row>
-
-        <div className="banner-section">
-          <BannerSlider />
-        </div>
 
         {isLoading ? (
           <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
