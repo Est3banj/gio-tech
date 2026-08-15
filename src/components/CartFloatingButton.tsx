@@ -4,7 +4,7 @@ import { Button, Offcanvas, ListGroup } from 'react-bootstrap';
 import { useCart } from '../contexts/cart-context';
 import { useWhatsappNumber } from '../contexts/whatsapp-number-context';
 import { formatPrice } from '../utils/formatters';
-import { trackPurchase, trackLead } from '../utils/metaPixel';
+import { trackLead } from '../utils/metaPixel';
 
 const CartFloatingButton: React.FC = () => {
   const { cartItems, removeFromCart, clearCart, cartCount } = useCart();
@@ -31,10 +31,23 @@ const CartFloatingButton: React.FC = () => {
   };
 
   const handleSendToWhatsapp = () => {
+    // Intención de compra (no pago confirmado): Lead / generate_lead.
+    // 'Purchase' queda reservado para ventas confirmadas — hoy no existe ese evento.
     if (cartItems.length > 0) {
-      trackPurchase(cartItems);
+      const totalValue = cartItems.reduce((sum, item) => {
+        return sum + (item.cotizacionType === 'contado' ? item.contado : item.cuotas6 || item.cuotas8);
+      }, 0);
+
+      trackLead({
+        content_type: 'product',
+        content_ids: cartItems.map(item => item.productId),
+        value: totalValue,
+        num_items: cartItems.length,
+        currency: 'COP'
+      });
+    } else {
+      trackLead();
     }
-    trackLead();
     handleClose();
   };
 
