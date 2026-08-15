@@ -56,7 +56,7 @@ const services: Service[] = [
 const LandingPage: React.FC = () => {
     const { products } = useProducts();
     const { popularIds } = usePopularProducts();
-    const phoneNumber = useWhatsappNumber() || "573248022632";
+    const phoneNumber = useWhatsappNumber() || "573223652569";
 
     const productosDestacados: Product[] = popularIds.length > 0 
         ? products.filter(p => popularIds.includes(p.id)).slice(0, 4)
@@ -66,10 +66,6 @@ const LandingPage: React.FC = () => {
 
     return (
         <div className="landing-wrapper" style={{ backgroundColor: '#020617', minHeight: '100vh' }}>
-
-            <section className="banner-section">
-                <BannerSlider />
-            </section>
 
             <section className="landing-hero section-padding-lg">
                 <div className="section-inner">
@@ -88,13 +84,17 @@ const LandingPage: React.FC = () => {
                 </div>
             </section>
 
+            <section className="banner-section">
+                <BannerSlider />
+            </section>
+
             <section className="trust-section section-padding-lg">
                 <div className="section-inner">
                     <div className="trust-grid">
                         {trustItems.map((item) => (
                             <div key={item.title} className="trust-item">
                                 <div className="trust-icon"><i className={`bi ${item.icon}`}></i></div>
-                                <h3 className="trust-title">{item.title}</h3>
+                                <h2 className="trust-title">{item.title}</h2>
                                 <p className="trust-desc">{item.desc}</p>
                             </div>
                         ))}

@@ -4,6 +4,7 @@ import { Modal, Button, Row, Col } from "react-bootstrap";
 import { useCart } from "../contexts/cart-context";
 import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
 import { buildContadoWhatsAppMessage, buildCreditoWhatsAppMessage, buildWhatsAppUrl } from "../utils/whatsapp-messages";
+import { trackLead } from "../utils/metaPixel";
 import { recordProductView } from "../services/productStats.service";
 import { useProductPricing } from "./product-card/useProductPricing";
 import CreditForm from "./product-card/CreditForm";
@@ -34,7 +35,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
   const [validResultType, setValidResultType] = useState<ValidacionResultType>(null);
   const { addToCart } = useCart();
   const rawPhoneNumber = useWhatsappNumber();
-  const phoneNumber = rawPhoneNumber || '573248022632';
+  const phoneNumber = rawPhoneNumber || '573223652569';
 
   // Registrar vista del producto
   useEffect(() => {
@@ -84,6 +85,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
   const handleSeleccionTipo = (tipo: CotizacionType) => {
     if (tipo === 'contado') {
       if (paymentAction === 'comprar') {
+        trackLead({
+          content_type: 'product',
+          content_ids: [producto.id],
+          content_name: producto.nombre,
+          value: der.contado || 0,
+          currency: 'COP',
+        });
         if (phoneNumber) {
           window.open(
             buildWhatsAppUrl(phoneNumber, mensajeWhatsAppContadoDirecto),
@@ -134,6 +142,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
       cuotas6Str,
       cuotas8Str,
       formData,
+    });
+
+    trackLead({
+      content_type: 'product',
+      content_ids: [producto.id],
+      content_name: producto.nombre,
+      value: producto.cuotas6 || producto.cuotas8 || 0,
+      currency: 'COP',
     });
 
     if (phoneNumber) {

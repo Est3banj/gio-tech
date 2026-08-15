@@ -48,7 +48,7 @@ const pasos: Paso[] = [
 ];
 
 const ServicioTecnicoPage: React.FC = () => {
-    const phoneNumber = useWhatsappNumber() || "573248022632";
+    const phoneNumber = useWhatsappNumber() || "573223652569";
 
     const mensajeWA = encodeURIComponent(
         "Hola GIO TECH, necesito servicio técnico para mi equipo. ¿Cuál es el proceso?"
