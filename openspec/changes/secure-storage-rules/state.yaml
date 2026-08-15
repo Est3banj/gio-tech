@@ -1,0 +1,32 @@
+change: secure-storage-rules
+status: PAUSED
+change_date: "2026-08-15"
+dag:
+  explore: done
+  propose: done
+  spec: done
+  design: done
+  tasks: done
+  apply: pending
+  verify: pending
+  archive: pending
+main_specs_updated: []
+notes: >
+  Change en fase de PLANIFICACIÓN (15-08-2026): exploración, proposal (Opción A
+  aprobada por el dueño: read público + write solo admin en /config/ con
+  validación de tipo PNG/JPEG/WebP y tamaño < 2MB, write global denegado),
+  spec delta del dominio storage (REQ-001..REQ-006), design (helper isAdmin()
+  vía cross-service firestore.get() con path literal (default), orden de match
+  /config ANTES del catch-all por first-match-wins) y tasks (4 fases con gates:
+  Fase 0 storage.rules + firebase.json, Fase 1 deploy + verificación REST con
+  token existente del configstore, Fase 2 checklist funcional del dueño, Fase 3
+  commits + archive). SIN deploy, SIN tocar firebase.json ni código de la app:
+  solo artefactos openspec escritos en
+  openspec/changes/secure-storage-rules/.
+  Pendientes de apply: escribir storage.rules y la seccion "storage" en
+  firebase.json, correr firebase deploy --only storage (aceptar prompt IAM
+  cross-service), verificar 403 de uploads anonimos y 200 del logo (gate con
+  billing activo; el 402 por billing cerrado NO es fallo de rules). Ruleset
+  04df2ff0 (nunca publicado) a inspeccionar en Fase 1 como material previo.
+  Al archivar: sincronizar spec a openspec/specs/storage/spec.md y mover la
+  carpeta a archive/2026-08-15-secure-storage-rules/.
