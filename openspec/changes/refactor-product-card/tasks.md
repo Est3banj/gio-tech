@@ -64,59 +64,59 @@
 
 ## Fase 2 — Sub-componentes presentacionales + css + hook
 
-- [ ] **2.1** Migrar el bloque `<style>` a `product-card.css`
+- [x] **2.1** Migrar el bloque `<style>` a `product-card.css`
   - REQ: REQ-004
   - Archivo: `src/components/product-card/product-card.css` (NUEVO) + `ProductCard.tsx`
   - Done: todo el contenido de `:277-601` (selectores, valores, keyframes, media query) copiado SIN modificar; `<style>` eliminado del JSX; CSS importado desde `ProductCard.tsx`. Verificar con diff que selectores/valores quedan idénticos al bloque original (move-only).
   - Estimación: S
   - Dependencias: 1.3 (gate)
 
-- [ ] **2.2** Crear `src/utils/promo.ts`-consuming hook `useProductPricing`
+- [x] **2.2** Crear `src/utils/promo.ts`-consuming hook `useProductPricing`
   - REQ: REQ-004 (derivados idénticos)
   - Archivo: `src/components/product-card/useProductPricing.ts` (NUEVO) + `ProductCard.tsx`
   - Done: hook puro (sin JSX ni contexts) que centraliza `:55-117`: destructuring de producto con defaults (`nombre = "Producto sin nombre"` etc.), `getMillis/esVentanaPromo/hasValidPromoPrice` de `utils/promo`, `formatPrice` de formatters, `getFinancierasForProduct`, badge modes (`badgeMode || 'promo'`), `badgeBg/highlightColor` con los fallbacks de variables CSS EXACTOS. Retorna `DerivadosPricing` (design.md Interfaces). `ProductCard.tsx` consume el hook y elimina el bloque inline.
   - Estimación: M
   - Dependencias: 2.1
 
-- [ ] **2.3** Crear presentacionales del card: `ProductBadges`, `PriceDisplay`, `ProductCardView`
+- [x] **2.3** Crear presentacionales del card: `ProductBadges`, `PriceDisplay`, `ProductCardView`
   - REQ: REQ-003, REQ-004
   - Archivo: `src/components/product-card/ProductBadges.tsx`, `PriceDisplay.tsx`, `ProductCardView.tsx` (NUEVOS) + `ProductCard.tsx`
   - Done: `ProductBadges` = markup move-only de `:619-657` (wrappers con visibility, nuevo `#28a745`, promo, HOT `#ff6b35`, aria-hidden). `PriceDisplay` con `variant: 'card' | 'modal'` = markup move-only de `:674-685` (card: del + rojo / azul) y `:726-733` (modal: textos + span rojo + badge promo opcional). `ProductCardView` = presentacional del Card completo `:603-714` (clases `product-card`, `product-card-img/title/price`, click → `onVerDetalles` con `stopPropagation` en el botón, imagen con placeholder exacto). `ProductCard.tsx` compone `ProductCardView` y queda sin el JSX del card.
   - Estimación: M
   - Dependencias: 2.2
 
-- [ ] **2.4** Crear `PlanCuotas` y `FinancieraGrid`
+- [x] **2.4** Crear `PlanCuotas` y `FinancieraGrid`
   - REQ: REQ-002, REQ-004
   - Archivo: `src/components/product-card/PlanCuotas.tsx`, `FinancieraGrid.tsx` (NUEVOS) + `ProductCard.tsx`
   - Done: `PlanCuotas` = markup move-only de `:735-755` (cuota inicial si > 0, `plan-special-box` con Badge PLAN ESPECIAL y 12 cuotas, o `plan-standard-box` con 16 quincenales + 8 mensuales; clase `plan-special-box`/`plan-standard-box` con estilos de variables ya en css). `FinancieraGrid` = markup move-only de `:759-788` (FINANCIERAS.map con `financiera-card` + disabled + "No disponible para este producto", logos, badge autovalidación/asesor, `onClick` → `onSelect(f)` si disponible). `ProductCard.tsx` los compone en el body del modal.
   - Estimación: M
   - Dependencias: 2.3
 
-- [ ] **2.5** Crear submachine `CreditForm` (formulario + autovalidación + términos)
+- [x] **2.5** Crear submachine `CreditForm` (formulario + autovalidación + términos)
   - REQ: REQ-002
   - Archivo: `src/components/product-card/CreditForm.tsx` (NUEVO) + `ProductCard.tsx`
   - Done: encapsula el estado del formulario (`formData`, `linkOpened`, `autovalidacionStatus`, `aceptaTerminos`, `nombreCompletoInvalido` con la regla de 2 palabras SOLO para sistecredito) y el markup move-only de `:790-939`: header con logo/nombre de la financiera, pasos de autovalidación (abrir `urlAutovalidacion` con `window.open` en otra pestaña, botones Aprobado/Denegado, volver a abrir), campos (radio con options / input, hint sistecredito "Ingresá tu nombre y apellido completo"/"Ej: Juan Pérez"), términos y condiciones (checkbox + link `/terminos`). Recibe `{ financiera, onValidSubmit }`; expone `isFormValid()` internamente. Validación del botón de Sistecredito: el container decide mostrar según `selectedFinanciera.id === 'sistecredito'`. Estado de reset: decision de diseño 2.5b (remount `key` vs `onReset`) — el RESULTADO observable es reset total al cerrar (smoke test).
   - Estimación: M
   - Dependencias: 2.4
 
-- [ ] **2.6** Crear `SistecreditoValidation` (wizard de pasos + timers, move-only)
+- [x] **2.6** Crear `SistecreditoValidation` (wizard de pasos + timers, move-only)
   - REQ: REQ-002
   - Archivo: `src/components/product-card/SistecreditoValidation.tsx` (NUEVO) + `ProductCard.tsx`
   - Done: encapsula `:227-273` (timers 800/2000/3500ms + 2000ms auto-envío, parseo de cupo `[^0-9]`, advertencia si `contado > cupo` con mensaje es-CO EXACTO, regla `primeraCompra === 'Sí'` → no-aplica) y el markup `:941-1025` (botón Validar con `isFormValid`, pasos progressivos, advertencia, resultado aplica/no-aplica con textos exactos "¡Aplicas para Sistecredito!"/"Cupo denegado"/"Te redirigimos a WhatsApp..."). Recibe `{ cupoInput, contado, formData, esFormValido, onValidSubmit }`. Los delays NO se tocan (move-only).
   - Estimación: M
   - Dependencias: 2.5
 
-- [ ] **2.7** Crear `ProductCard.test.tsx` (smoke tests de componente)
+- [x] **2.7** Crear `ProductCard.test.tsx` (smoke tests de componente)
   - REQ: REQ-002, REQ-003, REQ-004, REQ-007
   - Archivo: `src/components/product-card/ProductCard.test.tsx` (NUEVO)
-  - Done: con `vi.mock('firebase/firestore')` + `vi.mock('../firebase')` (patrón verificado de `product.service.test.ts:1-15`) + providers de `CartContext`/`WhatsappNumberContext` (probe del patrón `WhatsappNumberContext.test.tsx`) + `recordProductView` mockeado: (1) render del card con título y precio; (2) click "Ver detalles" → modal en step product con precios/plan; (3) navegación Comprar Ahora → Contado con `window.open` spy que recibe URL con `wa.me` (para contado CON promo y SIN promo); (4) Crédito → grid financieras con no-disponibles deshabilitadas (producto tipo iphone: PayJoy/Krediya disabled); (5) `cerrar()` resetea todo (reapertura en step product sin datos); (6) `recordProductView` llamado con `producto.id` al montar. Wizard Sistecredito con `vi.useFakeTimers` (NO en los tests anteriores).
+  - Done: 9 tests verdes — (1) render card título/precio (regular y promo con `<del>`); (2) modal step product con precios/plan/PROMO+; (3) contado CON promo y SIN promo: `window.open` spy → URL `wa.me/573223652569?text=` y mensaje decodificado (`Precio promocional: ... (antes ...)` / `Precio: ...`); (4) grid con PayJoy/Krediya disabled para iphone (sin `Primero valida tu crédito:` al clickearlas, Esmiopcion SÍ abre autovalidación); (5) `cerrar()` resetea (reapertura en step product, form vacío); (6) `recordProductView('prod-1')` al montar; (7) wizard Sistecredito con `vi.useFakeTimers` (800/1200/1500/2000ms) → pasos, advertencia de cupo, auto-envío con mensaje `🧾 *Solicitud de crédito - Sistecredito*`. Mocks: `vi.mock('firebase/firestore')` + `vi.mock('../../firebase')` (OJO: ruta correcta desde `product-card/` es `../../firebase`, no `../firebase` — el path del tasks.md era relativo a `src/contexts/`) + `vi.mock('../../services/productStats.service')` + providers Cart/WhatsappNumber. **Surprise**: `Intl` es-CO COP usa NNBSP U+202F entre `$` y el número — `\s` de JS no lo colapsa → `getByText(formatPrice(...))` falla; helper `normalizarTexto()` con `normalize('NFKC')` + collapse en el matcher. `waitFor` cuelga bajo fake timers → asserts directos post-`advanceTimersByTime`.
   - Estimación: M
   - Dependencias: 2.6
 
-- [ ] **2.8** GATE de Fase 2: extracción completa verificable
+- [x] **2.8** GATE de Fase 2: extracción completa verificable
   - REQ: REQ-002, REQ-004, REQ-005
   - Archivo: ninguno (verificación)
-  - Done: `npm test` → 28 + goldens + promo + smoke TODOS verdes; `npm run lint` → 0/0; `npx tsc --noEmit` OK; revisión visual del diff de la fase: markup movido (no reescrito) en componentes; `ProductCard.tsx` sin lógica de pricing ni markup de card/financieras/form (solo wizard, footer y composición).
+  - Done: `npm test` → **72 tests / 7 archivos** ALL GREEN (baseline 63 + 9 smoke); `npm run lint` → 0/0 sin warnings; `npx tsc --noEmit` → 0 errores; CSS move-only verificado byte-por-byte contra `git show a189fe5` (6882 chars idénticos, diff chars 0 — método: des-indent mínimo 8 del body del `<style>` original vs `product-card.css`); `git diff LandingPage.tsx Catalogo.tsx` → 0 líneas; `ProductCard.tsx` = 332 líneas de container (orquestación pura: estado del modal, espejos del wizard, handlers, footer) — sin pricing/badges/grid/form (todo en `product-card/`).
   - Estimación: S
   - Dependencias: 2.7
 
