@@ -67,6 +67,10 @@ const LandingPage: React.FC = () => {
     return (
         <div className="landing-wrapper" style={{ backgroundColor: '#020617', minHeight: '100vh' }}>
 
+            <section className="banner-section">
+                <BannerSlider />
+            </section>
+
             <section className="landing-hero section-padding-lg">
                 <div className="section-inner">
                     <span className="landing-hero-eyebrow">Puerto Asís · Putumayo · Colombia</span>
@@ -82,10 +86,6 @@ const LandingPage: React.FC = () => {
                         <Link to="/servicio-tecnico" className="landing-btn-ghost">Servicio técnico</Link>
                     </div>
                 </div>
-            </section>
-
-            <section className="banner-section">
-                <BannerSlider />
             </section>
 
             <section className="trust-section section-padding-lg">
