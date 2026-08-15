@@ -32,7 +32,7 @@ const HomePage: React.FC<HomePageProps> = ({ anuncio }) => {
         <div>
           <a href="https://www.instagram.com/tu_empresa" target="_blank" rel="noreferrer">Instagram</a> |{" "}
           <a href="https://www.facebook.com/tu_empresa" target="_blank" rel="noreferrer">Facebook</a> |{" "}
-          <a href="https://wa.me/573248022632" target="_blank" rel="noreferrer">WhatsApp</a>
+          <a href="https://wa.me/573223652569" target="_blank" rel="noreferrer">WhatsApp</a>
         </div>
         <p className="mt-3">&copy; {new Date().getFullYear()} GIO TECH</p>
       </footer>

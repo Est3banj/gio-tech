@@ -46,9 +46,9 @@ export const trackAddToCart = (product: Product, type: CotizacionType): void => 
 };
 
 /**
- * Track de Purchase - cuando el usuario envía la cotización por WhatsApp
- * Se considera como "compra/leads" porque el flujo de ventas es por WhatsApp
- * @param cartItems - Items del carrito
+ * Track de Purchase - RESERVADO para ventas CONFIRMADAS.
+ * El flujo actual vende por WhatsApp sin pago confirmado en el sitio: NO disparar
+ * este evento al abrir un link de WhatsApp (esas intenciones se reportan con trackLead).
  */
 export const trackPurchase = (cartItems: CartItem[]): void => {
   const totalValue = cartItems.reduce((sum, item) => {
@@ -65,15 +65,22 @@ export const trackPurchase = (cartItems: CartItem[]): void => {
 };
 
 /**
- * Track de Lead - cuando el usuario inicia una conversación
+ * Track de Lead - el usuario inicia una conversación o envía una cotización por WhatsApp
+ * (intención de compra, no pago confirmado). También dispara GA4 'generate_lead' si gtag existe.
+ * @param params - Parámetros del evento (opcional)
  */
-export const trackLead = (): void => {
-  trackMetaEvent('Lead');
+export const trackLead = (params?: MetaParams): void => {
+  trackMetaEvent('Lead', params ?? {});
+
+  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+    window.gtag('event', 'generate_lead', params ?? {});
+  }
 };
 
-// Extender window para incluir fbq
+// Extender window para incluir fbq y gtag
 declare global {
   interface Window {
     fbq: (action: string, eventName: string, params?: MetaParams) => void;
+    gtag: (command: string, eventName: string, params?: MetaParams) => void;
   }
 }

@@ -151,7 +151,7 @@ describe('CAMPO_LABELS / labelDeCampo', () => {
 describe('buildWhatsAppUrl', () => {
   // golden — byte-identidad REQ-001, no cambiar
   it('golden: construye URL wa.me con encodeURIComponent byte-exacto', () => {
-    const result = buildWhatsAppUrl('573248022632', 'Hola, estoy interesado en comprar el iPhone 16 Pro.\nPrecio promocional: $\u00A04.500.000 (antes $\u00A05.000.000).\n¿Está disponible para entrega inmediata?')
-    expect(result).toBe('https://wa.me/573248022632?text=Hola%2C%20estoy%20interesado%20en%20comprar%20el%20iPhone%2016%20Pro.%0APrecio%20promocional%3A%20%24%C2%A04.500.000%20(antes%20%24%C2%A05.000.000).%0A%C2%BFEst%C3%A1%20disponible%20para%20entrega%20inmediata%3F')
+    const result = buildWhatsAppUrl('573223652569', 'Hola, estoy interesado en comprar el iPhone 16 Pro.\nPrecio promocional: $\u00A04.500.000 (antes $\u00A05.000.000).\n¿Está disponible para entrega inmediata?')
+    expect(result).toBe('https://wa.me/573223652569?text=Hola%2C%20estoy%20interesado%20en%20comprar%20el%20iPhone%2016%20Pro.%0APrecio%20promocional%3A%20%24%C2%A04.500.000%20(antes%20%24%C2%A05.000.000).%0A%C2%BFEst%C3%A1%20disponible%20para%20entrega%20inmediata%3F')
   })
 })
