@@ -11,28 +11,28 @@
 
 ## Fase 0 — Golden tests + utils puras (SIEMPRE ANTES de tocar el componente)
 
-- [ ] **0.1** Crear `src/utils/whatsapp-messages.ts` (extracción VERBATIM)
+- [x] **0.1** Crear `src/utils/whatsapp-messages.ts` (extracción VERBATIM)
   - REQ: REQ-001 (base), REQ-006
   - Archivo: `src/utils/whatsapp-messages.ts` (NUEVO)
   - Done: exporta `buildContadoWhatsAppMessage` (template literals COPIADOS byte a byte de `ProductCard.tsx:113-115`: rama promo "comprar el ... (antes ...)" y rama no-promo "comprar al contado el ...", con `\n` y signos exactos), `buildCreditoWhatsAppMessage` (estructura de `:200-216`: header `🧾 *Solicitud de crédito - {financiera.nombre}*\n\n`, `📱 *Producto:*`, `💰 *Precio:*`, bloque Krediya con `💵 *Cuota inicial:*` si > 0 y 12 cuotas si `solo12Meses && cuotas12` o 16/8, `\n👤 *Datos del cliente:*\n`, `▸ {label}: {valor}\n` por campo con `Object.entries` preservando orden), `buildWhatsAppUrl` (`https://wa.me/{phone}?text=${encodeURIComponent(mensaje)}`), `CAMPO_LABELS` + `labelDeCampo(key)` (mapa EXACTO de `:184-198`: nombres→"Nombres y apellidos", cedula→"Cédula", fechaNacimiento→"Fecha y lugar de nacimiento", fechaExpedicion→"Fecha y lugar de expedición", celular→"Celular", email→"Correo electrónico", compradoAntes→"¿Ha comprado antes?", reportesNegativos→"¿Reportes negativos?", cupo→"Cupo disponible", primeraCompra→"Primera compra"; fallback = key cruda). Contrato de tipos según design.md Interfaces/Contracts.
   - Estimación: M
   - Dependencias: ninguna
 
-- [ ] **0.2** Crear `src/utils/whatsapp-messages.test.ts` (golden tests)
+- [x] **0.2** Crear `src/utils/whatsapp-messages.test.ts` (golden tests)
   - REQ: REQ-001, REQ-006
   - Archivo: `src/utils/whatsapp-messages.test.ts` (NUEVO)
   - Done: expected strings COPIADOS literalmente del comportamiento actual (reverificados contra `ProductCard.tsx` en el momento de escribirlos) y marcados como golden (comentario "golden — byte-identidad REQ-001, no cambiar"). Casos: (1) contado con promo (promoStr/regularStr dados); (2) contado sin promo; (3) crédito genérico (financiera no-Krediya, 2 campos, orden de inserción); (4) crédito Krediya con solo12Meses+cuotas12 y cuotaInicial>0 (con líneas de cuota inicial y 12 cuotas, SIN 16/8); (5) crédito Krediya con cuotaInicial=0 sin plan especial (SIN línea cuota inicial, CON 16 y 8); (6) label desconocida → key cruda; (7) `buildWhatsAppUrl` con encodeURIComponent byte-exacto. Usar strings de ejemplo representativos (nombres/prices es-CO sin depender de firebase).
   - Estimación: M
   - Dependencias: 0.1
 
-- [ ] **0.3** Crear `src/utils/promo.ts` + `promo.test.ts` (lógica pura de ventana promocional)
+- [x] **0.3** Crear `src/utils/promo.ts` + `promo.test.ts` (lógica pura de ventana promocional)
   - REQ: REQ-001 (gate `showPromoPrice`), REQ-006
   - Archivo: `src/utils/promo.ts` + `src/utils/promo.test.ts` (NUEVOS)
   - Done: puras move-only de `ProductCard.tsx:80-103`: `getMillis(ts)` (number / string parseable / objeto con `toMillis` / `+new Date` / null si no finito — comportamiento EXACTO de `:80-88`), `esVentanaPromo(promoStart, promoEnd, nowMs)` (semántica de `inWindow` `:90-93`), `hasValidPromoPrice(promoPrice, contado)` (misma semántica de `countedPromoPrice/countedContado` `:95-97`). Tests: ts nulo/number/string/Timestamp-like/inválido; boundaries de la ventana (sin start/sin end/start futuro/end pasado); precios NaN/0/negativo/promo>=contado.
   - Estimación: M
   - Dependencias: ninguna (puede paralelizarse con 0.1)
 
-- [ ] **0.4** GATE de Fase 0: goldens verdes sobre código viejo INTACTO
+- [x] **0.4** GATE de Fase 0: goldens verdes sobre código viejo INTACTO
   - REQ: REQ-006, REQ-005
   - Archivo: ninguno (verificación)
   - Done: `npm test` → nuevos tests verdes 100% + 28 existentes verdes; `npm run lint` → 0/0; `git status` → SOLO `src/utils/whatsapp-messages.ts`, `whatsapp-messages.test.ts`, `promo.ts`, `promo.test.ts` + artifacts openspec; `git diff src/components/ProductCard.tsx` VACÍO (el componente NO se tocó). Si el diff muestra ProductCard.tsx → PARAR (REQ-006 violada).
@@ -122,14 +122,14 @@
 
 ## Fase 3 — Limpieza + verificación completa
 
-- [ ] **3.1** Limpiar imports muertos y código residual
+- [x] **3.1** Limpiar imports muertos y código residual
   - REQ: REQ-005
   - Archivo: `src/components/ProductCard.tsx`, `src/components/product-card/*`
   - Done: sin imports sin uso (lint 0/0 lo garantiza — revisar explícito), sin blocks comentados, sin código duplicado remanente (grep de `wa.me`, `formatPrice(` inline en handlers, `mensajeWhatsAppContadoDirecto` fuera de utils...). El container mantiene SOLO lo del design D2/D8.
   - Estimación: S
   - Dependencias: 2.8 (gate)
 
-- [ ] **3.2** Verificación total post-limpieza
+- [x] **3.2** Verificación total post-limpieza
   - REQ: REQ-001, REQ-002, REQ-005, REQ-008
   - Comandos (raíz): `npm test` · `npm run lint` · `npx tsc --noEmit`
   - Done: suite 100% verde (28 + todos los nuevos); lint 0 errores 0 warnings; typecheck sin errores; `git diff HEAD -- firebase.json firestore.rules storage.rules functions/` VACÍO; `git diff src/components/LandingPage.tsx src/components/Catalogo.tsx` VACÍO (REQ-003). NO `vite build` (regla del orquestador).
@@ -138,14 +138,14 @@
 
 ## Fase 4 — Commits + archive (SIN deploy — REQ-008)
 
-- [ ] **4.1** Commit por fase (historia limpia)
+- [x] **4.1** Commit por fase (historia limpia)
   - REQ: REQ-005 (trazabilidad)
   - Comando (raíz): commits conventional en inglés por etapa — p. ej. `test(utils): add golden tests for whatsapp messages` (F1: utils+goldens), `refactor(product-card): use pure whatsapp message builders` (rewiring), `refactor(product-card): split presentational components and styles`, `test(product-card): add component smoke tests`. La historia debe permitir revertir fase por fase (rollback del design).
   - Done: 3-4 commits con la FUENTE de cada fase; ninguno mezcla fases.
   - Estimación: S
   - Dependencias: 3.2 (gate)
 
-- [ ] **4.2** Archive del change (sdd-archive)
+- [x] **4.2** Archive del change (sdd-archive)
   - REQ: REQ-008
   - Pasos: (1) sincronizar el spec a main specs (`openspec/specs/ui/spec.md`, primer spec del dominio `ui`); (2) mover `openspec/changes/refactor-product-card/` a `openspec/changes/archive/2026-08-15-refactor-product-card/`; (3) actualizar `state.yaml` a ARCHIVED con notas y evidencia (tests verdes, byte-identidad confirmada).
   - Done: carpeta archivada con prefijo ISO 2026-08-15; spec del dominio ui sincronizada; estado documentado. SIN push (lo realiza el orquestador si corresponde). SIN deploy — el dueño decide deploy por separado (REQ-008).

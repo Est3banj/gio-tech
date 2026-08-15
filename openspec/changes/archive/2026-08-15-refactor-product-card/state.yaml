@@ -1,0 +1,34 @@
+change: refactor-product-card
+status: ARCHIVED
+archived_date: "2026-08-15"
+dag:
+  explore: done
+  propose: done
+  spec: done
+  design: done
+  tasks: done
+  apply: done
+  verify: done
+  archive: done
+main_specs_updated:
+  - openspec/specs/ui/spec.md
+notes: >
+  Change implementado y verificado (apply 2026-08-15) con 4 commits de
+  implementación: fa02363 test(card): golden tests de whatsapp messages y
+  promo utils, 938e10a fix(types): tsc baseline pre-existente (AdminPanel
+  imports y test callbacks), a189fe5 refactor(card): wiring de ProductCard
+  a los shared message builders, 918016b refactor(card): extracción de
+  presentacionales, estilos y pricing hook. Resultado: ProductCard.tsx
+  1147 -> 332 lineas de container puro (orquestación del modal); sub-
+  componentes en src/components/product-card/ (ProductCardView,
+  ProductBadges, PriceDisplay, PlanCuotas, FinancieraGrid, CreditForm,
+  SistecreditoValidation, useProductPricing, product-card.css) y utils puras
+  en src/utils/ (whatsapp-messages.ts + promo.ts, con golden tests
+  byte-identicos REQ-001). Verificación final: 72 tests verdes (7 archivos),
+  lint 0/0, tsc --noEmit 0 errores, CSS move-only (diff chars 0 vs el
+  <style> original), call sites LandingPage.tsx:180 y Catalogo.tsx:199
+  intactos (REQ-003), diff firebase/firestore/storage/functions vacio
+  (REQ-008). SIN deploy. Spec delta sincronizada a openspec/specs/ui/spec.md
+  (primera spec del dominio ui, formato identico a specs/assistant/spec.md:
+  REQ-001..REQ-008). Carpeta movida a archive con prefijo ISO 2026-08-15.
+  Sin commits ni push (los realiza el orquestador).
