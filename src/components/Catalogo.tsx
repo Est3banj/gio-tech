@@ -105,14 +105,10 @@ const Catalogo: React.FC = () => {
         />
       </React.Suspense>
 
-      <div className="banner-section">
-        <BannerSlider />
-      </div>
-
       <section className="catalogo-section section-inner py-4">
         <Row className="mb-5 justify-content-center">
           <Col xs={12} md={10} lg={8} className="text-center">
-            <h2 className="display-5 fw-bold mb-3 text-primary">Nuestros Productos</h2>
+            <h1 className="display-5 fw-bold mb-3 text-primary">Nuestros Productos</h1>
             <p className="lead text-muted mb-4">
               Explora nuestra selección de los mejores celulares y otros dispositivos tecnológicos.
               ¡Cotiza directamente por WhatsApp y estreia hoy mismo!
@@ -174,6 +170,10 @@ const Catalogo: React.FC = () => {
             </Card>
           </Col>
         </Row>
+
+        <div className="banner-section">
+          <BannerSlider />
+        </div>
 
         {isLoading ? (
           <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
