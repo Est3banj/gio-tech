@@ -4,6 +4,7 @@ import { Modal, Button, Card, Row, Col, Badge } from "react-bootstrap";
 import { useCart } from "../contexts/cart-context";
 import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
 import { formatPrice } from "../utils/formatters";
+import { buildContadoWhatsAppMessage, buildCreditoWhatsAppMessage, buildWhatsAppUrl } from "../utils/whatsapp-messages";
 import { recordProductView } from "../services/productStats.service";
 import { FINANCIERAS, getFinancierasForProduct } from "../data/financieras";
 import type { Product, CotizacionType, Financiera } from "../types";
@@ -110,9 +111,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
 
   const cuotaInicial = Number(producto?.cuotaInicial || 0);
 
-  const mensajeWhatsAppContadoDirecto = showPromoPrice
-    ? `Hola, estoy interesado en comprar el ${nombre}.\nPrecio promocional: ${pricePromoStr} (antes ${priceRegularStr}).\n¿Está disponible para entrega inmediata?`
-    : `Hola, estoy interesado en comprar al contado el ${nombre}.\nPrecio: ${priceRegularStr}.\n¿Está disponible para entrega inmediata?`;
+  const mensajeWhatsAppContadoDirecto = buildContadoWhatsAppMessage({
+    nombre,
+    showPromoPrice,
+    pricePromoStr,
+    priceRegularStr,
+  });
 
   const financierasDisponibles = getFinancierasForProduct(producto.marca, producto.categoria, producto.nombre);
 
@@ -121,7 +125,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
       if (paymentAction === 'comprar') {
         if (phoneNumber) {
           window.open(
-            `https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensajeWhatsAppContadoDirecto)}`,
+            buildWhatsAppUrl(phoneNumber, mensajeWhatsAppContadoDirecto),
             '_blank'
           );
         }
@@ -181,42 +185,20 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
     if (!selectedFinanciera) return;
     if (!isFormValid()) return;
 
-    const lineLabel = (key: string): string => {
-      const labels: Record<string, string> = {
-        nombres: 'Nombres y apellidos',
-        cedula: 'Cédula',
-        fechaNacimiento: 'Fecha y lugar de nacimiento',
-        fechaExpedicion: 'Fecha y lugar de expedición',
-        celular: 'Celular',
-        email: 'Correo electrónico',
-        compradoAntes: '¿Ha comprado antes?',
-        reportesNegativos: '¿Reportes negativos?',
-        cupo: 'Cupo disponible',
-        primeraCompra: 'Primera compra',
-      };
-      return labels[key] || key;
-    };
-
-    let mensaje = `🧾 *Solicitud de crédito - ${selectedFinanciera.nombre}*\n\n`;
-    mensaje += `📱 *Producto:* ${nombre}\n`;
-    mensaje += `💰 *Precio:* ${showPromoPrice ? pricePromoStr : priceRegularStr}\n`;
-    // Solo Krediya incluye cuotas en el mensaje (las demas las define el asesor)
-    if (selectedFinanciera.id === 'krediya') {
-      if (cuotaInicial > 0) mensaje += `💵 *Cuota inicial:* ${formatPrice(cuotaInicial)}\n`;
-      if (solo12Meses && cuotas12) {
-        mensaje += `📆 *12 cuotas mensuales:* ${formatPrice(cuotas12)}\n`;
-      } else {
-        mensaje += `📆 *16 cuotas quincenales:* ${formatPrice(cuotas6)}\n`;
-        mensaje += `📆 *8 cuotas mensuales:* ${formatPrice(cuotas8)}\n`;
-      }
-    }
-    mensaje += `\n👤 *Datos del cliente:*\n`;
-    for (const [key, value] of Object.entries(formData)) {
-      mensaje += `▸ ${lineLabel(key)}: ${value}\n`;
-    }
+    const mensaje = buildCreditoWhatsAppMessage({
+      financiera: selectedFinanciera,
+      nombre,
+      precioStr: showPromoPrice ? pricePromoStr : priceRegularStr,
+      cuotaInicialStr: cuotaInicial > 0 ? formatPrice(cuotaInicial) : '',
+      solo12Meses: !!solo12Meses,
+      cuotas12Str: solo12Meses && cuotas12 ? formatPrice(cuotas12) : '',
+      cuotas6Str: formatPrice(cuotas6),
+      cuotas8Str: formatPrice(cuotas8),
+      formData,
+    });
 
     if (phoneNumber) {
-      window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, '_blank');
+      window.open(buildWhatsAppUrl(phoneNumber, mensaje), '_blank');
     }
     if (paymentAction === 'carrito') {
       addToCart(producto, 'credito');

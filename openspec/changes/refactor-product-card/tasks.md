@@ -41,21 +41,21 @@
 
 ## Fase 1 — Rewiring de WhatsApp en ProductCard.tsx (primer edit permitido)
 
-- [ ] **1.1** Reemplazar contado directo por la util pura
+- [x] **1.1** Reemplazar contado directo por la util pura
   - REQ: REQ-001
   - Archivo: `src/components/ProductCard.tsx` (`:113-115`, `:124`)
   - Done: el template literal inline `mensajeWhatsAppContadoDirecto` se reemplaza por `buildContadoWhatsAppMessage({ nombre, showPromoPrice, pricePromoStr, priceRegularStr })` y `window.open(buildWhatsAppUrl(phoneNumber, mensaje), '_blank')` en `handleSeleccionTipo` (`:124`). Los strings de entrada usan los mismos `priceRegularStr/pricePromoStr` ya derivados (sin re-formatear).
   - Estimación: S
   - Dependencias: 0.4 (gate)
 
-- [ ] **1.2** Reemplazar solicitud de crédito por la util pura
+- [x] **1.2** Reemplazar solicitud de crédito por la util pura
   - REQ: REQ-001
   - Archivo: `src/components/ProductCard.tsx` (`:180-225`)
   - Done: `handleEnviarWhatsApp` construye el mensaje con `buildCreditoWhatsAppMessage` (financiera, precioStr = promo o regular, cuotaInicialStr/cuotasStr ya formateados o formateados una vez con `formatPrice` según la decisión de diseño), mantiene el `if (phoneNumber) window.open(buildWhatsAppUrl(...))`, el `addToCart(producto, 'credito')` si `paymentAction === 'carrito'` y `cerrar()`. Se ELIMINA el mapa inline `lineLabel` (ahora `labelDeCampo` de la util). NO cambiar ningún otro comportamiento del handler.
   - Estimación: S
   - Dependencias: 1.1
 
-- [ ] **1.3** GATE de Fase 1: byte-identidad probada
+- [x] **1.3** GATE de Fase 1: byte-identidad probada
   - REQ: REQ-001, REQ-005
   - Archivo: ninguno (verificación)
   - Done: `npm test` → golden tests de 0.2 VERDES (byte-idénticos) + suite completa verde; `npm run lint` → 0/0 (sin unused imports); `npx tsc --noEmit` OK. Si un golden falla → REVERTIR 1.1/1.2 y revisar (REQ-001 rota).
