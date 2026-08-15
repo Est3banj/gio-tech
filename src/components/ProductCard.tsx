@@ -1,5 +1,5 @@
 // src/components/ProductCard.tsx
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Modal, Button, Row, Col } from "react-bootstrap";
 import { useCart } from "../contexts/cart-context";
 import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
@@ -37,14 +37,14 @@ const ProductCard: React.FC<ProductCardProps> = ({ producto, isPopular = false }
   const rawPhoneNumber = useWhatsappNumber();
   const phoneNumber = rawPhoneNumber || '573223652569';
 
-  // Registrar vista del producto
-  useEffect(() => {
+  // Registrar vista del producto SOLO cuando el usuario abre los detalles
+  const abrir = () => {
     if (producto?.id) {
       recordProductView(producto.id);
     }
-  }, [producto?.id]);
-
-  const abrir = () => { setMostrar(true); setStep('product'); };
+    setMostrar(true);
+    setStep('product');
+  };
   const cerrar = () => {
     setMostrar(false);
     setStep('product');
