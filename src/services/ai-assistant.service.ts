@@ -4,37 +4,12 @@
 import type { Product, ChatMessage } from '../types';
 import { businessInfo } from '../data/business-info';
 import { FINANCIERAS } from '../data/financieras';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
-import { db } from '../firebase';
 
 const GROQ_API_KEY = import.meta.env.VITE_GROQ_API_KEY;
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 const MAX_RETRIES = 3;
 const INITIAL_RETRY_DELAY = 1000; // 1s, luego 2s, luego 4s
-
-// ── Logging a Firestore ─────────────────────────────────────
-
-/**
- * Registra la interacción del chat en Firestore para análisis posterior.
- * Fire-and-forget: no bloquea la respuesta al usuario.
- */
-async function logChatInteraction(params: {
-  pregunta: string;
-  respuesta: string;
-  productosRelevantes: number;
-  financierasRecomendadas?: string;
-}): Promise<void> {
-  try {
-    await addDoc(collection(db, 'chat_logs'), {
-      ...params,
-      timestamp: serverTimestamp(),
-    });
-  } catch {
-    // Logging es opcional, si falla no afecta al usuario
-    console.warn('No se pudo guardar el log del chat');
-  }
-}
 
 // ── Helpers de búsqueda de productos ────────────────────────
 
@@ -377,13 +352,6 @@ Responde solo con productos que existan en el catálogo de arriba. Si no hay pro
       if (data.choices && data.choices[0]?.message?.content) {
         const respuesta = data.choices[0].message.content;
 
-        // Logging no bloqueante
-        logChatInteraction({
-          pregunta,
-          respuesta,
-          productosRelevantes: productosRelevantes.length,
-        });
-
         return respuesta;
       }
 
@@ -401,13 +369,6 @@ Responde solo con productos que existan en el catálogo de arriba. Si no hay pro
   // Si todos los reintentos fallaron
   const errorMessage = lastError?.message || "Error desconocido";
   console.error("Error en AI assistant tras reintentos:", lastError);
-
-  // Logging del error
-  logChatInteraction({
-    pregunta,
-    respuesta: `ERROR: ${errorMessage}`,
-    productosRelevantes: productosRelevantes.length,
-  });
 
   return `${errorMessage}. Por favor contáctanos por WhatsApp o intenta más tarde.`;
 };
