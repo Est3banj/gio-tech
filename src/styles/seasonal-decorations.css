@@ -1,21 +1,13 @@
-/* ========================================
-   DECORACIONES VISUALES DE TEMPORADA
-   GIO TECH - Estilo Moderno & Minimalista
-   ======================================== */
+/* ============================================================
+   DECORACIONES VISUALES DE TEMPORADA - GIO TECH (PREMIUM RETAIL)
+   Temas: Amor y Amistad (Valentine), Navidad (Christmas), Halloween
+   Estilo de Alto Impacto & Elegancia: Apple / Falabella / Mercado Libre
+   ============================================================ */
 
-/*
-  ✔ Estilo elegante, sin emojis visibles.
-  ✔ Gradientes sutiles, brillos suaves y partículas minimalistas.
-  ✔ ZERO interferencia con elementos, ZERO ruptura de diseño.
-  ✔ Mantiene tu UI profesional tipo tienda premium.
-*/
-
-/* ========================================
-   BASE GLOBAL PARA TODOS LOS TEMAS
-   ======================================== */
+/* ─── BASE GLOBAL PARA TEMAS ESTACIONALES ──────────────────── */
 
 html[data-theme-name] #root {
-  transition: background 0.6s ease, box-shadow 0.6s ease;
+  transition: background 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease;
 }
 
 html[data-theme-name] header,
@@ -23,11 +15,14 @@ html[data-theme-name] footer {
   position: relative;
 }
 
-html[data-theme-name] .product-card:hover {
-  transition: box-shadow 0.3s ease;
+html[data-theme-name] .product-card,
+html[data-theme-name] .gio-product-card-v2 {
+  transition: transform var(--trans-spring, 350ms cubic-bezier(0.16, 1, 0.3, 1)),
+              box-shadow var(--trans-spring, 350ms cubic-bezier(0.16, 1, 0.3, 1)),
+              border-color var(--trans-base, 250ms ease);
 }
 
-/* Partículas decorativas sutiles */
+/* Partículas decorativas de fondo sutiles */
 .season-particles {
   position: fixed;
   top: 0;
@@ -35,134 +30,343 @@ html[data-theme-name] .product-card:hover {
   width: 100vw;
   height: 100vh;
   pointer-events: none;
-  z-index: 1;
+  z-index: 6;
   background-repeat: repeat;
-  opacity: 0.08;
-  animation: floatParticles 10s linear infinite;
+  animation: floatParticles 24s linear infinite;
+  opacity: 0;
+  transition: opacity 0.6s ease;
 }
 
 @keyframes floatParticles {
   from {
     background-position: 0 0;
   }
-
   to {
-    background-position: 200px 200px;
+    background-position: 250px 500px;
   }
 }
-
-/* ========================================
-   🎄 NAVIDAD – ELEGANTE
-   ======================================== */
-
-html[data-theme-name="christmas"] #root {
-  background: radial-gradient(circle at top,
-      rgba(34, 197, 94, 0.12),
-      transparent 60%);
+/* ─── SEASONAL TICKER PILL (HEADER TOP TRUST BAR) ──────────── */
+.seasonal-ticker-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 9px;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #d81b60 0%, #e91e63 100%);
+  color: #ffffff;
+  box-shadow: 0 2px 8px rgba(216, 27, 96, 0.35);
+  margin-right: 6px;
+  line-height: 1.4;
+  vertical-align: middle;
 }
 
-html[data-theme-name="christmas"] header::after {
+.seasonal-ticker-pill-christmas {
+  background: linear-gradient(135deg, #16a34a 0%, #22c55e 100%);
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.35);
+}
+
+.seasonal-ticker-pill-halloween {
+  background: linear-gradient(135deg, #ea580c 0%, #f97316 100%);
+  box-shadow: 0 2px 8px rgba(234, 88, 12, 0.35);
+}
+
+/* ============================================================
+   💘 AMOR Y AMISTAD – PREMIUM ROSADO / MAGENTA
+   ============================================================ */
+
+/* Iluminación Atmosférica Envolvente */
+html[data-theme-name="valentine"] body,
+html[data-theme-name="valentine"] #root,
+html[data-theme-name="valentine"] .landing-wrapper {
+  background-image:
+    radial-gradient(circle at 50% -80px, rgba(244, 63, 94, 0.16) 0%, rgba(251, 113, 133, 0.05) 450px, transparent 800px),
+    radial-gradient(circle at 90% 20%, rgba(236, 72, 153, 0.08) 0%, transparent 500px),
+    radial-gradient(circle at 10% 40%, rgba(244, 63, 94, 0.06) 0%, transparent 600px);
+  background-repeat: no-repeat;
+}
+
+html[data-theme-name="valentine"] body.dark-mode,
+html[data-theme-name="valentine"] body.dark-mode #root,
+html[data-theme-name="valentine"].dark-mode body,
+html[data-theme-name="valentine"].dark-mode #root,
+html[data-theme-name="valentine"] body.dark-mode .landing-wrapper {
+  background-image:
+    radial-gradient(circle at 50% -80px, rgba(244, 63, 94, 0.28) 0%, rgba(225, 29, 72, 0.12) 500px, transparent 900px),
+    radial-gradient(circle at 90% 20%, rgba(236, 72, 153, 0.14) 0%, transparent 600px),
+    radial-gradient(circle at 10% 40%, rgba(244, 63, 94, 0.1) 0%, transparent 700px);
+  background-repeat: no-repeat;
+}
+
+/* Línea de luz neón debajo del header sticky */
+html[data-theme-name="valentine"] header::after,
+html[data-theme-name="valentine"] .gio-header::after {
   content: "";
   position: absolute;
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  height: 3px;
-  background: linear-gradient(90deg, #064e3b, var(--gio-red), #064e3b);
-  border-radius: 90px;
-  opacity: 0.3;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent 0%, #ec4899 20%, #f43f5e 50%, #ec4899 80%, transparent 100%);
+  box-shadow: 0 0 16px rgba(244, 63, 94, 0.85);
+  opacity: 0.95;
+  z-index: 10;
+  pointer-events: none;
 }
 
-html[data-theme-name="christmas"] .product-card:hover {
-  box-shadow: 0 0 20px rgba(34, 197, 94, 0.2) !important;
+/* Top Trust Bar - Tint sofisticado */
+html[data-theme-name="valentine"] .gio-top-trust-bar {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0%, rgba(254, 226, 226, 0.75) 50%, rgba(255, 255, 255, 0.75) 100%);
+  border-bottom-color: rgba(244, 63, 94, 0.25);
 }
 
-/* Partículas navideñas: puntos luminosos */
-html[data-theme-name="christmas"] .season-particles {
-  background-image: radial-gradient(var(--text-white) 1px, transparent 1px);
+html[data-theme-name="valentine"] body.dark-mode .gio-top-trust-bar,
+html[data-theme-name="valentine"].dark-mode .gio-top-trust-bar {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.85) 0%, rgba(76, 5, 25, 0.55) 50%, rgba(15, 23, 42, 0.85) 100%);
+  border-bottom-color: rgba(244, 63, 94, 0.35);
 }
 
-/* ========================================
+/* Partículas rosadas Amor y Amistad */
+html[data-theme-name="valentine"] .season-particles,
+html[data-theme-name="valentine"] body .season-particles {
+  background-image:
+    radial-gradient(circle, rgba(244, 114, 182, 0.6) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(251, 113, 133, 0.45) 2px, transparent 2px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.5) 1px, transparent 1px);
+  background-size: 80px 80px, 140px 140px, 200px 200px;
+  background-position: 0 0, 40px 60px, 100px 30px;
+  opacity: 0.75;
+}
+
+html[data-theme-name="valentine"] body.dark-mode .season-particles,
+html[data-theme-name="valentine"].dark-mode .season-particles {
+  opacity: 0.85;
+}
+
+/* Badges promocionales de temporada */
+html[data-theme-name="valentine"] .gio-badge-promo {
+  background: linear-gradient(135deg, #d81b60 0%, #e91e63 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(216, 27, 96, 0.35);
+}
+
+/* Botones principales con acento de temporada */
+html[data-theme-name="valentine"] .btn-card-action-pro,
+html[data-theme-name="valentine"] .product-cta-btn {
+  background: linear-gradient(135deg, #d81b60 0%, #e91e63 100%) !important;
+  box-shadow: 0 4px 14px rgba(216, 27, 96, 0.28) !important;
+}
+
+html[data-theme-name="valentine"] .btn-card-action-pro:hover,
+html[data-theme-name="valentine"] .product-cta-btn:hover {
+  background: linear-gradient(135deg, #c2185b 0%, #d81b60 100%) !important;
+  box-shadow: 0 6px 20px rgba(216, 27, 96, 0.45) !important;
+}
+
+html[data-theme-name="valentine"] .featured-catalog-btn {
+  background: linear-gradient(135deg, #d81b60 0%, #e91e63 100%) !important;
+  box-shadow: 0 10px 25px rgba(216, 27, 96, 0.35) !important;
+}
+
+html[data-theme-name="valentine"] .featured-catalog-btn:hover {
+  background: linear-gradient(135deg, #c2185b 0%, #d81b60 100%) !important;
+  box-shadow: 0 14px 30px rgba(216, 27, 96, 0.48) !important;
+}
+
+/* Eyebrows temáticos */
+html[data-theme-name="valentine"] .featured-eyebrow {
+  color: #d81b60 !important;
+  background: rgba(216, 27, 96, 0.08) !important;
+  border: 1px solid rgba(216, 27, 96, 0.2) !important;
+}
+
+html[data-theme-name="valentine"] body.dark-mode .featured-eyebrow,
+html[data-theme-name="valentine"].dark-mode .featured-eyebrow {
+  color: #f472b6 !important;
+  background: rgba(216, 27, 96, 0.18) !important;
+  border-color: rgba(244, 114, 182, 0.3) !important;
+}
+
+/* Tarjetas de producto al hover */
+html[data-theme-name="valentine"] .product-card:hover,
+html[data-theme-name="valentine"] .gio-product-card-v2:hover {
+  box-shadow: 0 14px 35px rgba(244, 63, 94, 0.25) !important;
+  border-color: rgba(244, 63, 94, 0.45) !important;
+}
+
+/* Simulador de cuotas pills */
+html[data-theme-name="valentine"] .cuota-term-pill:hover,
+html[data-theme-name="valentine"] .cuota-term-pill.active {
+  border-color: #d81b60;
+  background: rgba(216, 27, 96, 0.08);
+  color: #d81b60;
+}
+
+html[data-theme-name="valentine"] .cuota-term-pill.active small {
+  color: #d81b60;
+}
+
+/* ============================================================
+   🎄 NAVIDAD – ELEGANTE ESMERALDA / DORADO
+   ============================================================ */
+
+html[data-theme-name="christmas"] body,
+html[data-theme-name="christmas"] #root,
+html[data-theme-name="christmas"] .landing-wrapper {
+  background-image:
+    radial-gradient(circle at 50% -80px, rgba(34, 197, 94, 0.14) 0%, rgba(22, 163, 74, 0.05) 450px, transparent 800px),
+    radial-gradient(circle at 90% 20%, rgba(239, 68, 68, 0.06) 0%, transparent 500px);
+  background-repeat: no-repeat;
+}
+
+html[data-theme-name="christmas"] body.dark-mode,
+html[data-theme-name="christmas"] body.dark-mode #root,
+html[data-theme-name="christmas"].dark-mode body,
+html[data-theme-name="christmas"].dark-mode #root,
+html[data-theme-name="christmas"] body.dark-mode .landing-wrapper {
+  background-image:
+    radial-gradient(circle at 50% -80px, rgba(34, 197, 94, 0.24) 0%, rgba(22, 163, 74, 0.1) 500px, transparent 900px),
+    radial-gradient(circle at 90% 20%, rgba(239, 68, 68, 0.12) 0%, transparent 600px);
+  background-repeat: no-repeat;
+}
+
+html[data-theme-name="christmas"] header::after,
+html[data-theme-name="christmas"] .gio-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent 0%, #16a34a 20%, #ef4444 50%, #16a34a 80%, transparent 100%);
+  box-shadow: 0 0 16px rgba(34, 197, 94, 0.85);
+  opacity: 0.95;
+  z-index: 10;
+  pointer-events: none;
+}
+
+html[data-theme-name="christmas"] .gio-top-trust-bar {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0%, rgba(220, 252, 231, 0.75) 50%, rgba(255, 255, 255, 0.75) 100%);
+  border-bottom-color: rgba(34, 197, 94, 0.25);
+}
+
+html[data-theme-name="christmas"] body.dark-mode .gio-top-trust-bar,
+html[data-theme-name="christmas"].dark-mode .gio-top-trust-bar {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.85) 0%, rgba(6, 78, 59, 0.55) 50%, rgba(15, 23, 42, 0.85) 100%);
+  border-bottom-color: rgba(34, 197, 94, 0.35);
+}
+
+html[data-theme-name="christmas"] .season-particles,
+html[data-theme-name="christmas"] body .season-particles {
+  background-image:
+    radial-gradient(circle, rgba(34, 197, 94, 0.6) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.6) 2px, transparent 2px),
+    radial-gradient(circle, rgba(239, 68, 68, 0.4) 1px, transparent 1px);
+  background-size: 80px 80px, 140px 140px, 200px 200px;
+  background-position: 0 0, 40px 60px, 100px 30px;
+  opacity: 0.75;
+}
+
+html[data-theme-name="christmas"] body.dark-mode .season-particles,
+html[data-theme-name="christmas"].dark-mode .season-particles {
+  opacity: 0.85;
+}
+
+html[data-theme-name="christmas"] .product-card:hover,
+html[data-theme-name="christmas"] .gio-product-card-v2:hover {
+  box-shadow: 0 14px 35px rgba(34, 197, 94, 0.25) !important;
+  border-color: rgba(34, 197, 94, 0.45) !important;
+}
+
+/* ============================================================
    🎃 HALLOWEEN – MODERNO & OSCURO
-   ======================================== */
+   ============================================================ */
 
-html[data-theme-name="halloween"] #root {
-  background: radial-gradient(circle at top,
-      rgba(255, 98, 0, 0.10),
-      transparent 70%);
+html[data-theme-name="halloween"] body,
+html[data-theme-name="halloween"] #root,
+html[data-theme-name="halloween"] .landing-wrapper {
+  background-image:
+    radial-gradient(circle at 50% -80px, rgba(255, 109, 0, 0.14) 0%, rgba(123, 31, 162, 0.05) 450px, transparent 800px),
+    radial-gradient(circle at 90% 20%, rgba(255, 109, 0, 0.06) 0%, transparent 500px);
+  background-repeat: no-repeat;
 }
 
-html[data-theme-name="halloween"] header::after {
+html[data-theme-name="halloween"] body.dark-mode,
+html[data-theme-name="halloween"] body.dark-mode #root,
+html[data-theme-name="halloween"].dark-mode body,
+html[data-theme-name="halloween"].dark-mode #root,
+html[data-theme-name="halloween"] body.dark-mode .landing-wrapper {
+  background-image:
+    radial-gradient(circle at 50% -80px, rgba(255, 109, 0, 0.24) 0%, rgba(123, 31, 162, 0.12) 500px, transparent 900px),
+    radial-gradient(circle at 90% 20%, rgba(255, 109, 0, 0.1) 0%, transparent 600px);
+  background-repeat: no-repeat;
+}
+
+html[data-theme-name="halloween"] header::after,
+html[data-theme-name="halloween"] .gio-header::after {
   content: "";
   position: absolute;
-  top: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  height: 3px;
-  background: linear-gradient(90deg, #ff6d00, #7b1fa2, #ff6d00);
-  border-radius: 90px;
-  opacity: 0.25;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent 0%, #ff6d00 20%, #7b1fa2 50%, #ff6d00 80%, transparent 100%);
+  box-shadow: 0 0 16px rgba(255, 109, 0, 0.85);
+  opacity: 0.95;
+  z-index: 10;
+  pointer-events: none;
 }
 
-html[data-theme-name="halloween"] .product-card:hover {
-  box-shadow: 0 0 20px rgba(255, 109, 0, 0.25) !important;
+html[data-theme-name="halloween"] .gio-top-trust-bar {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.75) 0%, rgba(254, 243, 199, 0.75) 50%, rgba(255, 255, 255, 0.75) 100%);
+  border-bottom-color: rgba(255, 109, 0, 0.25);
 }
 
-/* Partículas halloween: puntos suaves naranja/morado */
-html[data-theme-name="halloween"] .season-particles {
-  background-image: radial-gradient(#ff6d00 1px, transparent 1px),
-    radial-gradient(#7b1fa2 1px, transparent 1px);
-  background-size: 80px 80px, 120px 120px;
-  opacity: 0.06;
+html[data-theme-name="halloween"] body.dark-mode .gio-top-trust-bar,
+html[data-theme-name="halloween"].dark-mode .gio-top-trust-bar {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.85) 0%, rgba(67, 20, 7, 0.55) 50%, rgba(15, 23, 42, 0.85) 100%);
+  border-bottom-color: rgba(255, 109, 0, 0.35);
 }
 
-/* ========================================
-   💘 AMOR Y AMISTAD – PREMIUM ROSADO
-   ======================================== */
-
-html[data-theme-name="valentine"] #root {
-  background: radial-gradient(circle at top,
-      rgba(255, 100, 150, 0.10),
-      transparent 60%);
+html[data-theme-name="halloween"] .season-particles,
+html[data-theme-name="halloween"] body .season-particles {
+  background-image:
+    radial-gradient(circle, rgba(255, 109, 0, 0.6) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(123, 31, 162, 0.5) 2px, transparent 2px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.4) 1px, transparent 1px);
+  background-size: 80px 80px, 140px 140px, 200px 200px;
+  background-position: 0 0, 40px 60px, 100px 30px;
+  opacity: 0.75;
 }
 
-html[data-theme-name="valentine"] header::after {
-  content: "";
-  position: absolute;
-  top: -6px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 90%;
-  height: 3px;
-  background: linear-gradient(90deg, #db2777, #f472b6, #db2777);
-  border-radius: 90px;
-  opacity: 0.28;
+html[data-theme-name="halloween"] body.dark-mode .season-particles,
+html[data-theme-name="halloween"].dark-mode .season-particles {
+  opacity: 0.85;
 }
 
-html[data-theme-name="valentine"] .product-card:hover {
-  box-shadow: 0 0 20px rgba(255, 64, 129, 0.23) !important;
+html[data-theme-name="halloween"] .product-card:hover,
+html[data-theme-name="halloween"] .gio-product-card-v2:hover {
+  box-shadow: 0 14px 35px rgba(255, 109, 0, 0.25) !important;
+  border-color: rgba(255, 109, 0, 0.45) !important;
 }
 
-/* Partículas rosadas premium */
-html[data-theme-name="valentine"] .season-particles {
-  background-image: radial-gradient(#ff80ab 1px, transparent 1px);
-  opacity: 0.09;
-}
-
-/* ========================================
-   RESPONSIVE
-   ======================================== */
+/* ============================================================
+   RESPONSIVE & ACCESSIBILITY
+   ============================================================ */
 
 @media (max-width: 768px) {
   .season-particles {
-    opacity: 0.05;
+    opacity: 0.5;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .season-particles {
+  .season-particles,
+  .seasonal-ticker-pill {
     animation: none !important;
+    transition: none !important;
   }
 }

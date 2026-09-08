@@ -1,65 +1,68 @@
-import { useState, useEffect, useSyncExternalStore } from 'react';
-import { subscribeToConfig } from '../services/config.service';
+import { useSyncExternalStore } from 'react';
+import { subscribeToConfig, DEFAULT_CONFIG } from '../services/config.service';
 import type { StoreConfig } from '../types';
 
-// Store externo para compartir estado entre componentes (singleton pattern)
-let configStore: StoreConfig = {};
-const configListeners = new Set<() => void>();
-
-function notifyConfigListeners(): void {
-  configListeners.forEach((listener) => listener());
-}
-
-const configSubscribe = (listener: () => void): (() => boolean) => {
-  configListeners.add(listener);
-  return () => configListeners.delete(listener);
-};
-
-interface UseConfigReturn {
+export interface UseConfigReturn {
   config: StoreConfig;
   isLoading: boolean;
   error: Error | null;
 }
 
-/**
- * Hook personalizado para suscribirse a la configuración general desde Firestore.
- * Usa store externo para evitar suscripciones duplicadas.
- */
-export function useConfig(): UseConfigReturn {
-  const [config, setConfig] = useState<StoreConfig>(configStore);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+let storeState: UseConfigReturn = {
+  config: DEFAULT_CONFIG,
+  isLoading: true,
+  error: null,
+};
 
-  // Sincronizar con store externo
-  useSyncExternalStore(configSubscribe, () => configStore);
+let activeUnsubscribe: (() => void) | null = null;
+const listeners = new Set<() => void>();
 
-  useEffect(() => {
-    // Si ya hay datos en el store, no cargar de nuevo
-    if (Object.keys(configStore).length > 0) {
-      setConfig(configStore);
-      setIsLoading(false);
-      return;
-    }
+function notify(): void {
+  listeners.forEach((listener) => listener());
+}
 
-    setIsLoading(true);
-    setError(null);
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
 
-    const unsubscribe = subscribeToConfig(
+  if (listeners.size === 1) {
+    activeUnsubscribe = subscribeToConfig(
       (data) => {
-        configStore = data || {};
-        setConfig(configStore);
-        setIsLoading(false);
-        notifyConfigListeners();
+        storeState = {
+          config: data || DEFAULT_CONFIG,
+          isLoading: false,
+          error: null,
+        };
+        notify();
       },
       (err) => {
         console.error('Error en useConfig:', err);
-        setError(err);
-        setIsLoading(false);
+        storeState = {
+          ...storeState,
+          isLoading: false,
+          error: err,
+        };
+        notify();
       }
     );
+  }
 
-    return () => unsubscribe();
-  }, []);
+  return () => {
+    listeners.delete(listener);
+    if (listeners.size === 0 && activeUnsubscribe) {
+      activeUnsubscribe();
+      activeUnsubscribe = null;
+    }
+  };
+}
 
-  return { config, isLoading, error };
+function getSnapshot(): UseConfigReturn {
+  return storeState;
+}
+
+/**
+ * Hook personalizado para suscribirse a la configuración general desde Firestore.
+ * Usa store externo con useSyncExternalStore para compartir suscripción y estado.
+ */
+export function useConfig(): UseConfigReturn {
+  return useSyncExternalStore(subscribe, getSnapshot);
 }

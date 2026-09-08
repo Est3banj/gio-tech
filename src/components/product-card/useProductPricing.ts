@@ -1,4 +1,3 @@
-// src/components/product-card/useProductPricing.ts
 import { formatPrice } from "../../utils/formatters";
 import {
   calcularCuotaInicial,
@@ -10,7 +9,7 @@ import {
   resolveBadgeBg,
   resolveHighlightColor,
 } from "../../utils/promo";
-import { getFinancierasForProduct } from "../../data/financieras";
+import { getFinancierasForProduct, getProductType, type ProductType } from "../../data/financieras";
 import type { Financiera, Product } from "../../types";
 
 export interface DerivadosPricing {
@@ -37,6 +36,10 @@ export interface DerivadosPricing {
   cuotas6Str: string;
   cuotas8Str: string;
   financierasDisponibles: Financiera[];
+  tieneFinanciacion: boolean;
+  aplicaKrediya: boolean;
+  mostrarPlanCuotas: boolean;
+  productType: ProductType;
 }
 
 export function useProductPricing(producto: Product): DerivadosPricing {
@@ -60,8 +63,8 @@ export function useProductPricing(producto: Product): DerivadosPricing {
   } = producto || {};
 
   const productAny = producto as unknown as Record<string, unknown>;
-  const promoStart = productAny.promoStart;
-  const promoEnd = productAny.promoEnd;
+  const promoStart = productAny?.promoStart;
+  const promoEnd = productAny?.promoEnd;
 
   const effectivePromoActive = producto?.promo;
 
@@ -81,12 +84,27 @@ export function useProductPricing(producto: Product): DerivadosPricing {
   const cuotaInicial = calcularCuotaInicial(producto?.cuotaInicial);
   const cuotaInicialStr = cuotaInicial > 0 ? formatPrice(cuotaInicial) : '';
 
-  const solo12 = !!solo12Meses;
-  const cuotas12Str = solo12 && cuotas12 ? formatPrice(cuotas12) : '';
-  const cuotas6Str = formatPrice(cuotas6);
-  const cuotas8Str = formatPrice(cuotas8);
+  const precioParaFinancieras = showPromoPrice && promoPrice ? promoPrice : (contado ?? producto?.precio);
+  const productType = getProductType(producto?.marca, producto?.nombre, producto?.categoria);
+  const financierasDisponibles = getFinancierasForProduct(
+    producto?.marca,
+    producto?.categoria,
+    producto?.nombre,
+    precioParaFinancieras
+  );
+  const tieneFinanciacion = financierasDisponibles.length > 0;
+  const aplicaKrediya = financierasDisponibles.some((f) => f.id === 'krediya');
 
-  const financierasDisponibles = getFinancierasForProduct(producto.marca, producto.categoria, producto.nombre);
+  // Solo productos que aplican para Krediya Y tienen cuotas configuradas muestran el simulador PlanCuotas
+  const tieneCuotasValidas = solo12Meses
+    ? typeof cuotas12 === 'number' && cuotas12 > 0
+    : (typeof cuotas6 === 'number' && cuotas6 > 0) || (typeof cuotas8 === 'number' && cuotas8 > 0);
+
+  const mostrarPlanCuotas = aplicaKrediya && tieneCuotasValidas;
+  const solo12 = !!solo12Meses && mostrarPlanCuotas;
+  const cuotas12Str = mostrarPlanCuotas && solo12 && cuotas12 ? formatPrice(cuotas12) : '';
+  const cuotas6Str = mostrarPlanCuotas && cuotas6 ? formatPrice(cuotas6) : '';
+  const cuotas8Str = mostrarPlanCuotas && cuotas8 ? formatPrice(cuotas8) : '';
 
   return {
     nombre,
@@ -112,5 +130,9 @@ export function useProductPricing(producto: Product): DerivadosPricing {
     cuotas6Str,
     cuotas8Str,
     financierasDisponibles,
+    tieneFinanciacion,
+    aplicaKrediya,
+    mostrarPlanCuotas,
+    productType,
   };
 }

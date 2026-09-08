@@ -87,6 +87,7 @@ export interface Financiera {
     iphone: boolean;
     android: boolean;
     electrodomestico: boolean;
+    accesorio: boolean;
   };
   campos: CampoFormulario[];
 }
@@ -105,12 +106,19 @@ export interface CartItem {
   cuotas6: number;
   cuotas8: number;
   cotizacionType: CotizacionType;
+  cantidad: number;
+  solo12Meses?: boolean;
+  cuotas12?: number | null;
+  cuotaInicial?: number | null;
 }
 
 export interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (product: Product, type: CotizacionType) => void;
+  addToCart: (product: Product, type: CotizacionType, cantidad?: number) => void;
   removeFromCart: (itemId: string) => void;
+  updateQuantity: (itemId: string, cantidad: number) => void;
+  incrementQuantity: (itemId: string) => void;
+  decrementQuantity: (itemId: string) => void;
   clearCart: () => void;
   cartCount: number;
 }
@@ -138,6 +146,8 @@ export interface StoreConfig {
   logo?: string;
   descripcion?: string;
   whatsappNumber?: string;
+  telefono?: string;
+  direccion?: string;
   email?: string;
   redesSociales?: {
     facebook?: string;

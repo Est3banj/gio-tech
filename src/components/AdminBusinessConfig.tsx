@@ -62,7 +62,10 @@ function AdminBusinessConfig({
           enabled: themeEnabled,
           start: toDateOrNull(themeStart),
           end: toDateOrNull(themeEnd),
-          vars: themeVars,
+          vars: {
+            "--theme-name": themeVars["--theme-name"] || "valentine",
+            ...themeVars,
+          },
         },
       });
       setSuccess("Configuración actualizada exitosamente!");
@@ -211,52 +214,65 @@ function AdminBusinessConfig({
             </Col>
           </Row>
 
-          <div className="d-flex gap-2 mt-3">
+          <div className="d-flex flex-wrap gap-2 mt-3">
             <Button
               size="sm"
-              variant="secondary"
-              onClick={() =>
+              variant={themeVars["--theme-name"] === "valentine" && themeEnabled ? "primary" : "outline-secondary"}
+              style={themeVars["--theme-name"] === "valentine" && themeEnabled ? { background: "#d81b60", borderColor: "#d81b60" } : {}}
+              onClick={() => {
+                setThemeEnabled(true);
                 setThemeVars((v) => ({
                   ...v,
                   "--promo-badge-bg": "#d81b60",
                   "--promo-badge-text": "#ffffff",
                   "--promo-highlight": "rgba(216,27,96,.18)",
                   "--theme-name": "valentine",
-                }))
-              }
+                }));
+              }}
             >
-              💘 Amor y Amistad
+              💘 Amor y Amistad {themeVars["--theme-name"] === "valentine" && themeEnabled ? "(Activo)" : ""}
             </Button>
             <Button
               size="sm"
-              variant="success"
-              onClick={() =>
+              variant={themeVars["--theme-name"] === "christmas" && themeEnabled ? "success" : "outline-success"}
+              onClick={() => {
+                setThemeEnabled(true);
                 setThemeVars((v) => ({
                   ...v,
                   "--promo-badge-bg": "#2e7d32",
                   "--promo-badge-text": "#ffffff",
                   "--promo-highlight": "rgba(46,125,50,.18)",
                   "--theme-name": "christmas",
-                }))
-              }
+                }));
+              }}
             >
-              🎄 Navidad
+              🎄 Navidad {themeVars["--theme-name"] === "christmas" && themeEnabled ? "(Activo)" : ""}
             </Button>
             <Button
               size="sm"
-              variant="warning"
-              onClick={() =>
+              variant={themeVars["--theme-name"] === "halloween" && themeEnabled ? "warning" : "outline-warning"}
+              onClick={() => {
+                setThemeEnabled(true);
                 setThemeVars((v) => ({
                   ...v,
                   "--promo-badge-bg": "#ff6d00",
                   "--promo-badge-text": "#1b1b1b",
                   "--promo-highlight": "rgba(255,109,0,.18)",
                   "--theme-name": "halloween",
-                }))
-              }
+                }));
+              }}
             >
-              🎃 Halloween
+              🎃 Halloween {themeVars["--theme-name"] === "halloween" && themeEnabled ? "(Activo)" : ""}
             </Button>
+            {themeEnabled && (
+              <Button
+                size="sm"
+                variant="outline-danger"
+                onClick={() => setThemeEnabled(false)}
+              >
+                ✕ Desactivar Tema
+              </Button>
+            )}
           </div>
         </Card>
 

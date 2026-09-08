@@ -1,5 +1,6 @@
 // src/components/product-card/SistecreditoValidation.tsx
 import React, { useState, useEffect } from "react";
+import type { ProductType } from "../../data/financieras";
 
 export type ValidacionPhase = 'idle' | 'running' | 'done';
 export type ValidacionResultType = 'aplica' | 'no-aplica' | 'condiciones' | null;
@@ -14,8 +15,12 @@ interface SistecreditoValidationProps {
   contado: number | null | undefined;
   formData: Record<string, string>;
   esFormValido: boolean;
+  productType?: ProductType;
+  productName?: string;
   onValidSubmit: () => void;
   onStatusChange: (status: ValidacionStatus) => void;
+  onSwitchFinanciera?: (financieraId: string) => void;
+  onContactAsesor?: () => void;
 }
 
 const SistecreditoValidation: React.FC<SistecreditoValidationProps> = ({
@@ -23,8 +28,11 @@ const SistecreditoValidation: React.FC<SistecreditoValidationProps> = ({
   contado,
   formData,
   esFormValido,
+  productType = 'android',
   onValidSubmit,
   onStatusChange,
+  onSwitchFinanciera,
+  onContactAsesor,
 }) => {
   const [validPhase, setValidPhase] = useState<ValidacionPhase>('idle');
   const [validStep, setValidStep] = useState(0); // 0=datos, 1=cupo, 2=historial, 3=resultado
@@ -46,7 +54,7 @@ const SistecreditoValidation: React.FC<SistecreditoValidationProps> = ({
     };
   }, []);
 
-  /** Validación progresiva para Sistecredito con pasos animados */
+  /** Validación progresiva para Sistecredito con pasos animados rápidos (1.2s total) */
   const handleSistecreditoValidar = () => {
     if (validPhase !== 'idle') return;
     if (!esFormValido) return;
@@ -60,9 +68,9 @@ const SistecreditoValidation: React.FC<SistecreditoValidationProps> = ({
 
     const t: Array<ReturnType<typeof setTimeout>> = [];
 
-    t.push(setTimeout(() => setValidStep(1), 800));          // paso 1: consultando cupo...
+    t.push(setTimeout(() => setValidStep(1), 300));          // paso 1: consultando cupo... (0.3s)
 
-    t.push(setTimeout(() => {                                  // paso 2: cupo resultado
+    t.push(setTimeout(() => {                                  // paso 2: cupo resultado (0.7s)
       const cupoText = cupo === null ? 'No recuerda' : `$${cupo.toLocaleString('es-CO')}`;
       let advertencia = '';
       if (cupo !== null && (contado || 0) > cupo) {
@@ -72,12 +80,10 @@ const SistecreditoValidation: React.FC<SistecreditoValidationProps> = ({
       setValidCupoText(cupoText);
       setValidAdvertencia(advertencia);
       setValidStep(2);
-    }, 2000));
+    }, 700));
 
-    t.push(setTimeout(() => {                                  // paso 3: resultado final
+    t.push(setTimeout(() => {                                  // paso 3: resultado final (1.2s)
       const esPrimeraCompra = formData.primeraCompra === 'Sí';
-      // Unica regla real: primera compra = no aplica para tecnologia
-      // El cupo es solo informativo para el asesor, no lo validamos
       const type = esPrimeraCompra ? 'no-aplica' : 'aplica';
       const msg = esPrimeraCompra ? 'No aplica para tecnología' : 'Aplica';
 
@@ -87,9 +93,9 @@ const SistecreditoValidation: React.FC<SistecreditoValidationProps> = ({
       setValidPhase('done');
 
       if (type === 'aplica') {
-        t.push(setTimeout(() => onValidSubmit(), 2000));
+        t.push(setTimeout(() => onValidSubmit(), 800));
       }
-    }, 3500));
+    }, 1200));
 
     validTimers.current = t;
   };
@@ -162,14 +168,74 @@ const SistecreditoValidation: React.FC<SistecreditoValidationProps> = ({
           {validPhase === 'done' && (
             <div className={`validation-result ${validResultType === 'no-aplica' ? 'no-aplica' : 'aplica'}`}>
               {validResultType === 'no-aplica' ? (
-                <>
-                  <div className="icon"><i className="bi bi-x-circle-fill"></i></div>
-                  <div className="fw-bold fs-6">Cupo denegado</div>
-                  <div className="reason">{validResultMsg}</div>
-                  <div className="mt-2" style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
-                    No te preocupes, puedes probar con otra financiera
+                <div className="p-2">
+                  <div className="icon"><i className="bi bi-info-circle-fill text-warning"></i></div>
+                  <div className="fw-bold fs-6 mt-1">Sistecrédito requiere compras previas</div>
+                  <div className="reason text-muted mb-3" style={{ fontSize: '0.85rem' }}>
+                    Para financiar tecnología por Sistecrédito se exige historial de compras anteriores canceladas.
                   </div>
-                </>
+
+                  {productType === 'iphone' || productType === 'accesorio' ? (
+                    <div className="mt-2 p-3 rounded text-start" style={{ background: 'rgba(13, 110, 253, 0.05)', border: '1px solid rgba(13, 110, 253, 0.2)' }}>
+                      <p className="fw-bold mb-2 text-primary" style={{ fontSize: '0.9rem' }}>
+                        <i className="bi bi-lightbulb-fill text-warning me-1"></i> {productType === 'iphone' ? 'Opciones recomendadas para tu iPhone:' : 'Opciones recomendadas para tu compra:'}
+                      </p>
+                      <ul className="mb-3 ps-3 text-muted" style={{ fontSize: '0.85rem' }}>
+                        <li className="mb-1"><strong>Esmiopción:</strong> Disponible si no tienes reportes negativos.</li>
+                        <li><strong>Plan con Abono Inicial:</strong> Consulta con un asesor para armar un plan a tu medida.</li>
+                      </ul>
+                      <div className="d-grid gap-2">
+                        {onSwitchFinanciera && (
+                          <button
+                            type="button"
+                            className="btn btn-primary btn-sm fw-semibold py-2"
+                            onClick={() => onSwitchFinanciera('esmiopcion')}
+                          >
+                            <i className="bi bi-arrow-repeat me-1"></i> Continuar con Esmiopción
+                          </button>
+                        )}
+                        {onContactAsesor && (
+                          <button
+                            type="button"
+                            className="btn btn-success btn-sm fw-semibold py-2"
+                            onClick={onContactAsesor}
+                          >
+                            <i className="bi bi-whatsapp me-1"></i> Asesoría para Plan con Abono
+                          </button>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-2 p-3 rounded text-start" style={{ background: 'rgba(40, 167, 69, 0.05)', border: '1px solid rgba(40, 167, 69, 0.2)' }}>
+                      <p className="fw-bold mb-2 text-success" style={{ fontSize: '0.9rem' }}>
+                        <i className="bi bi-lightbulb-fill text-warning me-1"></i> Alternativas con aprobación inmediata:
+                      </p>
+                      <p className="mb-3 text-muted" style={{ fontSize: '0.85rem' }}>
+                        <strong>Krediya</strong> y <strong>PayJoy</strong> aprueban primera compra y reciben clientes con o sin historial crediticio.
+                      </p>
+                      <div className="d-grid gap-2">
+                        {onSwitchFinanciera && (
+                          <>
+                            <button
+                              type="button"
+                              className="btn btn-primary btn-sm fw-semibold py-2"
+                              onClick={() => onSwitchFinanciera('krediya')}
+                            >
+                              <i className="bi bi-arrow-repeat me-1"></i> Cambiar a Krediya
+                            </button>
+                            <button
+                              type="button"
+                              className="btn btn-warning btn-sm fw-semibold py-2 text-dark"
+                              onClick={() => onSwitchFinanciera('pajoy')}
+                            >
+                              <i className="bi bi-arrow-repeat me-1"></i> Cambiar a PayJoy
+                            </button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <>
                   <div className="icon"><i className="bi bi-check-circle-fill"></i></div>

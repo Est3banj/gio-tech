@@ -25,24 +25,26 @@ const ProductBadges: React.FC<ProductBadgesProps> = ({
   <div className="gio-badge-container" aria-hidden={!showPromoBadge && !showNuevoBadge}>
     <div className="gio-badge-wrapper" style={{ visibility: showNuevoBadge ? 'visible' : 'hidden' }}>
       <span
-        className="gio-badge"
+        className="gio-badge gio-badge-nuevo"
         style={{
-          backgroundColor: nuevoBadgeBg || '#28a745',
+          backgroundColor: nuevoBadgeBg || '#16a34a',
           color: '#ffffff'
         }}
       >
+        <i className="bi bi-sparkles me-1"></i>
         {nuevoBadgeText || 'NUEVO'}
       </span>
     </div>
 
     <div className="gio-badge-wrapper" style={{ visibility: showPromoBadge ? 'visible' : 'hidden' }}>
       <span
-        className="gio-badge"
+        className="gio-badge gio-badge-promo"
         style={{
           backgroundColor: promoBadgeBg || badgeBg,
           color: '#ffffff',
         }}
       >
+        <i className="bi bi-tag-fill me-1"></i>
         {promoBadgeText || 'PROMO'}
       </span>
     </div>
@@ -50,13 +52,14 @@ const ProductBadges: React.FC<ProductBadgesProps> = ({
     {isPopular && (
       <div className="gio-badge-wrapper">
         <span
-          className="gio-badge"
+          className="gio-badge gio-badge-hot"
           style={{
-            backgroundColor: '#ff6b35',
+            backgroundColor: '#e11d48',
             color: '#ffffff',
           }}
         >
-          🔥 HOT
+          <i className="bi bi-fire me-1"></i>
+          HOT
         </span>
       </div>
     )}

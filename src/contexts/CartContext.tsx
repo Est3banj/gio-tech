@@ -16,7 +16,19 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     try {
       const localData = localStorage.getItem('gio-tech-cart');
-      return localData ? JSON.parse(localData) : [];
+      if (!localData) return [];
+      const parsed = JSON.parse(localData);
+      if (!Array.isArray(parsed)) return [];
+      return parsed.map((item: Partial<CartItem>) => ({
+        ...item,
+        cantidad: typeof item.cantidad === 'number' && item.cantidad > 0 ? item.cantidad : 1,
+        contado: item.contado ?? 0,
+        cuotas6: item.cuotas6 ?? 0,
+        cuotas8: item.cuotas8 ?? 0,
+        cuotas12: item.cuotas12 ?? 0,
+        solo12Meses: Boolean(item.solo12Meses),
+        cuotaInicial: item.cuotaInicial ?? 0,
+      })) as CartItem[];
     } catch {
       return [];
     }
@@ -32,7 +44,8 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
   }, [cartItems]);
 
   // Función para añadir un producto al carrito
-  const addToCart = (product: Product, type: CotizacionType) => {
+  const addToCart = (product: Product, type: CotizacionType, cantidad: number = 1) => {
+    const qtyToAdd = Math.max(1, Math.floor(cantidad || 1));
     setCartItems(prevItems => {
       // Crear un ID único para el ítem en el carrito (producto ID + tipo de cotización)
       const itemId = `${product.id}-${type}`;
@@ -41,10 +54,14 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
       const exists = prevItems.find(item => item.itemId === itemId);
 
       if (exists) {
-        // Si ya existe, no lo añadimos de nuevo
-        return prevItems;
+        // Si ya existe, incrementamos su cantidad
+        return prevItems.map(item =>
+          item.itemId === itemId
+            ? { ...item, cantidad: item.cantidad + qtyToAdd }
+            : item
+        );
       } else {
-        // Añadir el nuevo ítem al carrito con su tipo de cotización
+        // Añadir el nuevo ítem al carrito con su tipo de cotización y soporte de 12 meses
         const newItem: CartItem = { 
           itemId,
           productId: product.id,
@@ -53,7 +70,11 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
           contado: product.contado ?? 0,
           cuotas6: product.cuotas6 ?? 0,
           cuotas8: product.cuotas8 ?? 0,
-          cotizacionType: type
+          solo12Meses: Boolean(product.solo12Meses),
+          cuotas12: product.cuotas12 ?? 0,
+          cuotaInicial: product.cuotaInicial ?? 0,
+          cotizacionType: type,
+          cantidad: qtyToAdd
         };
         
         // Track del evento AddToCart a Meta Pixel
@@ -61,6 +82,43 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
         
         return [...prevItems, newItem];
       }
+    });
+  };
+
+  // Función para modificar la cantidad directa de un ítem
+  const updateQuantity = (itemId: string, cantidad: number) => {
+    const validQty = Math.floor(cantidad);
+    if (validQty <= 0) {
+      removeFromCart(itemId);
+      return;
+    }
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.itemId === itemId ? { ...item, cantidad: validQty } : item
+      )
+    );
+  };
+
+  // Incrementar en 1 la cantidad
+  const incrementQuantity = (itemId: string) => {
+    setCartItems(prevItems =>
+      prevItems.map(item =>
+        item.itemId === itemId ? { ...item, cantidad: (item.cantidad || 1) + 1 } : item
+      )
+    );
+  };
+
+  // Decrementar en 1 la cantidad (si llega a 0, se elimina)
+  const decrementQuantity = (itemId: string) => {
+    setCartItems(prevItems => {
+      const target = prevItems.find(item => item.itemId === itemId);
+      if (!target) return prevItems;
+      if (target.cantidad <= 1) {
+        return prevItems.filter(item => item.itemId !== itemId);
+      }
+      return prevItems.map(item =>
+        item.itemId === itemId ? { ...item, cantidad: item.cantidad - 1 } : item
+      );
     });
   };
 
@@ -74,12 +132,23 @@ export const CartProvider: React.FC<CartProviderProps> = ({ children }) => {
     setCartItems([]);
   };
 
-  // Conteo de ítems en el carrito
-  const cartCount = cartItems.length;
+  // Conteo total de unidades en el carrito
+  const cartCount = cartItems.reduce((sum, item) => sum + (item.cantidad || 1), 0);
 
   // El proveedor del contexto que expone los valores y funciones
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart, cartCount }}>
+    <CartContext.Provider
+      value={{
+        cartItems,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        incrementQuantity,
+        decrementQuantity,
+        clearCart,
+        cartCount
+      }}
+    >
       {children}
     </CartContext.Provider>
   );

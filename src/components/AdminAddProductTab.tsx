@@ -1,7 +1,8 @@
 import { FormEvent } from "react";
 import { Card, Form, Row, Col, Button, Badge } from "react-bootstrap";
 import { createProduct, updateProduct } from "../services/product.service";
-import { Product, ProductSpecs } from "../types";
+import { Product } from "../types";
+import { parseSpecs } from "../utils/specs-parser";
 
 interface AdminAddProductTabProps {
   nombreProducto: string;
@@ -88,62 +89,6 @@ function AdminAddProductTab({
   setSuccess,
   setError,
 }: AdminAddProductTabProps) {
-  function parseDescriptionToSpecs(description: string = ""): ProductSpecs {
-    if (!description || typeof description !== "string") return {
-      almacenamiento: null,
-      ram: null,
-      camara: null,
-      pantalla: null,
-      bateria: null,
-    };
-    const text = description.toLowerCase();
-
-    const toNum = (v: string | number | undefined | null): number | null => {
-      if (v === 0 || v) {
-        const s = String(v)
-          .replace(/[^0-9.,]/g, "")
-          .replace(",", ".");
-        const n = Number(s);
-        return Number.isFinite(n) ? n : null;
-      }
-      return null;
-    };
-
-    const almacenamientoMatch = text.match(/\b(\d{2,4})\s?gb\b/);
-    const almacenamiento = almacenamientoMatch
-      ? toNum(almacenamientoMatch[1])
-      : null;
-
-    const ramMatch =
-      text.match(/\b(\d{1,2})\s?gb\s?de\s?ram\b/) ||
-      text.match(/\b(\d{1,2})\s?gb\s?ram\b/) ||
-      text.match(/\b(\d{1,2})\s?gb\b/);
-    const ram = ramMatch ? toNum(ramMatch[1]) : null;
-
-    const camMatch =
-      text.match(/(\d{2,4})\s?mp\b/) ||
-      text.match(/cámara\s?de\s?(\d{2,4})\s?mp/);
-    const camara = camMatch ? toNum(camMatch[1] || camMatch[2]) : null;
-
-    const screenMatch =
-      text.match(/(\d{1,2}(?:[.,]\d)?)\s?(?:pulgadas|")/) ||
-      text.match(/pantalla.*?(\d{1,2}(?:[.,]\d)?)/);
-    const pantalla = screenMatch
-      ? toNum((screenMatch[1] || screenMatch[2] || "").replace(",", "."))
-      : null;
-
-    const batMatch = text.match(/(\d{3,5})\s?m(?:ah)?\b/);
-    const bateria = batMatch ? toNum(batMatch[1]) : null;
-
-    return {
-      almacenamiento: almacenamiento || null,
-      ram: ram || null,
-      camara: camara || null,
-      pantalla: pantalla || null,
-      bateria: bateria || null,
-    };
-  }
-
   const resetProductoForm = () => {
     setNombreProducto("");
     setDescripcionProducto("");
@@ -175,7 +120,7 @@ function AdminAddProductTab({
     e.preventDefault();
     setError("");
     setSuccess("");
-    const specs = parseDescriptionToSpecs(descripcionProducto || "");
+    const specs = parseSpecs(descripcionProducto || "");
 
     const parseNumberSafe = (v: string): number | null => {
       if (v === "" || v === null || typeof v === "undefined") return null;

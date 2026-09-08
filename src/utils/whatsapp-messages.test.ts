@@ -155,3 +155,94 @@ describe('buildWhatsAppUrl', () => {
     expect(result).toBe('https://wa.me/573223652569?text=Hola%2C%20estoy%20interesado%20en%20comprar%20el%20iPhone%2016%20Pro.%0APrecio%20promocional%3A%20%24%C2%A04.500.000%20(antes%20%24%C2%A05.000.000).%0A%C2%BFEst%C3%A1%20disponible%20para%20entrega%20inmediata%3F')
   })
 })
+
+import { buildCartWhatsAppMessage } from './whatsapp-messages'
+import type { CartItem } from '../types'
+
+describe('buildCartWhatsAppMessage', () => {
+  it('returns default fallback message when cart is empty', () => {
+    expect(buildCartWhatsAppMessage([])).toBe(
+      'Hola, estoy contactando a GIO TECH. No tengo productos en mi lista de interés.'
+    )
+  })
+
+  it('generates structured message for single contado item with customer info', () => {
+    const items: CartItem[] = [
+      {
+        itemId: 's24-contado',
+        productId: 's24',
+        nombre: 'Samsung Galaxy S24 Ultra',
+        imagen: '',
+        contado: 4500000,
+        cuotas6: 0,
+        cuotas8: 0,
+        cotizacionType: 'contado',
+        cantidad: 1,
+      },
+    ]
+
+    const result = buildCartWhatsAppMessage(items, {
+      nombre: 'Esteban Farias',
+      municipio: 'Puerto Asís',
+    })
+
+    expect(result).toContain('🛒 *Nueva Cotización - GIO TECH*')
+    expect(result).toContain('👤 *Datos del Cliente:*')
+    expect(result).toContain('▸ Nombre: Esteban Farias')
+    expect(result).toContain('▸ Municipio: Puerto Asís')
+    expect(result).toContain('1. *Samsung Galaxy S24 Ultra* (x1)')
+    expect(result).toContain('• Modalidad: Contado')
+    expect(result).toContain('• Precio unitario:')
+    expect(result).toContain('💰 *Total Estimado de Contado:*')
+  })
+
+  it('generates structured message for multi-quantity items and calculates subtotals', () => {
+    const items: CartItem[] = [
+      {
+        itemId: 'redmi-contado',
+        productId: 'redmi',
+        nombre: 'Xiaomi Redmi Note 13',
+        imagen: '',
+        contado: 1000000,
+        cuotas6: 0,
+        cuotas8: 0,
+        cotizacionType: 'contado',
+        cantidad: 3,
+      },
+    ]
+
+    const result = buildCartWhatsAppMessage(items)
+
+    expect(result).toContain('1. *Xiaomi Redmi Note 13* (x3)')
+    expect(result).toContain('• Subtotal (3 uds):')
+    expect(result).not.toContain('👤 *Datos del Cliente:*')
+  })
+
+  it('generates structured message for 12 meses special plan items without showing $0', () => {
+    const items: CartItem[] = [
+      {
+        itemId: 's24-credito',
+        productId: 's24',
+        nombre: 'Samsung Galaxy S24 Plan Especial',
+        imagen: '',
+        contado: 3500000,
+        cuotas6: 0,
+        cuotas8: 0,
+        solo12Meses: true,
+        cuotas12: 350000,
+        cuotaInicial: 500000,
+        cotizacionType: 'credito',
+        cantidad: 1,
+      },
+    ]
+
+    const result = buildCartWhatsAppMessage(items, { nombre: 'Laura Perez' })
+
+    expect(result).toContain('1. *Samsung Galaxy S24 Plan Especial* (x1)')
+    expect(result).toContain('• Modalidad: Crédito')
+    expect(result).toContain('• Cuota inicial:')
+    expect(result).toContain('• Plan especial: 12 cuotas mensuales de')
+    expect(result).not.toContain('$0')
+    expect(result).toContain('• Valor ref. contado:')
+  })
+})

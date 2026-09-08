@@ -1,65 +1,68 @@
-import { useState, useEffect, useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from 'react';
 import { subscribeToProducts } from '../services/product.service';
 import type { Product } from '../types';
 
-// Store externo para compartir estado entre componentes (singleton pattern)
-let productsStore: Product[] = [];
-const productsListeners = new Set<() => void>();
-
-function notifyProductsListeners(): void {
-  productsListeners.forEach((listener) => listener());
-}
-
-const productsSubscribe = (listener: () => void): (() => boolean) => {
-  productsListeners.add(listener);
-  return () => productsListeners.delete(listener);
-};
-
-interface UseProductsReturn {
+export interface UseProductsReturn {
   products: Product[];
   isLoading: boolean;
   error: Error | null;
 }
 
-/**
- * Hook personalizado para suscribirse a la lista de productos desde Firestore.
- * Usa store externo para evitar suscripciones duplicadas.
- */
-export function useProducts(): UseProductsReturn {
-  const [products, setProducts] = useState<Product[]>(productsStore);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<Error | null>(null);
+let storeState: UseProductsReturn = {
+  products: [],
+  isLoading: true,
+  error: null,
+};
 
-  // Sincronizar con store externo
-  useSyncExternalStore(productsSubscribe, () => productsStore);
+let activeUnsubscribe: (() => void) | null = null;
+const listeners = new Set<() => void>();
 
-  useEffect(() => {
-    // Si ya hay datos en el store, no cargar de nuevo
-    if (productsStore.length > 0) {
-      setProducts(productsStore);
-      setIsLoading(false);
-      return;
-    }
+function notify(): void {
+  listeners.forEach((listener) => listener());
+}
 
-    setIsLoading(true);
-    setError(null);
+function subscribe(listener: () => void): () => void {
+  listeners.add(listener);
 
-    const unsubscribe = subscribeToProducts(
+  if (listeners.size === 1) {
+    activeUnsubscribe = subscribeToProducts(
       (lista) => {
-        productsStore = lista;
-        setProducts(lista);
-        setIsLoading(false);
-        notifyProductsListeners();
+        storeState = {
+          products: lista,
+          isLoading: false,
+          error: null,
+        };
+        notify();
       },
       (err) => {
         console.error('Error en useProducts:', err);
-        setError(err);
-        setIsLoading(false);
+        storeState = {
+          ...storeState,
+          isLoading: false,
+          error: err,
+        };
+        notify();
       }
     );
+  }
 
-    return () => unsubscribe();
-  }, []);
+  return () => {
+    listeners.delete(listener);
+    if (listeners.size === 0 && activeUnsubscribe) {
+      activeUnsubscribe();
+      activeUnsubscribe = null;
+    }
+  };
+}
 
-  return { products, isLoading, error };
+function getSnapshot(): UseProductsReturn {
+  return storeState;
+}
+
+/**
+ * Hook personalizado para suscribirse a la lista de productos desde Firestore.
+ * Usa store externo con useSyncExternalStore para compartir suscripción y estado.
+ */
+export function useProducts(): UseProductsReturn {
+  return useSyncExternalStore(subscribe, getSnapshot);
 }

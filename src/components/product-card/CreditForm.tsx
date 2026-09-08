@@ -5,6 +5,8 @@ import SistecreditoValidation from "./SistecreditoValidation";
 import type { ValidacionStatus } from "./SistecreditoValidation";
 import type { Financiera } from "../../types";
 
+import type { ProductType } from "../../data/financieras";
+
 export type AutovalidacionStatus = 'pendiente' | 'aprobado' | 'denegado';
 
 export interface CreditFormStatus {
@@ -16,17 +18,25 @@ export interface CreditFormStatus {
 interface CreditFormProps {
   financiera: Financiera;
   contado: number | null | undefined;
+  productType?: ProductType;
+  productName?: string;
   onValidSubmit: () => void;
   onStatusChange: (status: CreditFormStatus) => void;
   onValidacionStatusChange: (status: ValidacionStatus) => void;
+  onSwitchFinanciera?: (financieraId: string) => void;
+  onContactAsesor?: () => void;
 }
 
 const CreditForm: React.FC<CreditFormProps> = ({
   financiera,
   contado,
+  productType,
+  productName,
   onValidSubmit,
   onStatusChange,
   onValidacionStatusChange,
+  onSwitchFinanciera,
+  onContactAsesor,
 }) => {
   const [formData, setFormData] = useState<Record<string, string>>({});
   const [linkOpened, setLinkOpened] = useState(false);
@@ -215,8 +225,12 @@ const CreditForm: React.FC<CreditFormProps> = ({
           contado={contado}
           formData={formData}
           esFormValido={isFormValid()}
+          productType={productType}
+          productName={productName}
           onValidSubmit={onValidSubmit}
           onStatusChange={onValidacionStatusChange}
+          onSwitchFinanciera={onSwitchFinanciera}
+          onContactAsesor={onContactAsesor}
         />
       )}
     </>

@@ -66,3 +66,80 @@ export const CAMPO_LABELS: Record<string, string> = {
 export function labelDeCampo(key: string): string {
   return CAMPO_LABELS[key] || key;
 }
+
+import type { CartItem } from '../types';
+import { formatPrice } from './formatters';
+
+export interface CartMsgCustomerInfo {
+  nombre?: string;
+  municipio?: string;
+}
+
+export function buildCartWhatsAppMessage(
+  cartItems: CartItem[],
+  customerInfo?: CartMsgCustomerInfo
+): string {
+  if (!cartItems || cartItems.length === 0) {
+    return 'Hola, estoy contactando a GIO TECH. No tengo productos en mi lista de interés.';
+  }
+
+  let mensaje = `🛒 *Nueva Cotización - GIO TECH*\n\n`;
+
+  const nombreCliente = customerInfo?.nombre?.trim();
+  const municipioCliente = customerInfo?.municipio?.trim();
+
+  if (nombreCliente || municipioCliente) {
+    mensaje += `👤 *Datos del Cliente:*\n`;
+    if (nombreCliente) {
+      mensaje += `▸ Nombre: ${nombreCliente}\n`;
+    }
+    if (municipioCliente) {
+      mensaje += `▸ Municipio: ${municipioCliente}\n`;
+    }
+    mensaje += `\n`;
+  }
+
+  mensaje += `📦 *Productos solicitados:*\n`;
+
+  let totalContado = 0;
+
+  cartItems.forEach((item, index) => {
+    const qty = typeof item.cantidad === 'number' && item.cantidad > 0 ? item.cantidad : 1;
+    const precioContadoUnit = item.contado || 0;
+    const subtotalContado = precioContadoUnit * qty;
+    totalContado += subtotalContado;
+
+    mensaje += `${index + 1}. *${item.nombre}* (x${qty})\n`;
+
+    if (item.cotizacionType === 'contado') {
+      mensaje += `   • Modalidad: Contado\n`;
+      mensaje += `   • Precio unitario: ${formatPrice(precioContadoUnit)}\n`;
+      if (qty > 1) {
+        mensaje += `   • Subtotal (${qty} uds): ${formatPrice(subtotalContado)}\n`;
+      }
+    } else {
+      mensaje += `   • Modalidad: Crédito\n`;
+      if (item.cuotaInicial && item.cuotaInicial > 0) {
+        mensaje += `   • Cuota inicial: ${formatPrice(item.cuotaInicial)}\n`;
+      }
+
+      if (item.solo12Meses && item.cuotas12) {
+        mensaje += `   • Plan especial: 12 cuotas mensuales de ${formatPrice(item.cuotas12)}\n`;
+      } else if (item.cuotas6 || item.cuotas8) {
+        mensaje += `   • Cuotas estimadas: 16Q de ${formatPrice(item.cuotas6)} / 8M de ${formatPrice(item.cuotas8)}\n`;
+      } else {
+        mensaje += `   • Cuotas: Sujetas a estudio crediticio\n`;
+      }
+
+      mensaje += `   • Valor ref. contado: ${formatPrice(precioContadoUnit)}\n`;
+      if (qty > 1) {
+        mensaje += `   • Subtotal ref. (${qty} uds): ${formatPrice(subtotalContado)}\n`;
+      }
+    }
+  });
+
+  mensaje += `\n💰 *Total Estimado de Contado:* ${formatPrice(totalContado)}\n\n`;
+  mensaje += `¿Podrían confirmar disponibilidad y asesorarme con el pedido?`;
+
+  return mensaje;
+}

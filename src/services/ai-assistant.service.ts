@@ -373,8 +373,124 @@ Responde solo con productos que existan en el catálogo de arriba. Si no hay pro
   return `${errorMessage}. Por favor contáctanos por WhatsApp o intenta más tarde.`;
 };
 
+import { formatPrice } from '../utils/formatters';
+
+export interface ChatHandoffData {
+  mensajes: ChatMessage[];
+  productosMatcheados?: Product[];
+  productosCatalogo?: Product[];
+}
+
 /**
- * Genera un mensaje de WhatsApp con los productos recomendados
+ * Analiza la conversación y extrae el perfil crediticio, presupuesto y necesidades detectadas.
+ */
+export const generateHandoffSummary = (data: ChatHandoffData): string => {
+  const { mensajes = [], productosMatcheados = [] } = data;
+
+  if (mensajes.length === 0 && productosMatcheados.length === 0) {
+    return "¡Hola! Estuve viendo el catálogo en GIO TECH y me gustaría recibir asesoría personalizada.";
+  }
+
+  const userMessages = mensajes.filter(m => m.rol === 'usuario').map(m => m.texto);
+  const fullUserText = userMessages.join(' ').toLowerCase();
+
+  // 1. Detectar perfil crediticio / intención de pago
+  let perfil = 'General / A convenir';
+  if (fullUserText.includes('reportad') || fullUserText.includes('datacredito') || fullUserText.includes('data crédito')) {
+    perfil = 'Reportado en centrales (interés en PayJoy / Krediya / Celya)';
+  } else if (fullUserText.includes('sistecredito') || fullUserText.includes('sistecrédito')) {
+    perfil = 'Interés en Sistecrédito';
+  } else if (fullUserText.includes('cuota') || fullUserText.includes('credito') || fullUserText.includes('crédito') || fullUserText.includes('financiar') || fullUserText.includes('financiacion') || fullUserText.includes('financiación')) {
+    perfil = 'Interés en Crédito / Financiación';
+  } else if (fullUserText.includes('contado') || fullUserText.includes('efectivo') || fullUserText.includes('transferencia')) {
+    perfil = 'Compra de Contado';
+  }
+
+  // 2. Detectar marcas y necesidades
+  const marcas = ['iPhone', 'Apple', 'Samsung', 'Xiaomi', 'Redmi', 'Tecno', 'Infinix', 'Motorola', 'Oppo', 'Huawei'];
+  const marcasDetectadas = marcas.filter(m => fullUserText.includes(m.toLowerCase()));
+  
+  const necesidades: string[] = [];
+  if (marcasDetectadas.length > 0) {
+    necesidades.push(`Marca(s): ${marcasDetectadas.join(', ')}`);
+  }
+  if (fullUserText.includes('camara') || fullUserText.includes('cámara') || fullUserText.includes('foto')) {
+    necesidades.push('Buena cámara');
+  }
+  if (fullUserText.includes('bateria') || fullUserText.includes('batería')) {
+    necesidades.push('Batería duradera');
+  }
+  if (fullUserText.includes('juego') || fullUserText.includes('gaming') || fullUserText.includes('jugar') || fullUserText.includes('free fire')) {
+    necesidades.push('Rendimiento / Gaming');
+  }
+  if (fullUserText.includes('128') || fullUserText.includes('256') || fullUserText.includes('512') || fullUserText.includes('almacenamiento') || fullUserText.includes('memoria')) {
+    necesidades.push('Buena capacidad de almacenamiento');
+  }
+  if (fullUserText.includes('barat') || fullUserText.includes('econo') || fullUserText.includes('accesib')) {
+    necesidades.push('Gama económica / accesible');
+  }
+
+  const necesidadesStr = necesidades.length > 0 ? necesidades.join(' • ') : 'Asesoría general de catálogo';
+
+  // 3. Detectar presupuesto aproximado
+  let presupuesto = 'Flexible / Según recomendación';
+  const matchMillones = fullUserText.match(/(\d+([.,]\d+)?)\s*(millon|millones|millón|m)/);
+  const matchK = fullUserText.match(/(\d+)\s*(mil|k)/);
+  if (matchMillones) {
+    presupuesto = `Aprox. $${matchMillones[1]} millones`;
+  } else if (matchK) {
+    presupuesto = `Aprox. $${matchK[1]} mil`;
+  } else if (productosMatcheados.length > 0) {
+    const preciosValidos = productosMatcheados
+      .map(p => p.contado)
+      .filter((p): p is number => typeof p === 'number' && p > 0);
+    if (preciosValidos.length === 1) {
+      presupuesto = formatPrice(preciosValidos[0]);
+    } else if (preciosValidos.length > 1) {
+      const min = Math.min(...preciosValidos);
+      const max = Math.max(...preciosValidos);
+      presupuesto = min === max ? formatPrice(min) : `${formatPrice(min)} - ${formatPrice(max)}`;
+    }
+  }
+
+  // 4. Última consulta
+  const lastUserMsg = [...mensajes].reverse().find(m => m.rol === 'usuario');
+  const ultimaConsulta = lastUserMsg?.texto?.trim();
+
+  // Construcción del mensaje estructurado
+  let mensaje = `🤖 *Asistencia Virtual GIO TECH - Lead Precalificado*\n\n`;
+  mensaje += `👤 *Perfil del Cliente:*\n`;
+  mensaje += `▸ Modalidad / Perfil: ${perfil}\n`;
+  mensaje += `▸ Preferencias: ${necesidadesStr}\n`;
+  mensaje += `▸ Presupuesto estimado: ${presupuesto}\n\n`;
+
+  if (productosMatcheados.length > 0) {
+    mensaje += `📱 *Productos de interés / recomendados:*\n`;
+    productosMatcheados.slice(0, 5).forEach((p, idx) => {
+      const precioStr = p.contado ? formatPrice(p.contado) : 'Consultar';
+      mensaje += `${idx + 1}. *${p.nombre}* (${precioStr})\n`;
+    });
+    mensaje += `\n`;
+  }
+
+  if (ultimaConsulta) {
+    mensaje += `💬 *Última consulta del cliente:*\n"${ultimaConsulta}"\n\n`;
+  }
+
+  mensaje += `¡Hola! Estuve conversando con el asistente virtual y deseo continuar la asesoría con un asesor humano para concretar mi pedido.`;
+
+  return mensaje;
+};
+
+/**
+ * Genera el mensaje codificado o formateado para WhatsApp Handoff
+ */
+export const generateHandoffWhatsAppMessage = (data: ChatHandoffData): string => {
+  return generateHandoffSummary(data);
+};
+
+/**
+ * Genera un mensaje de WhatsApp con los productos recomendados (legacy / fallback)
  */
 export const generateWhatsAppMessage = (productos: Product[]): string => {
   if (!productos || productos.length === 0) {

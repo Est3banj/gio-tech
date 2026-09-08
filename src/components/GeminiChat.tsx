@@ -1,10 +1,11 @@
 // src/components/GeminiChat.tsx
 import React, { useState, useRef, useEffect } from 'react';
 import { Button, Form, Card, Badge } from 'react-bootstrap';
-import { askAssistant, generateWhatsAppMessage } from '../services/ai-assistant.service';
+import { askAssistant, generateHandoffWhatsAppMessage } from '../services/ai-assistant.service';
 import { useWhatsappNumber } from '../contexts/whatsapp-number-context';
 import { useCart } from '../contexts/cart-context';
 import { formatPrice } from '../utils/formatters';
+import { trackLead } from '../utils/metaPixel';
 import { extractMatchedProducts } from '../utils/product-matcher';
 import type { Product, ChatMessage } from '../types';
 import type { MatchedProduct } from '../utils/product-matcher';
@@ -90,17 +91,35 @@ const GeminiChat: React.FC<GeminiChatProps> = ({ productos, onClose }) => {
   const handleWhatsApp = () => {
     if (!phoneNumber) return;
 
-    const lastAssistantIdx = [...mensajes].reverse().findIndex(m => m.rol === 'asistente');
-    const lastAssistantIndex = lastAssistantIdx >= 0
-      ? mensajes.length - 1 - lastAssistantIdx
-      : -1;
+    // Recolectar todos los productos matcheados a lo largo del chat
+    const allMatchedProducts: Product[] = [];
+    const seenIds = new Set<string>();
+    Object.values(productosMatcheados).forEach(mps => {
+      mps?.forEach(mp => {
+        if (mp?.product && !seenIds.has(mp.product.id)) {
+          seenIds.add(mp.product.id);
+          allMatchedProducts.push(mp.product);
+        }
+      });
+    });
 
-    const lastProducts = lastAssistantIndex >= 0 && productosMatcheados[lastAssistantIndex]
-      ? productosMatcheados[lastAssistantIndex].map(mp => mp.product)
-      : [];
+    const mensaje = generateHandoffWhatsAppMessage({
+      mensajes,
+      productosMatcheados: allMatchedProducts,
+      productosCatalogo: productos,
+    });
 
-    const mensaje = generateWhatsAppMessage(lastProducts);
-    window.open(`https://wa.me/${phoneNumber}?text=${mensaje}`, '_blank');
+    const totalEstimated = allMatchedProducts.reduce((sum, p) => sum + (p.contado || 0), 0);
+
+    trackLead({
+      content_type: 'chat_handoff',
+      content_ids: allMatchedProducts.map(p => p.id),
+      value: totalEstimated,
+      num_items: allMatchedProducts.length,
+      currency: 'COP',
+    });
+
+    window.open(`https://wa.me/${phoneNumber}?text=${encodeURIComponent(mensaje)}`, '_blank');
   };
 
   // ── Render ──────────────────────────────────────────────

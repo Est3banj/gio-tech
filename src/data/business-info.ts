@@ -68,11 +68,10 @@ ENVIOS:
 
   metodosPago: `
 MÉTODOS DE PAGO:
-- Efectivo
+- Efectivo en tienda
 - Transferencia bancaria
 - PSE
 - Tarjetas de crédito/débito
-- Pago contra entrega (solo en algunas ciudades)
 - Financiación con proveedores externos
   `,
 

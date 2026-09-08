@@ -29,6 +29,26 @@ const TerminosPage = lazy(() => import("./components/TerminosPage"));
 
 const ACTIVAR_NIEVE = false;
 
+const RootRoute = () => {
+  const location = useLocation();
+  const searchParams = new URLSearchParams(location.search);
+  const hasProductQuery = Boolean(searchParams.get("producto") || searchParams.get("id"));
+
+  if (hasProductQuery) {
+    return <Navigate to={`/catalogo${location.search}`} replace />;
+  }
+
+  return (
+    <Suspense fallback={
+      <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+        <p className="lead mb-0">Cargando…</p>
+      </div>
+    }>
+      <LandingPage />
+    </Suspense>
+  );
+};
+
 function App() {
   const [usuario, setUsuario] = useState<User | null>(null);
   const [, setConfiguracion] = useState<StoreConfig>({});
@@ -112,18 +132,7 @@ function App() {
 
           <main className="flex-grow-1">
             <Routes>
-              <Route
-                path="/"
-                element={
-                  <Suspense fallback={
-                    <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
-                      <p className="lead mb-0">Cargando…</p>
-                    </div>
-                  }>
-                    <LandingPage />
-                  </Suspense>
-                }
-              />
+              <Route path="/" element={<RootRoute />} />
               <Route path="/catalogo" element={<Catalogo />} />
               <Route
                 path="/servicio-tecnico"
@@ -200,7 +209,7 @@ function App() {
         </div>
       </CartProvider>
 
-      <SnowfallEffect enabled={ACTIVAR_NIEVE} />
+      <SnowfallEffect enabled={true} />
     </WhatsappNumberProvider>
   );
 }

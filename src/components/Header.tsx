@@ -1,11 +1,12 @@
 // src/components/Header.tsx
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { subscribeToConfig } from "../services/config.service";
-import type { StoreConfig } from "../types";
+import { useConfig } from "../hooks/useConfig";
+
+export const DEFAULT_HEADER_ADDRESS = "Cra. 32 #13 36, Puerto Asís, Putumayo";
 
 const Header: React.FC = () => {
-  const [config, setConfig] = useState<StoreConfig>({});
+  const { config } = useConfig();
   const location = useLocation();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -13,7 +14,9 @@ const Header: React.FC = () => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) return savedTheme === "dark";
-    return window.matchMedia("(prefers-color-scheme: dark)").matches;
+    return typeof window !== "undefined" && window.matchMedia
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+      : false;
   });
 
   useEffect(() => {
@@ -25,14 +28,6 @@ const Header: React.FC = () => {
       localStorage.setItem("theme", "light");
     }
   }, [isDarkMode]);
-
-  useEffect(() => {
-    const unsub = subscribeToConfig(
-      (data) => setConfig(data),
-      (error) => console.error("Header config error:", error)
-    );
-    return () => unsub();
-  }, []);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -63,27 +58,101 @@ const Header: React.FC = () => {
   const isHeroPage = location.pathname === "/" || location.pathname === "/servicio-tecnico";
   const isSolid = scrolled || !isHeroPage;
 
-  return (
-    <>
-      <header className={`gio-header ${isSolid || isMobileMenuOpen ? "scrolled" : ""}`}>
-        <div className="section-inner d-flex justify-content-between align-items-center">
+  const address = config?.direccion?.trim() || DEFAULT_HEADER_ADDRESS;
 
+  const isThemeActive = Boolean(config?.theme?.enabled);
+  const themeVars = config?.theme?.vars || {};
+  const currentThemeName = (themeVars['--theme-name'] || (config?.theme as { name?: string })?.name || '').toLowerCase();
+  const isValentine = isThemeActive && currentThemeName === 'valentine';
+  const isChristmas = isThemeActive && currentThemeName === 'christmas';
+  const isHalloween = isThemeActive && currentThemeName === 'halloween';
+
+  const renderTrustContent = () => (
+    <>
+      {isValentine && (
+        <>
+          <span className="trust-item trust-item-seasonal">
+            <span className="seasonal-ticker-pill">💘 Amor y Amistad</span>
+            <strong>Mes de Amor y Amistad</strong>: Celulares a cuotas sin inicial
+          </span>
+          <span className="trust-divider" aria-hidden="true">•</span>
+        </>
+      )}
+      {isChristmas && (
+        <>
+          <span className="trust-item trust-item-seasonal">
+            <span className="seasonal-ticker-pill seasonal-ticker-pill-christmas">🎄 Navidad GIO</span>
+            <strong>Temporada Navideña</strong>: Estrena hoy con las mejores cuotas
+          </span>
+          <span className="trust-divider" aria-hidden="true">•</span>
+        </>
+      )}
+      {isHalloween && (
+        <>
+          <span className="trust-item trust-item-seasonal">
+            <span className="seasonal-ticker-pill seasonal-ticker-pill-halloween">🎃 Halloween Tech</span>
+            <strong>Especial Halloween</strong>: Ofertas de miedo en tecnología
+          </span>
+          <span className="trust-divider" aria-hidden="true">•</span>
+        </>
+      )}
+      <span className="trust-item">
+        <i className="bi bi-geo-alt-fill text-danger me-1" aria-hidden="true"></i>
+        Tienda física: <strong>{address}</strong>
+      </span>
+      <span className="trust-divider" aria-hidden="true">•</span>
+      <span className="trust-item">
+        <i className="bi bi-truck text-primary me-1" aria-hidden="true"></i>
+        Envíos seguros a todo el <strong>Putumayo</strong>
+      </span>
+      <span className="trust-divider" aria-hidden="true">•</span>
+      <span className="trust-item">
+        <i className="bi bi-shield-check text-success me-1" aria-hidden="true"></i>
+        <strong>Garantía Directa</strong>
+      </span>
+      <span className="trust-divider" aria-hidden="true">•</span>
+    </>
+  );
+
+  return (
+    <header className={`gio-header ${isSolid || isMobileMenuOpen ? "scrolled" : ""}`}>
+      {/* ─── Micro-Trust Bar Unificada (Infinite Marquee) ─── */}
+      <div className="gio-top-trust-bar" role="region" aria-label="Información de confianza">
+        <div className="trust-marquee-track">
+          <div className="trust-marquee-group">
+            {renderTrustContent()}
+            {renderTrustContent()}
+          </div>
+          <div className="trust-marquee-group" aria-hidden="true">
+            {renderTrustContent()}
+            {renderTrustContent()}
+          </div>
+        </div>
+      </div>
+
+      {/* ─── Main Navigation Row ─── */}
+      <div className="gio-header-main">
+        <div className="section-inner d-flex justify-content-between align-items-center">
           <div className="header-brand d-flex align-items-center gap-2 gap-md-3">
-            {config.logo && (
-              <img
-                src={config.logo}
-                alt={config.nombre || "Logo"}
-                className="gio-logo"
-              />
+            {config?.logo && (
+              <Link to="/" className="d-flex align-items-center text-decoration-none" onClick={closeMobileMenu}>
+                <img
+                  src={config.logo}
+                  alt={config.nombre || "Logo"}
+                  className="gio-logo"
+                />
+              </Link>
             )}
-            {config.nombre && (
-              <h2 className="fw-bold text-primary mb-0 header-title d-none d-sm-block">
-                {config.nombre}
-              </h2>
+            {config?.nombre && (
+              <Link to="/" className="text-decoration-none" onClick={closeMobileMenu}>
+                <h2 className="fw-bold text-primary mb-0 header-title d-none d-sm-block">
+                  {config.nombre}
+                </h2>
+              </Link>
             )}
           </div>
 
-          <nav className="header-nav-desktop d-none d-lg-flex mb-0 mx-auto">
+          <nav className="header-nav-desktop d-none d-lg-flex mb-0 mx-auto" aria-label="Navegación principal">
             <ul className="nav align-items-center mb-0">
               <li className="nav-item">
                 <Link to="/" className={`nav-link-gio ${location.pathname === "/" ? "active" : ""}`}>Inicio</Link>
@@ -97,7 +166,7 @@ const Header: React.FC = () => {
             </ul>
           </nav>
 
-          <div className="header-actions d-flex align-items-center gap-3">
+          <div className="header-actions d-flex align-items-center gap-2 gap-md-3">
             <button
               onClick={toggleTheme}
               className="theme-toggle-btn"
@@ -117,10 +186,11 @@ const Header: React.FC = () => {
             </button>
           </div>
         </div>
-      </header>
+      </div>
 
+      {/* ─── Mobile Menu Overlay ─── */}
       <div className={`mobile-nav-overlay d-lg-none ${isMobileMenuOpen ? "open" : ""}`}>
-        <nav className="mobile-nav-container">
+        <nav className="mobile-nav-container" aria-label="Navegación móvil">
           <ul className="mobile-nav-list">
             <li>
               <Link to="/" className={`mobile-nav-link ${location.pathname === "/" ? "active" : ""}`} onClick={closeMobileMenu}>Inicio</Link>
@@ -134,7 +204,7 @@ const Header: React.FC = () => {
           </ul>
         </nav>
       </div>
-    </>
+    </header>
   );
 };
 

@@ -61,10 +61,11 @@ function AdminPanel() {
   const [logoNegocio, setLogoNegocio] = useState<File | null>(null);
   const [previewLogo, setPreviewLogo] = useState<string>("");
 
-  const [themeEnabled, setThemeEnabled] = useState<boolean>(false);
+  const [themeEnabled, setThemeEnabled] = useState<boolean>(true);
   const [themeStart, setThemeStart] = useState<string>("");
   const [themeEnd, setThemeEnd] = useState<string>("");
   const [themeVars, setThemeVars] = useState<ThemeVars>({
+    "--theme-name": "valentine",
     "--promo-badge-bg": "#d81b60",
     "--promo-badge-text": "#ffffff",
     "--promo-highlight": "rgba(216,27,96,.18)",
