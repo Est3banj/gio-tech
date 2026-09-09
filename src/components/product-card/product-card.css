@@ -238,11 +238,26 @@
   letter-spacing: -0.01em;
   white-space: nowrap;
   line-height: 1.4;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+              background 0.2s ease,
+              border-color 0.2s ease,
+              box-shadow 0.2s ease;
+  user-select: none;
+}
+
+.spec-chip:hover {
+  transform: translateY(-1.5px);
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-sm);
 }
 
 .spec-chip i {
   font-size: 0.8rem;
   color: var(--text-muted);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
 }
 
 .spec-chip-default {

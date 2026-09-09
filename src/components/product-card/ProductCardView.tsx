@@ -1,10 +1,10 @@
-// src/components/product-card/ProductCardView.tsx
 import React, { useState, useMemo } from "react";
 import type { Product, ProductSpecs } from "../../types";
 import type { DerivadosPricing } from "./useProductPricing";
 import ProductBadges from "./ProductBadges";
 import PriceDisplay from "./PriceDisplay";
-import { parseSpecs } from "../../utils/specs-parser";
+import { extractProductSpecs } from "../../utils/specs-parser";
+import { getProductType } from "../../data/financieras";
 
 interface ProductCardViewProps {
   producto: Product;
@@ -49,20 +49,27 @@ const ProductCardView: React.FC<ProductCardViewProps> = ({ producto, isPopular =
     }
   };
 
+  const isAccesorio = useMemo(() => {
+    const cat = (producto.categoria || '').toLowerCase();
+    if (cat.includes('accesorio') || cat.includes('accessory')) return true;
+    return getProductType(producto.marca, producto.nombre, producto.categoria) === 'accesorio';
+  }, [producto.marca, producto.nombre, producto.categoria]);
+
   const specs = useMemo(() => {
-    const fromDesc = parseSpecs(producto.descripcion || '');
-    const s = (producto.specs || {}) as Partial<ProductSpecs>;
-    return {
-      almacenamiento: s.almacenamiento || fromDesc.almacenamiento,
-      ram: s.ram || fromDesc.ram,
-      camara: s.camara || fromDesc.camara,
-      pantalla: s.pantalla || fromDesc.pantalla,
-      bateria: s.bateria || fromDesc.bateria,
-    };
-  }, [producto.specs, producto.descripcion]);
+    if (isAccesorio) {
+      return {
+        almacenamiento: null,
+        ram: null,
+        camara: null,
+        pantalla: null,
+        bateria: null,
+      };
+    }
+    return extractProductSpecs(producto);
+  }, [producto, isAccesorio]);
 
   const hasAnySpec = Boolean(
-    specs.almacenamiento || specs.ram || specs.camara || specs.pantalla || specs.bateria
+    !isAccesorio && (specs.almacenamiento || specs.ram || specs.camara || specs.pantalla || specs.bateria)
   );
 
   return (
@@ -129,37 +136,37 @@ const ProductCardView: React.FC<ProductCardViewProps> = ({ producto, isPopular =
 
         {/* ─── Chips de Specs Minimalistas con Micro-Iconos Vectoriales ─── */}
         <div className="product-specs-rail">
-          {specs.almacenamiento && (
+          {!isAccesorio && specs.almacenamiento && (
             <span className="spec-chip" title="Almacenamiento">
               <i className="bi bi-sd-card" aria-hidden="true"></i>
               <span>{specs.almacenamiento >= 1024 ? `${specs.almacenamiento / 1024}TB` : `${specs.almacenamiento}GB`}</span>
             </span>
           )}
-          {specs.ram && (
+          {!isAccesorio && specs.ram && (
             <span className="spec-chip" title="Memoria RAM">
               <i className="bi bi-memory" aria-hidden="true"></i>
-              <span>{specs.ram}GB</span>
+              <span>{specs.ram}GB RAM</span>
             </span>
           )}
-          {specs.camara && (
+          {!isAccesorio && specs.camara && (
             <span className="spec-chip" title="Cámara">
               <i className="bi bi-camera" aria-hidden="true"></i>
               <span>{specs.camara}MP</span>
             </span>
           )}
-          {specs.bateria && (
+          {!isAccesorio && specs.bateria && (
             <span className="spec-chip" title="Batería">
               <i className="bi bi-battery-charging" aria-hidden="true"></i>
               <span>{specs.bateria}mAh</span>
             </span>
           )}
-          {specs.pantalla && (
+          {!isAccesorio && specs.pantalla && (
             <span className="spec-chip" title="Pantalla">
               <i className="bi bi-phone" aria-hidden="true"></i>
               <span>{specs.pantalla}&quot;</span>
             </span>
           )}
-          {!hasAnySpec && (
+          {(!hasAnySpec || isAccesorio) && (
             <span className="spec-chip spec-chip-default">
               <i className="bi bi-shield-check" aria-hidden="true"></i>
               <span>Garantía Oficial</span>

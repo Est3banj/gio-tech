@@ -578,4 +578,122 @@ describe('ProductCard', () => {
       }
     })
   })
+
+  describe('Spec Chips Rendering & Sanitization', () => {
+    it('renders spec chips with accurate labels for smartphone with full specs in title and description', () => {
+      const smartphone = baseProduct({
+        id: 's25-ultra',
+        nombre: 'Samsung Galaxy S25 Ultra 512GB/12 RAM',
+        descripcion: 'Cámara principal de 200 MP, pantalla Dynamic AMOLED 6.8", batería 5000 mAh',
+      })
+
+      renderCard(smartphone)
+
+      expect(screen.getByText('512GB')).toBeInTheDocument()
+      expect(screen.getByText('12GB RAM')).toBeInTheDocument()
+      expect(screen.getByText('200MP')).toBeInTheDocument()
+      expect(screen.getByText('5000mAh')).toBeInTheDocument()
+      expect(screen.getByText('6.8"')).toBeInTheDocument()
+      expect(screen.queryByText('Garantía Oficial')).not.toBeInTheDocument()
+    })
+
+    it('shields against corrupted firestore specs and recalculates from real text', () => {
+      const corruptedSmartphone = baseProduct({
+        id: 's25-corrupted',
+        nombre: 'Samsung Galaxy S25 Ultra 512GB/12 RAM',
+        descripcion: 'Cámara 200MP, batería 5000 mAh',
+        specs: {
+          ram: 28 as unknown as number, // corrupt value in firestore
+          pantalla: 56 as unknown as number, // corrupt value
+          almacenamiento: 512,
+        },
+      })
+
+      renderCard(corruptedSmartphone)
+
+      // 12GB RAM is rescued from the title, corrupted 28 is discarded
+      expect(screen.getByText('12GB RAM')).toBeInTheDocument()
+      expect(screen.getByText('512GB')).toBeInTheDocument()
+      expect(screen.getByText('200MP')).toBeInTheDocument()
+      expect(screen.getByText('5000mAh')).toBeInTheDocument()
+      // Corrupt screen 56 is discarded and not present in description
+      expect(screen.queryByText('56"')).not.toBeInTheDocument()
+    })
+
+    it('renders "Garantía Oficial" and never renders smartphone specs for accessories', () => {
+      const accesorio = baseProduct({
+        id: 'case-1',
+        nombre: 'Funda Protectora Transparente 128GB silicona 3.5"',
+        categoria: 'Accesorios',
+        descripcion: 'Funda ultra resistente 5000m',
+      })
+
+      renderCard(accesorio)
+
+      expect(screen.getByText('Garantía Oficial')).toBeInTheDocument()
+      expect(screen.queryByText(/RAM/i)).not.toBeInTheDocument()
+      expect(screen.queryByText('128GB')).not.toBeInTheDocument()
+      expect(screen.queryByText('3.5"')).not.toBeInTheDocument()
+      expect(screen.queryByText(/5000/i)).not.toBeInTheDocument()
+    })
+
+    it('renders "Garantía Oficial" for smartphone with zero spec information', () => {
+      const simplePhone = baseProduct({
+        id: 'simple-phone',
+        nombre: 'Celular Básico',
+        descripcion: 'Un teléfono sencillo sin detalles técnicos',
+      })
+
+      renderCard(simplePhone)
+
+      expect(screen.getByText('Garantía Oficial')).toBeInTheDocument()
+    })
+
+    it('prioritizes title storage over firestore specs and description in the card UI', () => {
+      const phone = baseProduct({
+        id: 'phone-priority',
+        nombre: 'iPhone 15 128 GB',
+        descripcion: 'Memoria interna 256GB de alta velocidad',
+        specs: {
+          almacenamiento: 64, // Firestore antiguo
+          camara: 48,
+        },
+      })
+
+      renderCard(phone)
+
+      expect(screen.getByText('128GB')).toBeInTheDocument()
+      expect(screen.queryByText('64GB')).not.toBeInTheDocument()
+      expect(screen.queryByText('256GB')).not.toBeInTheDocument()
+      expect(screen.getByText('48MP')).toBeInTheDocument()
+    })
+
+    it('correctly displays storage chips for real Gio Tech titles', () => {
+      const redmi = baseProduct({
+        id: 'redmi-14-pro',
+        nombre: 'REDMI NOTE 14 PRO PLUS 5G/ 256 GB',
+        descripcion: 'Cámara 200MP, batería 5000 mAh',
+      })
+
+      renderCard(redmi)
+
+      expect(screen.getByText('256GB')).toBeInTheDocument()
+      expect(screen.getByText('200MP')).toBeInTheDocument()
+      expect(screen.getByText('5000mAh')).toBeInTheDocument()
+      // Should not confuse 5G with 5GB RAM
+      expect(screen.queryByText('5GB RAM')).not.toBeInTheDocument()
+    })
+
+    it('correctly displays 1TB storage chip for 1TB title', () => {
+      const iphone1tb = baseProduct({
+        id: 'iphone-1tb',
+        nombre: 'iPhone 14 Pro Max 1TB',
+        descripcion: 'Potencia extrema',
+      })
+
+      renderCard(iphone1tb)
+
+      expect(screen.getByText('1TB')).toBeInTheDocument()
+    })
+  })
 })
