@@ -3,6 +3,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen, fireEvent } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import Header, { DEFAULT_HEADER_ADDRESS } from './Header';
+import { ThemeModeProvider } from '../contexts/ThemeModeContext';
 import type { UseConfigReturn } from '../hooks/useConfig';
 import type { StoreConfig } from '../types';
 
@@ -11,6 +12,16 @@ const mockUseConfig = vi.fn<() => UseConfigReturn>();
 vi.mock('../hooks/useConfig', () => ({
   useConfig: () => mockUseConfig(),
 }));
+
+const renderHeader = (initialEntries = ['/']) => {
+  return render(
+    <MemoryRouter initialEntries={initialEntries}>
+      <ThemeModeProvider>
+        <Header />
+      </ThemeModeProvider>
+    </MemoryRouter>
+  );
+};
 
 describe('Header Component & Top Trust Bar', () => {
   beforeEach(() => {
@@ -30,11 +41,7 @@ describe('Header Component & Top Trust Bar', () => {
       error: null,
     });
 
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Header />
-      </MemoryRouter>
-    );
+    renderHeader();
 
     // Verify default address is rendered in trust bar
     const addressElements = screen.getAllByText(DEFAULT_HEADER_ADDRESS);
@@ -57,11 +64,7 @@ describe('Header Component & Top Trust Bar', () => {
       error: null,
     });
 
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Header />
-      </MemoryRouter>
-    );
+    renderHeader();
 
     const addressElements = screen.getAllByText('Carrera 10 # 15-20, Puerto Asís');
     expect(addressElements.length).toBeGreaterThanOrEqual(1);
@@ -77,11 +80,7 @@ describe('Header Component & Top Trust Bar', () => {
       error: null,
     });
 
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Header />
-      </MemoryRouter>
-    );
+    renderHeader();
 
     const trustBar = screen.getByRole('region', { name: /Información de confianza/i });
     expect(trustBar).toBeInTheDocument();
@@ -95,11 +94,7 @@ describe('Header Component & Top Trust Bar', () => {
       error: null,
     });
 
-    const { container } = render(
-      <MemoryRouter initialEntries={['/']}>
-        <Header />
-      </MemoryRouter>
-    );
+    const { container } = renderHeader();
 
     const marqueeTrack = container.querySelector('.trust-marquee-track');
     expect(marqueeTrack).toBeInTheDocument();
@@ -125,11 +120,7 @@ describe('Header Component & Top Trust Bar', () => {
       error: null,
     });
 
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Header />
-      </MemoryRouter>
-    );
+    renderHeader();
 
     const toggleBtn = screen.getByRole('button', { name: /Toggle theme/i });
     expect(toggleBtn).toBeInTheDocument();
@@ -150,11 +141,7 @@ describe('Header Component & Top Trust Bar', () => {
       error: null,
     });
 
-    const { container } = render(
-      <MemoryRouter initialEntries={['/']}>
-        <Header />
-      </MemoryRouter>
-    );
+    const { container } = renderHeader();
 
     const menuToggle = screen.getByRole('button', { name: /Toggle mobile menu/i });
     expect(menuToggle).toHaveAttribute('aria-expanded', 'false');
@@ -186,11 +173,7 @@ describe('Header Component & Top Trust Bar', () => {
       error: null,
     });
 
-    render(
-      <MemoryRouter initialEntries={['/']}>
-        <Header />
-      </MemoryRouter>
-    );
+    renderHeader();
 
     expect(screen.getAllByText(/Mes de Amor y Amistad/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText(/Celulares a cuotas sin inicial/i).length).toBeGreaterThanOrEqual(1);

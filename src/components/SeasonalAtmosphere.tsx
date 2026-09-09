@@ -9,19 +9,21 @@ export const SeasonalAtmosphere: React.FC<SeasonalAtmosphereProps> = ({ enabled 
   const { config } = useConfig();
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
-  const isThemeActive = config?.theme?.enabled !== false;
+  const isThemeActive = Boolean(config?.theme?.enabled);
   const themeVars = config?.theme?.vars || {};
   const currentThemeName = (
     themeVars['--theme-name'] ||
     (config?.theme as { name?: string })?.name ||
-    'valentine'
+    'standard'
   ).toLowerCase();
 
-  const isValentine = isThemeActive && currentThemeName === 'valentine';
-  const isChristmas = isThemeActive && currentThemeName === 'christmas';
-  const isHalloween = isThemeActive && currentThemeName === 'halloween';
+  const isStandard = currentThemeName === 'standard';
+  const isValentine = isThemeActive && !isStandard && currentThemeName === 'valentine';
+  const isChristmas = isThemeActive && !isStandard && currentThemeName === 'christmas';
+  const isHalloween = isThemeActive && !isStandard && currentThemeName === 'halloween';
+  const isBlackFriday = isThemeActive && !isStandard && currentThemeName === 'blackfriday';
 
-  const shouldRender = enabled && isThemeActive && (isValentine || isChristmas || isHalloween);
+  const shouldRender = enabled && isThemeActive && !isStandard && (isValentine || isChristmas || isHalloween || isBlackFriday);
 
   useEffect(() => {
     if (!shouldRender) return;
@@ -102,11 +104,20 @@ export const SeasonalAtmosphere: React.FC<SeasonalAtmosphereProps> = ({ enabled 
       '#cbd5e1',
     ];
 
+    const blackFridayColors = [
+      '#ffd700',
+      '#f59e0b',
+      '#fbbf24',
+      '#ffffff',
+    ];
+
     const colors = isValentine
       ? valentineColors
       : isChristmas
       ? christmasColors
-      : halloweenColors;
+      : isHalloween
+      ? halloweenColors
+      : blackFridayColors;
 
     const particles: Particle[] = [];
 
@@ -115,7 +126,9 @@ export const SeasonalAtmosphere: React.FC<SeasonalAtmosphereProps> = ({ enabled 
         ? (Math.random() < 0.65 ? 'heart' : 'sparkle')
         : isChristmas
         ? (Math.random() < 0.7 ? 'circle' : 'sparkle')
-        : (Math.random() < 0.6 ? 'sparkle' : 'circle');
+        : isHalloween
+        ? (Math.random() < 0.6 ? 'sparkle' : 'circle')
+        : (Math.random() < 0.7 ? 'sparkle' : 'circle');
 
       const size = typeChoice === 'heart'
         ? Math.random() * 8 + 8
@@ -237,7 +250,7 @@ export const SeasonalAtmosphere: React.FC<SeasonalAtmosphereProps> = ({ enabled 
       window.removeEventListener('resize', resize);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [shouldRender, isValentine, isChristmas, isHalloween]);
+  }, [shouldRender, isValentine, isChristmas, isHalloween, isBlackFriday]);
 
   if (!shouldRender) return null;
 

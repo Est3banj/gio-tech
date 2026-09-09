@@ -58,32 +58,21 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     const root = document.documentElement;
     const body = document.body;
 
-    const isExplicitlyDisabled = theme?.enabled === false;
-
-    const vars: Record<string, string> = {
-      ...(DEFAULT_CONFIG.theme?.vars || {}),
-      ...(theme?.vars || {}),
-    };
-    const themeName = vars['--theme-name'] || theme?.name || DEFAULT_CONFIG.theme?.vars?.['--theme-name'] || 'valentine';
-    const isValentine = themeName === 'valentine';
+    const themeName = theme?.vars?.['--theme-name'] || theme?.name || 'standard';
+    const isStandard = !themeName || themeName === 'standard';
+    const isExplicitlyDisabled = !theme || !theme.enabled || isStandard;
 
     const now = Date.now();
     const start = toMillis(theme?.start);
     const end = toMillis(theme?.end);
 
-    let isActive = !isExplicitlyDisabled && Boolean(theme);
+    let isActive = !isExplicitlyDisabled;
 
     if (isActive) {
-      if (!isValentine) {
-        if (start && now < start) {
-          isActive = false;
-        } else if (end && now > end) {
-          isActive = false;
-        }
-      } else {
-        if (start && now < start) {
-          isActive = false;
-        }
+      if (start && now < start) {
+        isActive = false;
+      } else if (end && now > end) {
+        isActive = false;
       }
     }
 
@@ -93,6 +82,10 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
         ...appliedVarsRef.current,
         ...Object.keys(DEFAULT_CONFIG.theme?.vars || {}),
         ...(theme?.vars ? Object.keys(theme.vars) : []),
+        '--theme-name',
+        '--promo-badge-bg',
+        '--promo-badge-text',
+        '--promo-highlight',
       ]);
       allVarsToClean.forEach((k) => {
         root.style.removeProperty(k);
@@ -113,6 +106,11 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     } else {
       body.style.backgroundImage = '';
     }
+
+    const vars: Record<string, string> = {
+      ...(theme?.vars || {}),
+      '--theme-name': themeName,
+    };
 
     const currentVarKeys = Object.keys(vars);
     appliedVarsRef.current.forEach((prevKey) => {
@@ -139,6 +137,10 @@ const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       const allVarsToClean = new Set([
         ...appliedVarsRef.current,
         ...Object.keys(DEFAULT_CONFIG.theme?.vars || {}),
+        '--theme-name',
+        '--promo-badge-bg',
+        '--promo-badge-text',
+        '--promo-highlight',
       ]);
       allVarsToClean.forEach((k) => {
         root.style.removeProperty(k);

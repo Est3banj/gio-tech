@@ -1,33 +1,16 @@
 // src/components/Header.tsx
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { useConfig } from "../hooks/useConfig";
+import { useConfig, useThemeMode } from "../hooks";
 
 export const DEFAULT_HEADER_ADDRESS = "Cra. 32 #13 36, Puerto Asís, Putumayo";
 
 const Header: React.FC = () => {
   const { config } = useConfig();
+  const { isDarkMode, toggleTheme } = useThemeMode();
   const location = useLocation();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme) return savedTheme === "dark";
-    return typeof window !== "undefined" && window.matchMedia
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
-      : false;
-  });
-
-  useEffect(() => {
-    if (isDarkMode) {
-      document.body.classList.add("dark-mode");
-      localStorage.setItem("theme", "dark");
-    } else {
-      document.body.classList.remove("dark-mode");
-      localStorage.setItem("theme", "light");
-    }
-  }, [isDarkMode]);
 
   useEffect(() => {
     if (isMobileMenuOpen) {
@@ -40,7 +23,6 @@ const Header: React.FC = () => {
     };
   }, [isMobileMenuOpen]);
 
-  const toggleTheme = () => setIsDarkMode(!isDarkMode);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
   const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
@@ -66,13 +48,17 @@ const Header: React.FC = () => {
   const isValentine = isThemeActive && currentThemeName === 'valentine';
   const isChristmas = isThemeActive && currentThemeName === 'christmas';
   const isHalloween = isThemeActive && currentThemeName === 'halloween';
+  const isBlackFriday = isThemeActive && currentThemeName === 'blackfriday';
 
   const renderTrustContent = () => (
     <>
       {isValentine && (
         <>
           <span className="trust-item trust-item-seasonal">
-            <span className="seasonal-ticker-pill">💘 Amor y Amistad</span>
+            <span className="seasonal-ticker-pill">
+              <i className="bi bi-heart-fill me-1" aria-hidden="true" />
+              Amor y Amistad
+            </span>
             <strong>Mes de Amor y Amistad</strong>: Celulares a cuotas sin inicial
           </span>
           <span className="trust-divider" aria-hidden="true">•</span>
@@ -81,7 +67,10 @@ const Header: React.FC = () => {
       {isChristmas && (
         <>
           <span className="trust-item trust-item-seasonal">
-            <span className="seasonal-ticker-pill seasonal-ticker-pill-christmas">🎄 Navidad GIO</span>
+            <span className="seasonal-ticker-pill seasonal-ticker-pill-christmas">
+              <i className="bi bi-tree-fill me-1" aria-hidden="true" />
+              Navidad GIO
+            </span>
             <strong>Temporada Navideña</strong>: Estrena hoy con las mejores cuotas
           </span>
           <span className="trust-divider" aria-hidden="true">•</span>
@@ -90,8 +79,23 @@ const Header: React.FC = () => {
       {isHalloween && (
         <>
           <span className="trust-item trust-item-seasonal">
-            <span className="seasonal-ticker-pill seasonal-ticker-pill-halloween">🎃 Halloween Tech</span>
+            <span className="seasonal-ticker-pill seasonal-ticker-pill-halloween">
+              <i className="bi bi-moon-stars-fill me-1" aria-hidden="true" />
+              Halloween Tech
+            </span>
             <strong>Especial Halloween</strong>: Ofertas de miedo en tecnología
+          </span>
+          <span className="trust-divider" aria-hidden="true">•</span>
+        </>
+      )}
+      {isBlackFriday && (
+        <>
+          <span className="trust-item trust-item-seasonal">
+            <span className="seasonal-ticker-pill seasonal-ticker-pill-blackfriday">
+              <i className="bi bi-tag-fill me-1" aria-hidden="true" />
+              Black Friday GIO
+            </span>
+            <strong>Black Friday</strong>: Precios insuperables y crédito inmediato
           </span>
           <span className="trust-divider" aria-hidden="true">•</span>
         </>

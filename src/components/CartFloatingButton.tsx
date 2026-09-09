@@ -6,6 +6,7 @@ import { useWhatsappNumber } from '../contexts/whatsapp-number-context';
 import { formatPrice } from '../utils/formatters';
 import { trackLead } from '../utils/metaPixel';
 import { buildCartWhatsAppMessage, buildWhatsAppUrl } from '../utils/whatsapp-messages';
+import ProductImage from './common/ProductImage';
 
 const MUNICIPIOS_PUTUMAYO = [
   'Puerto Asís',
@@ -163,19 +164,35 @@ const CartFloatingButton: React.FC = () => {
                       className="d-flex flex-column p-2 mb-2 rounded border bg-light shadow-sm"
                     >
                       <div className="d-flex align-items-center">
-                        <img
-                          src={item.imagen || 'https://via.placeholder.com/60x60?text=IMG'}
-                          alt={item.nombre}
+                        <div
                           style={{
                             width: '54px',
                             height: '54px',
-                            objectFit: 'contain',
+                            minWidth: '54px',
                             marginRight: '12px',
                             borderRadius: '8px',
                             background: '#fff',
-                            padding: '3px',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            overflow: 'hidden',
+                            border: '1px solid rgba(0, 0, 0, 0.08)',
                           }}
-                        />
+                        >
+                          <ProductImage
+                            src={item.imagen}
+                            alt={item.nombre}
+                            variant="thumb"
+                            loading="lazy"
+                            decoding="async"
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'contain',
+                              padding: '3px',
+                            }}
+                          />
+                        </div>
                         <div className="flex-grow-1 me-2" style={{ minWidth: 0 }}>
                           <h6 className="mb-1 text-truncate fw-bold fs-6">{item.nombre}</h6>
                           <div className="small text-muted">

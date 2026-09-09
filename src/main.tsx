@@ -6,12 +6,15 @@ import './index.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/seasonal-decorations.css';
 import ThemeProvider from './components/ThemeProvider';
+import { ThemeModeProvider } from './contexts/ThemeModeContext';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <ThemeProvider>
-        <App />
+        <ThemeModeProvider>
+          <App />
+        </ThemeModeProvider>
       </ThemeProvider>
     </BrowserRouter>
   </StrictMode>

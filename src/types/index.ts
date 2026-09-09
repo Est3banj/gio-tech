@@ -24,6 +24,7 @@ export interface Product {
   imagenes?: string[];
   descripcion?: string;
   stock?: number;
+  enStock?: boolean;
   categoria?: string;
   esDestacado?: boolean;
   fechaAgregado?: Date;
@@ -149,6 +150,8 @@ export interface StoreConfig {
   telefono?: string;
   direccion?: string;
   email?: string;
+  mapsUrl?: string;
+  horarios?: string;
   redesSociales?: {
     facebook?: string;
     instagram?: string;

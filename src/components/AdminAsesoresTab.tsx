@@ -1,4 +1,4 @@
-import { FormEvent } from "react";
+import { useState, FormEvent } from "react";
 import {
   doc,
   setDoc,
@@ -8,10 +8,10 @@ import {
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { getApp, getApps, initializeApp, deleteApp } from "firebase/app";
 import { getAuth as getAuthSecondary } from "firebase/auth";
-import { Card, Form, Button } from "react-bootstrap";
 import { db } from "../firebase";
 import { Asesor } from "../types";
 import AdminAsesoresList from "./AdminAsesoresList";
+import { getAsesorCreationErrorMessage } from "../utils/auth-errors";
 
 interface AdminAsesoresTabProps {
   asesores: Asesor[];
@@ -50,10 +50,13 @@ function AdminAsesoresTab({
   setSuccess,
   setKey,
 }: AdminAsesoresTabProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const handleAddAsesor = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
     setSuccess("");
+    setIsSubmitting(true);
     try {
       const primaryApp = getApp();
       const secondaryApp =
@@ -63,7 +66,7 @@ function AdminAsesoresTab({
       const userCredential = await createUserWithEmailAndPassword(
         secondaryAuth,
         emailAsesor,
-        passwordAsesor,
+        passwordAsesor
       );
       const user = userCredential.user;
 
@@ -82,26 +85,33 @@ function AdminAsesoresTab({
       } catch (mirrorErr) {
         console.error(
           "Error al sincronizar perfiles_publicos (remediar con backfill):",
-          mirrorErr,
+          mirrorErr
         );
       }
 
       try {
         await secondaryAuth.signOut?.();
-      } catch { /* ignore logout errors */ }
+      } catch {
+        /* ignore logout errors */
+      }
       try {
         await deleteApp(secondaryApp);
-      } catch { /* ignore delete errors */ }
+      } catch {
+        /* ignore delete errors */
+      }
 
-      setSuccess("Asesor registrado exitosamente!");
+      setSuccess("¡Asesor registrado exitosamente!");
       setEmailAsesor("");
       setPasswordAsesor("");
       setNombreCompletoAsesor("");
       setWhatsappAsesor("");
     } catch (err: unknown) {
       console.error("Error al registrar asesor:", err);
-      const message = err instanceof Error ? err.message : "Error desconocido";
-      setError(`Error al registrar asesor: ${message}`);
+      const fbErr = err as { code?: string; message?: string };
+      const errorMessage = getAsesorCreationErrorMessage(fbErr.code, fbErr.message);
+      setError(errorMessage);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -119,6 +129,7 @@ function AdminAsesoresTab({
     setError("");
     setSuccess("");
     if (!editandoAsesor) return;
+    setIsSubmitting(true);
     try {
       await updateDoc(doc(db, "usuarios", editandoAsesor.id), {
         nombreCompleto: nombreCompletoAsesor,
@@ -132,10 +143,10 @@ function AdminAsesoresTab({
       } catch (mirrorErr) {
         console.error(
           "Error al sincronizar perfiles_publicos (remediar con backfill):",
-          mirrorErr,
+          mirrorErr
         );
       }
-      setSuccess("Asesor actualizado exitosamente!");
+      setSuccess("¡Asesor comercial actualizado exitosamente!");
       setEditandoAsesor(null);
       setEmailAsesor("");
       setNombreCompletoAsesor("");
@@ -145,6 +156,8 @@ function AdminAsesoresTab({
       console.error("Error al actualizar asesor:", err);
       const message = err instanceof Error ? err.message : "Error desconocido";
       setError(`Error al actualizar asesor: ${message}`);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -153,7 +166,7 @@ function AdminAsesoresTab({
     setSuccess("");
     if (
       window.confirm(
-        "¿Eliminar asesor? Esto lo elimina del listado y su acceso.",
+        "¿Eliminar asesor? Esto lo elimina del listado y su acceso al sistema."
       )
     ) {
       try {
@@ -163,10 +176,10 @@ function AdminAsesoresTab({
         } catch (mirrorErr) {
           console.error(
             "Error al borrar perfiles_publicos (queda doc huérfano del perfil):",
-            mirrorErr,
+            mirrorErr
           );
         }
-        setSuccess("Asesor eliminado exitosamente del listado.");
+        setSuccess("Asesor comercial eliminado exitosamente.");
       } catch (err: unknown) {
         console.error("Error al eliminar asesor:", err);
         const message = err instanceof Error ? err.message : "Error desconocido";
@@ -176,90 +189,179 @@ function AdminAsesoresTab({
   };
 
   return (
-    <>
-      <Card className="p-4 mb-4 shadow-sm">
-        <h3 className="mb-3">
-          {editandoAsesor ? "Editar Asesor" : "Registrar Nuevo Asesor"}
-        </h3>
-        <Form
-          onSubmit={editandoAsesor ? handleUpdateAsesor : handleAddAsesor}
-        >
-          <Form.Group className="mb-3">
-            <Form.Label>Nombre Completo</Form.Label>
-            <Form.Control
-              type="text"
-              value={nombreCompletoAsesor}
-              onChange={(e) => setNombreCompletoAsesor(e.target.value)}
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Email</Form.Label>
-            <Form.Control
-              type="email"
-              value={emailAsesor}
-              onChange={(e) => setEmailAsesor(e.target.value)}
-              required
-              disabled={!!editandoAsesor}
-            />
-          </Form.Group>
-          {!editandoAsesor && (
-            <Form.Group className="mb-3">
-              <Form.Label>Contraseña</Form.Label>
-              <Form.Control
-                type="password"
-                value={passwordAsesor}
-                onChange={(e) => setPasswordAsesor(e.target.value)}
-                required
-              />
-            </Form.Group>
-          )}
-          <Form.Group className="mb-3">
-            <Form.Label>Número de WhatsApp</Form.Label>
-            <Form.Control
-              type="text"
-              value={whatsappAsesor}
-              onChange={(e) => setWhatsappAsesor(e.target.value)}
-              placeholder="Ej: 573XXYYYYYYY"
-              required
-            />
-          </Form.Group>
-          <Form.Group className="mb-3">
-            <Form.Label>Rol</Form.Label>
-            <Form.Select
-              value={rolAsesor}
-              onChange={(e) => setRolAsesor(e.target.value)}
-              disabled={!!editandoAsesor}
-            >
-              <option value="asesor">Asesor (Acceso total)</option>
-            </Form.Select>
-          </Form.Group>
-          <Button variant="primary" type="submit" className="me-2">
-            {editandoAsesor ? "Actualizar Asesor" : "Registrar Asesor"}
-          </Button>
-          {editandoAsesor && (
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setEditandoAsesor(null);
-                setEmailAsesor("");
-                setNombreCompletoAsesor("");
-                setWhatsappAsesor("");
-                setPasswordAsesor("");
-              }}
-            >
-              Cancelar Edición
-            </Button>
-          )}
-        </Form>
-      </Card>
+    <div className="admin-asesores-container d-flex flex-column gap-4">
+      {/* ─── Form Card ─────────────────────────────── */}
+      <div className="admin-card-pro">
+        <div className="admin-card-header-clean mb-3">
+          <div className="admin-card-header-icon advisors">
+            <i className="bi bi-person-badge-fill" />
+          </div>
+          <div>
+            <h3 className="admin-card-title mb-0">
+              {editandoAsesor ? "Editar Asesor Comercial" : "Registrar Nuevo Asesor"}
+            </h3>
+            <p className="admin-card-subtitle mb-0">
+              Crea credenciales de acceso para tu equipo de atención y ventas
+            </p>
+          </div>
+        </div>
 
+        <form onSubmit={editandoAsesor ? handleUpdateAsesor : handleAddAsesor}>
+          <div className="row g-3">
+            {/* Nombre Completo */}
+            <div className="col-12 col-md-6">
+              <label htmlFor="nombre-completo-asesor-input" className="form-label fw-semibold">
+                Nombre y Apellidos <span className="text-danger">*</span>
+              </label>
+              <div className="input-group">
+                <span className="input-group-text">
+                  <i className="bi bi-person" />
+                </span>
+                <input
+                  id="nombre-completo-asesor-input"
+                  type="text"
+                  className="form-control"
+                  placeholder="Ej: Carlos Gómez"
+                  value={nombreCompletoAsesor}
+                  onChange={(e) => setNombreCompletoAsesor(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Email */}
+            <div className="col-12 col-md-6">
+              <label htmlFor="email-asesor-input" className="form-label fw-semibold">
+                Correo Electrónico (Usuario de acceso) <span className="text-danger">*</span>
+              </label>
+              <div className="input-group">
+                <span className="input-group-text">
+                  <i className="bi bi-envelope" />
+                </span>
+                <input
+                  id="email-asesor-input"
+                  type="email"
+                  className="form-control"
+                  placeholder="asesor@giotech.com"
+                  value={emailAsesor}
+                  onChange={(e) => setEmailAsesor(e.target.value)}
+                  required
+                  disabled={!!editandoAsesor}
+                />
+              </div>
+            </div>
+
+            {/* Password (only for new) */}
+            {!editandoAsesor && (
+              <div className="col-12 col-md-6">
+                <label htmlFor="password-asesor-input" className="form-label fw-semibold">
+                  Contraseña de Ingreso <span className="text-danger">*</span>
+                </label>
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <i className="bi bi-key" />
+                  </span>
+                  <input
+                    id="password-asesor-input"
+                    type="password"
+                    className="form-control"
+                    placeholder="Mínimo 6 caracteres"
+                    value={passwordAsesor}
+                    onChange={(e) => setPasswordAsesor(e.target.value)}
+                    required
+                    minLength={6}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* WhatsApp */}
+            <div className={`col-12 ${!editandoAsesor ? "col-md-6" : "col-md-6"}`}>
+              <label htmlFor="whatsapp-asesor-input" className="form-label fw-semibold">
+                Número de WhatsApp Directo <span className="text-danger">*</span>
+              </label>
+              <div className="input-group">
+                <span className="input-group-text text-success">
+                  <i className="bi bi-whatsapp" />
+                </span>
+                <input
+                  id="whatsapp-asesor-input"
+                  type="text"
+                  className="form-control"
+                  placeholder="Ej: 573223652569"
+                  value={whatsappAsesor}
+                  onChange={(e) => setWhatsappAsesor(e.target.value)}
+                  required
+                />
+              </div>
+            </div>
+
+            {/* Rol */}
+            <div className="col-12 col-md-6">
+              <label htmlFor="rol-asesor-select" className="form-label fw-semibold">Rol Asignado</label>
+              <select
+                id="rol-asesor-select"
+                className="form-select"
+                value={rolAsesor}
+                onChange={(e) => setRolAsesor(e.target.value)}
+                disabled={!!editandoAsesor}
+              >
+                <option value="asesor">Asesor Comercial (Gestión de ventas)</option>
+              </select>
+            </div>
+
+            {/* Action Buttons */}
+            <div className="col-12 d-flex gap-2 justify-content-end pt-2">
+              {editandoAsesor && (
+                <button
+                  type="button"
+                  className="btn btn-outline-secondary px-4"
+                  onClick={() => {
+                    setEditandoAsesor(null);
+                    setEmailAsesor("");
+                    setNombreCompletoAsesor("");
+                    setWhatsappAsesor("");
+                    setPasswordAsesor("");
+                  }}
+                  disabled={isSubmitting}
+                >
+                  Cancelar Edición
+                </button>
+              )}
+              <button
+                type="submit"
+                className="btn btn-danger px-5 py-2 fw-bold d-inline-flex align-items-center gap-2"
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? (
+                  <>
+                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true" />
+                    <span>Procesando...</span>
+                  </>
+                ) : editandoAsesor ? (
+                  <>
+                    <i className="bi bi-check2-circle" />
+                    <span>Actualizar Asesor</span>
+                  </>
+                ) : (
+                  <>
+                    <i className="bi bi-person-plus-fill" />
+                    <span>Registrar Asesor</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      {/* ─── List ──────────────────────────────────── */}
       <AdminAsesoresList
         asesores={asesores}
         onEdit={handleEditAsesor}
         onDelete={handleDeleteAsesor}
       />
-    </>
+    </div>
   );
 }
 

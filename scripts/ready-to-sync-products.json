@@ -1,0 +1,1820 @@
+[
+  {
+    "id": "7fLdojxmlatExf7ZjgsS",
+    "nombre": "65\" Samsung QLED Q6F 4K Smart TV",
+    "marca": "Samsung",
+    "categoria": "Televisores",
+    "contado": 2999999,
+    "specs": {
+      "pantalla": 65,
+      "bateria": null,
+      "camara": null,
+      "ram": null,
+      "almacenamiento": null
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "4AGNJuD7YMb5wz3FG0fg",
+    "nombre": "Adaptador|Cargador de Corriente APPLE 20W USB-C Blanco",
+    "marca": "Otra",
+    "categoria": "Accesorios",
+    "contado": 139000,
+    "specs": {
+      "pantalla": null,
+      "bateria": null,
+      "camara": null,
+      "ram": null,
+      "almacenamiento": null
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "T0HpsNeuAUmkrUSzXSMW",
+    "nombre": "AirTag 1 Unidad",
+    "marca": "Otra",
+    "categoria": "Accesorios",
+    "contado": 175000,
+    "specs": {
+      "pantalla": null,
+      "bateria": null,
+      "camara": null,
+      "ram": null,
+      "almacenamiento": null
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "BbnCQcdSdToIu6EtaKBK",
+    "nombre": "Apple iPad A16 128GB Wi-Fi",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 2000000,
+    "specs": {
+      "pantalla": 6.1,
+      "bateria": 3561,
+      "camara": 48,
+      "ram": 8,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "PJUXwtHUReg7mYreYqp3",
+    "nombre": "Apple iPad A16 256GB Wi-Fi",
+    "marca": "Apple",
+    "categoria": "Tablets",
+    "contado": 2550000,
+    "specs": {
+      "pantalla": 10.9,
+      "bateria": 7606,
+      "camara": 12,
+      "ram": 4,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "4AUiZMTVyyNTr0Bx1grV",
+    "nombre": "Apple iPad Air Chip M3 128gb 11 Pulgadas Wifi - 2025",
+    "marca": "Apple",
+    "categoria": "Tablets",
+    "contado": 3200000,
+    "specs": {
+      "pantalla": 11,
+      "bateria": 7606,
+      "camara": 12,
+      "ram": 8,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "OaUli0EpitFISDylhJqZ",
+    "nombre": "Apple iPad Air M4 256GB Wi-Fi 11\"",
+    "marca": "Apple",
+    "categoria": "Tablets",
+    "contado": 3550000,
+    "specs": {
+      "pantalla": 11,
+      "bateria": 7606,
+      "camara": 12,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "GHlBeOWRgf7mpfASVB5M",
+    "nombre": "Apple iPad Pro M5 11\" 256GB Wi-Fi",
+    "marca": "Apple",
+    "categoria": "Tablets",
+    "contado": 4550000,
+    "specs": {
+      "pantalla": 11,
+      "bateria": 8160,
+      "camara": 12,
+      "ram": 12,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "BQCNpFtVQAukkbQwyW0z",
+    "nombre": "Apple iPad Pro M5 13\" 256GB Wi-Fi",
+    "marca": "Apple",
+    "categoria": "Tablets",
+    "contado": 5300000,
+    "specs": {
+      "pantalla": 13,
+      "bateria": 10290,
+      "camara": 12,
+      "ram": 12,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "IEy58COXSTguBzDYgI4V",
+    "nombre": "Apple iPhone 16 Pro Max 512GB CPO",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 4550000,
+    "specs": {
+      "pantalla": 6.9,
+      "bateria": 4685,
+      "camara": 48,
+      "ram": 8,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "AECWFeSs0K5UMR4xIsuB",
+    "nombre": "Apple iPhone 17 Pro Max 512GB 5G",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 5400000,
+    "specs": {
+      "pantalla": 6.9,
+      "bateria": 4800,
+      "camara": 48,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "ugSl18rrnE0AsQThF5Sw",
+    "nombre": "Apple MacBook Air 15\" M4 256GB/16 RAM",
+    "marca": "Apple",
+    "categoria": "Laptops",
+    "contado": 5000000,
+    "specs": {
+      "pantalla": 15.3,
+      "bateria": null,
+      "camara": 12,
+      "ram": 16,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "Wq25LVZY5YQPNLH2cVfv",
+    "nombre": "Apple MacBook Air 15\" M4 512GB/24 RAM",
+    "marca": "Apple",
+    "categoria": "Laptops",
+    "contado": 6000000,
+    "specs": {
+      "pantalla": 15.3,
+      "bateria": null,
+      "camara": 12,
+      "ram": 24,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "FfStozFuc2iptbVIAlvm",
+    "nombre": "Audifonos REDMI Inalambricos Bluetooth In Ear Buds 6 Lite",
+    "marca": "Otra",
+    "categoria": "Accesorios",
+    "contado": 144998,
+    "specs": {
+      "pantalla": null,
+      "bateria": null,
+      "camara": null,
+      "ram": null,
+      "almacenamiento": null
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "dJ09a00QUgziEjHvikOl",
+    "nombre": "Cable APPLE USB‑C a Lightning de 1.0 Metro Blanco",
+    "marca": "Otra",
+    "categoria": "Accesorios",
+    "contado": 89999,
+    "specs": {
+      "pantalla": null,
+      "bateria": null,
+      "camara": null,
+      "ram": null,
+      "almacenamiento": null
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "aZDIHgphxGOufvt37uqQ",
+    "nombre": "Celular OPPO A60 256GB Blanco",
+    "marca": "Oppo",
+    "categoria": "Celulares",
+    "contado": 1240000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "dNOFaqaEr3MqDqUq9aR4",
+    "nombre": "Celular Xiaomi Redmi 15 Sandy Purple 8GB RAM 256GB ROM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1190000,
+    "specs": {
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "PUhF8GvJs5qRYDqVNio6",
+    "nombre": "INFINITIX NOTE 50 PRO/ 256GB/12RAM",
+    "marca": "Infinix",
+    "categoria": "Celulares",
+    "contado": 1200000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 108,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "VBZehKdoO2MpOVDCnB1w",
+    "nombre": "Infinix Hot 60 Pro+ negro, dual SIM, 8 GB RAM, 256 GB",
+    "marca": "Infinix",
+    "categoria": "Celulares",
+    "contado": 980000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "5AUF6HhOISybRHkeXL7l",
+    "nombre": "Infinix Hot 70 256gb Azul",
+    "marca": "Infinix",
+    "categoria": "Celulares",
+    "contado": 820000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "6G0MBdUrUUsfbp2gKef3",
+    "nombre": "Infinix Note 60 256GB/8 RAM",
+    "marca": "Infinix",
+    "categoria": "Celulares",
+    "contado": 1780000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "eKX8VQ9FuVEFf1coASG5",
+    "nombre": "Infinix Note 60 Pro 256GB | 8GB",
+    "marca": "Infinix",
+    "categoria": "Celulares",
+    "contado": 1920000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 108,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "xTCkBlBmds5li6eQp7fR",
+    "nombre": "Infinix Note Edge 5G 256gb | 8gb",
+    "marca": "Infinix",
+    "categoria": "Celulares",
+    "contado": 1580000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 6500,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "pnAGTA9bxT9hzBUcffmS",
+    "nombre": "INFINIX Smart 10 256GB 4G Negro",
+    "marca": "Infinix",
+    "categoria": "Celulares",
+    "contado": 600000,
+    "specs": {
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 13,
+      "ram": 4,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "knnjgSVFhbuq26EiGS1F",
+    "nombre": "iPhone 13 128 GB",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 1920000,
+    "specs": {
+      "pantalla": 6.1,
+      "bateria": 3227,
+      "camara": 12,
+      "ram": 4,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "FqtTcaF6QK8OE2d2Bw05",
+    "nombre": "iPhone 15 128 GB",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 2900000,
+    "specs": {
+      "pantalla": 6.1,
+      "bateria": 3349,
+      "camara": 48,
+      "ram": 6,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "VX68POL2n6Ahun68V4Kq",
+    "nombre": "iPhone 16 128 GB",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 3100000,
+    "specs": {
+      "pantalla": 6.1,
+      "bateria": 3561,
+      "camara": 48,
+      "ram": 8,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "p39epPO9r9uPeYdvf4NN",
+    "nombre": "iPhone 17 256GB 5G Verde Salvia",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 3550000,
+    "specs": {
+      "pantalla": 6.3,
+      "bateria": 3600,
+      "camara": 48,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "Hb1NBjK6lwIbKtBjOeqn",
+    "nombre": "iPhone 17 Pro 256GB 5G Plata",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 4300000,
+    "specs": {
+      "pantalla": 6.3,
+      "bateria": 3700,
+      "camara": 48,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "eFAfYLZXrVbl2LFtnStb",
+    "nombre": "iPhone 17 Pro Max 256GB 5G Azul Oscuro",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 4600000,
+    "specs": {
+      "pantalla": 6.9,
+      "bateria": 4800,
+      "camara": 48,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "ryLEz3rUYFbYThWVKBmN",
+    "nombre": "iPhone Air 256GB 5G Azul Cielo",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 4300000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 3600,
+      "camara": 48,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "ORvHZgIyniPpspx6N1Ns",
+    "nombre": "MacBook Air 13\" Pulgadas Chip M3 CPU 8 núcleos GPU 10 núcleos - RAM 8 GB - SSD 256 GB - Blanco Estrella",
+    "marca": "Apple",
+    "categoria": "Laptops",
+    "contado": 4450000,
+    "specs": {
+      "pantalla": 13.6,
+      "bateria": null,
+      "camara": 12,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "XSR4VLP3RGNrs0zIpabZ",
+    "nombre": "MacBook Air de 13\" M5",
+    "marca": "Apple",
+    "categoria": "Laptops",
+    "contado": 5300000,
+    "specs": {
+      "pantalla": 13.6,
+      "bateria": null,
+      "camara": 12,
+      "ram": 16,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "GfJlbUIjVpKu73J7bLKk",
+    "nombre": "MacBook Neo de 13 pulgadas",
+    "marca": "Apple",
+    "categoria": "Laptops",
+    "contado": 3200000,
+    "specs": {
+      "pantalla": 13.6,
+      "bateria": null,
+      "camara": 12,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "S35YIviUpH6CR9RTOTcg",
+    "nombre": "MOTOROLA Edge 50 Fusion 256GB Azul",
+    "marca": "Motorola",
+    "categoria": "Celulares",
+    "contado": 1300000,
+    "specs": {
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "ttgWWVd8zkprKG9dCy3S",
+    "nombre": "REDMI Note 15 Pro 256 GB 5G",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1580000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "LQ8QSAywtezC49CN1p8U",
+    "nombre": "REDMI Note 15 Pro 256GB 4G Titanium",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1470000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "BPtWSYCAir1bmC1k4aa9",
+    "nombre": "SAMSUNG Galaxy A07 128GB 4G Negro",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 950000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 64
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "LelVmbtZDeEX48kE1E3W",
+    "nombre": "Samsung Galaxy A07 128GB/6 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 975000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 6,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "fvij4iwPfzrr7ESXaKbm",
+    "nombre": "Samsung Galaxy A07 64GB/4 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 920000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 64
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "BIBPPI6rz4GyNUU9p4OI",
+    "nombre": "Samsung Galaxy A17 128GB/4 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1020000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "TR0BgUAOuTFky5mk6m8U",
+    "nombre": "SAMSUNG Galaxy A17 256GB LTE 4G Azul",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1210000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "g73GLza6IImjpklW4cpk",
+    "nombre": "Samsung Galaxy A26 5G 256GB/8 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1450000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "pT8pgFKyVQ32EdUaOjXX",
+    "nombre": "Samsung Galaxy A27 256GB/8 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1450000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "KWS4CNiWisJP71yVzYsy",
+    "nombre": "SAMSUNG Galaxy A36 256GB 5G Verde",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1300000,
+    "specs": {
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "9rTIAWevJpFAfdPEGEUw",
+    "nombre": "Samsung Galaxy A37 128GB/6 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1480000,
+    "specs": {
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 6,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "88vm6mZS89mf4TBYhHo1",
+    "nombre": "Samsung Galaxy A37 256GB/8 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1600000,
+    "specs": {
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "9NxNUgHiKzkNWheuhFml",
+    "nombre": "SAMSUNG Galaxy A56 256GB 5G Gris",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1700000,
+    "specs": {
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "PFh3MzylEj8wAiK6LO5c",
+    "nombre": "SAMSUNG Galaxy A57 256GB 5G Azul oscuro",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1800000,
+    "specs": {
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "qPQkNev8y4v2ZIEVRit2",
+    "nombre": "Samsung Galaxy S20+ 5G 128GB/12 RAM + SD 256GB",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 1430000,
+    "specs": {
+      "pantalla": 6.7,
+      "bateria": 4500,
+      "camara": 64,
+      "ram": 12,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "gwkbNlOUwW0QpVZx37kj",
+    "nombre": "Samsung Galaxy S25 FE 512GB/8 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 2700000,
+    "specs": {
+      "pantalla": 6.4,
+      "bateria": 4500,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "2ufUYvzGbhyZedbzzbm8",
+    "nombre": "Samsung Galaxy S25 Ultra 5G 1TB/12 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 4530000,
+    "specs": {
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 12,
+      "almacenamiento": 1024
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "CHMbHdeqE4bEZ4s4EPjS",
+    "nombre": "Samsung Galaxy S25 Ultra 5G 256GB/12 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 3300000,
+    "specs": {
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 12,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "07M5ugBdQ600YTxeufce",
+    "nombre": "Samsung Galaxy S25 Ultra 5g 512GB/12 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 3700000,
+    "specs": {
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "LOjAzBOoypBqWdPZqeYi",
+    "nombre": "Samsung Galaxy S26 FE 256GB/8 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 3300000,
+    "specs": {
+      "pantalla": 6.4,
+      "bateria": 4700,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "9I7eeyHVurGBKyCxfnK6",
+    "nombre": "Samsung Galaxy S26 FE 512GB/8 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 3850000,
+    "specs": {
+      "pantalla": 6.4,
+      "bateria": 4700,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "AjMwU8obJqlmi7DaHXDO",
+    "nombre": "Samsung Galaxy S26 Ultra",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 6000000,
+    "specs": {
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 12,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "zQ313mo4cph63BAZeCDr",
+    "nombre": "Samsung Galaxy S26 Ultra 5G 256GB/12 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 3900000,
+    "specs": {
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 12,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "vhDEIXMnekYweAcL4QiQ",
+    "nombre": "Samsung Galaxy S26 Ultra 5G 512GB/12 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 4150000,
+    "specs": {
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "JgEk2pyMsNY2w1KmLe4C",
+    "nombre": "Samsung Galaxy Z Flip 8 512GB/12 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 4550000,
+    "specs": {
+      "pantalla": 6.7,
+      "bateria": 4000,
+      "camara": 50,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "4xmQBAkVvZO8taHWH4pV",
+    "nombre": "Samsung Galaxy Z Fold 8 512GB/12 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 6200000,
+    "specs": {
+      "pantalla": 7.6,
+      "bateria": 4400,
+      "camara": 50,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "kYbvqgVvAJ28PMu9DRmb",
+    "nombre": "Samsung Galaxy Z Fold 8 Ultra 512GB/12 RAM",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 7150000,
+    "specs": {
+      "pantalla": 7.6,
+      "bateria": 4500,
+      "camara": 200,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "KFliYwveGgGRZIG85UZ2",
+    "nombre": "SAMSUNG S25 256GB 5G Azul Cielo",
+    "marca": "Samsung",
+    "categoria": "Celulares",
+    "contado": 2400000,
+    "specs": {
+      "pantalla": 6.2,
+      "bateria": 4000,
+      "camara": 50,
+      "ram": 12,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "CRsiAwffAwYEKZGc2ock",
+    "nombre": "Tecno Camon 50 Ultra 5G 256GB/8 RAM + Obsequio",
+    "marca": "Tecno",
+    "categoria": "Celulares",
+    "contado": 1780000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "NfUCSL2hExtptXfkkclr",
+    "nombre": "Tecno Pova 6 5G 256GB/8 RAM",
+    "marca": "Tecno",
+    "categoria": "Celulares",
+    "contado": 1150000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 6000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "w2hVyGx6NrxcrbIPG8Jl",
+    "nombre": "Tecno Pova Curve 2 5G 256 GB",
+    "marca": "Tecno",
+    "categoria": "Celulares",
+    "contado": 1580000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 8000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "xPMRjiE3ZyeJdBOnkmT4",
+    "nombre": "Tecno Pova Slim 5G 256GB/8 RAM",
+    "marca": "Tecno",
+    "categoria": "Celulares",
+    "contado": 1530000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "Uqz5gHY3ogil2eO9hc6j",
+    "nombre": "Tecno Spark 40C 256gb",
+    "marca": "Tecno",
+    "categoria": "Celulares",
+    "contado": 750000,
+    "specs": {
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 13,
+      "ram": 4,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "tCzqYsjKb8L5LXRy1ADW",
+    "nombre": "TECNO Spark 50 5G Dorado",
+    "marca": "Tecno",
+    "categoria": "Celulares",
+    "contado": 1410000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "nnRBu3Cmx9YV6NlzAC1u",
+    "nombre": "Tecno Spark 50 Kn4 4g 256gb 4gb Ram Dual Sim Plata",
+    "marca": "Tecno",
+    "categoria": "Celulares",
+    "contado": 870000,
+    "specs": {
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "cWcm3pSCEYKZ0Ko9l4VP",
+    "nombre": "Tecno Spark Go 3 128gb",
+    "marca": "Tecno",
+    "categoria": "Celulares",
+    "contado": 990000,
+    "specs": {
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 13,
+      "ram": 4,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "EzglKPIVhMCasBe18dqb",
+    "nombre": "Tecno Spark Go 3 64GB/3 RAM",
+    "marca": "Tecno",
+    "categoria": "Celulares",
+    "contado": 950000,
+    "specs": {
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 13,
+      "ram": 3,
+      "almacenamiento": 64
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "sqbEXTcwDA9uRkN8gZLg",
+    "nombre": "TV - HARVIC 55\"",
+    "marca": "Harvic",
+    "categoria": "Televisores",
+    "contado": 1800000,
+    "specs": {
+      "pantalla": 55,
+      "bateria": null,
+      "camara": null,
+      "ram": null,
+      "almacenamiento": null
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "4y9EFxK0zvRRfbizQwPo",
+    "nombre": "UGREEN Cargador USB C de 30 W, Nexode plegable GaN PPS compacto y rápido cargador de pared, adaptador de corriente USB-C",
+    "marca": "Otra",
+    "categoria": "Accesorios",
+    "contado": 80000,
+    "specs": {
+      "pantalla": null,
+      "bateria": null,
+      "camara": null,
+      "ram": null,
+      "almacenamiento": null
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "OTbA0qCvmcqbf5fFhnYk",
+    "nombre": "UGREEN Uno - Bloque de cargador USB C de 30 W, cargador rápido compacto robot GaN",
+    "marca": "Otra",
+    "categoria": "Accesorios",
+    "contado": 145000,
+    "specs": {
+      "pantalla": null,
+      "bateria": null,
+      "camara": null,
+      "ram": null,
+      "almacenamiento": null
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "uKGRphQErHmwFekcNImD",
+    "nombre": "UGREEN Uno - Bloque de cargador USB C de 30 W, cargador rápido compacto robot GaN",
+    "marca": "Otra",
+    "categoria": "Accesorios",
+    "contado": 145000,
+    "specs": {
+      "pantalla": null,
+      "bateria": null,
+      "camara": null,
+      "ram": null,
+      "almacenamiento": null
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "wTjbIsb68Pr6iDgz7ZvF",
+    "nombre": "Xiaomi 17 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 3500000,
+    "specs": {
+      "pantalla": 6.36,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "MX2MoND0NJp4zh2xjVyC",
+    "nombre": "Xiaomi 17T 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 2900000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "Wk074o10ovGkdLrk0FMK",
+    "nombre": "Xiaomi 17T Pro 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 3300000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "wPMTzxHm7M5di3uGazgq",
+    "nombre": "Xiaomi Poco C71 128GB/4 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 960000,
+    "specs": {
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "AJILwvnJVvz8AT8h5On7",
+    "nombre": "Xiaomi Poco C71 64GB/4 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 920000,
+    "specs": {
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 64
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "0xckgZkkYBHbfMFI8gRP",
+    "nombre": "Xiaomi Poco F8 Pro 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 2600000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "M2t8BstZ5PlkwRbpkXw2",
+    "nombre": "Xiaomi Poco M8 Pro 5G 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1780000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 64,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "GILdgUR8itJzBP57dpcD",
+    "nombre": "Xiaomi Poco X8 Pro 5G 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 2100000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 64,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "o0H3NWp9yYbhsx7QPw5U",
+    "nombre": "Xiaomi Poco X8 Pro 5G 512GB/8 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1970000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 64,
+      "ram": 8,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "75kIbJrfscPKLZYgXfBt",
+    "nombre": "Xiaomi Poco X8 Pro Max 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 2450000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5500,
+      "camara": 108,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "WhK4YOLKbazTsAv5pj2p",
+    "nombre": "Xiaomi Redmi 15C 128GB/4 RAM",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 1010000,
+    "specs": {
+      "pantalla": 6.1,
+      "bateria": 3349,
+      "camara": 48,
+      "ram": 6,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "O0YTsviCjgkZoboVMN6b",
+    "nombre": "Xiaomi Redmi 15C 256GB/4+4 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1050000,
+    "specs": {
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "8WeEYvSwk8UMOe6obi96",
+    "nombre": "Xiaomi Redmi 15c 8gb Ram 256gb Dual Sim 50mp Huella Fm Dimm Azul",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1110000,
+    "specs": {
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "aCuMp0UEf5w7hGIf68SW",
+    "nombre": "Xiaomi Redmi 17 128GB/4 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1130000,
+    "specs": {
+      "pantalla": 6.36,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "La5n6acEQ4rQBvBQI9FL",
+    "nombre": "Xiaomi Redmi 17 256GB/4 RAM",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 1220000,
+    "specs": {
+      "pantalla": 6.3,
+      "bateria": 3600,
+      "camara": 48,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "FTLE1p5sgIn8Tg7Z5ZiW",
+    "nombre": "Xiaomi Redmi 17 256GB/6 RAM",
+    "marca": "Apple",
+    "categoria": "Celulares",
+    "contado": 1290000,
+    "specs": {
+      "pantalla": 6.3,
+      "bateria": 3600,
+      "camara": 48,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "tfd9IenyDcHA14DHBnS0",
+    "nombre": "Xiaomi Redmi A7 PRO",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 920000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 3,
+      "almacenamiento": 64
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "E1JPa6g4TWCMS6I1hKIi",
+    "nombre": "Xiaomi Redmi A7 Pro 128GB/4 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 960000,
+    "specs": {
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50,
+      "ram": 4,
+      "almacenamiento": 128
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "4yFB4uZc1DLwkqYlMyT1",
+    "nombre": "Xiaomi Redmi Note 14 Pro+ 5G 256GB/8 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1700000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "8PoV99V7Y2dkhVnTDr6m",
+    "nombre": "Xiaomi Redmi Note 15 256GB/8 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1280000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 108,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "5eedmyHG0xwGp8kLDosR",
+    "nombre": "Xiaomi Redmi Note 15 512GB/8 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1330000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 108,
+      "ram": 8,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "nI3MVYnURr7orq2lS0J8",
+    "nombre": "Xiaomi Redmi Note 15 Pro 4G 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1590000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "WPMiSQuNAMVJOtzR7ioC",
+    "nombre": "Xiaomi Redmi Note 15 Pro 5G 512GB/8 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1680000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 8,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "MBp2Yi1rBkZXjh6UbWds",
+    "nombre": "Xiaomi Redmi Note 15 Pro+ 5G 256GB/8 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 1850000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 8,
+      "almacenamiento": 256
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  },
+  {
+    "id": "XX37YFIiJYNYSgQZDkdb",
+    "nombre": "Xiaomi Redmi Note 15 Pro+ 5G 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "categoria": "Celulares",
+    "contado": 2050000,
+    "specs": {
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200,
+      "ram": 12,
+      "almacenamiento": 512
+    },
+    "cuotas6": 0,
+    "cuotas8": 0,
+    "cuotas12": 0,
+    "cuotaInicial": 0
+  }
+]

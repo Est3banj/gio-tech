@@ -47,7 +47,10 @@ export const subscribeToProducts = (
  * @returns ID del nuevo producto.
  */
 export const createProduct = async (productData: Omit<Product, 'id'>): Promise<string> => {
-    const docRef = await addDoc(collection(db, "productos"), productData);
+    const cleanData = Object.fromEntries(
+        Object.entries(productData).filter(([, v]) => v !== undefined)
+    );
+    const docRef = await addDoc(collection(db, "productos"), cleanData);
     return docRef.id;
 };
 
@@ -61,8 +64,14 @@ export const updateProduct = async (
   productId: string, 
   productData: Partial<Product>
 ): Promise<void> => {
+    if (!productId || typeof productId !== 'string') {
+        throw new Error('ID de producto inválido para actualización');
+    }
+    const cleanData = Object.fromEntries(
+        Object.entries(productData).filter(([, v]) => v !== undefined)
+    );
     const productRef = doc(db, "productos", productId);
-    await updateDoc(productRef, productData);
+    await updateDoc(productRef, cleanData);
 };
 
 /**
@@ -71,6 +80,9 @@ export const updateProduct = async (
  * @returns Promise<void>
  */
 export const deleteProduct = async (productId: string): Promise<void> => {
+    if (!productId || typeof productId !== 'string') {
+        throw new Error('ID de producto inválido para eliminación');
+    }
     const productRef = doc(db, "productos", productId);
     await deleteDoc(productRef);
 };

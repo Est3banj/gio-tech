@@ -1,0 +1,1321 @@
+[
+  {
+    "id": "07M5ugBdQ600YTxeufce",
+    "nombre": "Samsung Galaxy S25 Ultra 5g 512GB/12 RAM",
+    "contado": 3700000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "camara": 200,
+      "pantalla": 6.8,
+      "bateria": 5000
+    },
+    "desc": "Samsung Galaxy S25 Ultra (512GB)\n\n📸 Cámara: 200 MP (Calidad profesional).\n🚀 Potencia: Snapdragon 8 Elite + 12GB RAM.\n\ud83d"
+  },
+  {
+    "id": "0xckgZkkYBHbfMFI8gRP",
+    "nombre": "Xiaomi Poco F8 Pro 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 2600000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi Poco F8 Pro 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dispo"
+  },
+  {
+    "id": "2ufUYvzGbhyZedbzzbm8",
+    "nombre": "Samsung Galaxy S25 Ultra 5G 1TB/12 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 4530000,
+    "specs": {
+      "almacenamiento": 1024,
+      "ram": 12,
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200
+    },
+    "desc": "Samsung Galaxy S25 Ultra 5G 1TB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiació"
+  },
+  {
+    "id": "4AUiZMTVyyNTr0Bx1grV",
+    "nombre": "Apple iPad Air Chip M3 128gb 11 Pulgadas Wifi - 2025",
+    "contado": 3200000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": null,
+      "camara": 12,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "iPad Air (M3 - 128GB)\n\n🧠 Procesador: Chip M3 (Rendimiento de nivel profesional).\n📱 Pantalla: Ultra Retina XDR OLED (Co"
+  },
+  {
+    "id": "4xmQBAkVvZO8taHWH4pV",
+    "nombre": "Samsung Galaxy Z Fold 8 512GB/12 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 6200000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 7.6,
+      "bateria": 4400,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy Z Fold 8 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación "
+  },
+  {
+    "id": "4yFB4uZc1DLwkqYlMyT1",
+    "nombre": "Xiaomi Redmi Note 14 Pro+ 5G 256GB/8 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1700000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200
+    },
+    "desc": "Xiaomi Redmi Note 14 Pro+ 5G 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiac"
+  },
+  {
+    "id": "5AUF6HhOISybRHkeXL7l",
+    "nombre": "Infinix Hot 70 256gb Azul",
+    "contado": 820000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 4,
+      "camara": 50,
+      "pantalla": 6.7,
+      "bateria": 5600
+    },
+    "desc": "Pantalla: 6.7\" o 6.78\" IPS LCD con una tasa de refresco fluida de 120Hz.Rendimiento: Equipado con un procesador optimiza"
+  },
+  {
+    "id": "5eedmyHG0xwGp8kLDosR",
+    "nombre": "Xiaomi Redmi Note 15 512GB/8 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1330000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 8,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 108
+    },
+    "desc": "Xiaomi Redmi Note 15 512GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disp"
+  },
+  {
+    "id": "6G0MBdUrUUsfbp2gKef3",
+    "nombre": "Infinix Note 60 256GB/8 RAM",
+    "marca": "Infinix",
+    "cat": "Celulares",
+    "contado": 1780000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Infinix Note 60 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponibl"
+  },
+  {
+    "id": "75kIbJrfscPKLZYgXfBt",
+    "nombre": "Xiaomi Poco X8 Pro Max 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 2450000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.67,
+      "bateria": 5500,
+      "camara": 108
+    },
+    "desc": "Xiaomi Poco X8 Pro Max 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación d"
+  },
+  {
+    "id": "88vm6mZS89mf4TBYhHo1",
+    "nombre": "Samsung Galaxy A37 256GB/8 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 1600000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy A37 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dispon"
+  },
+  {
+    "id": "8PoV99V7Y2dkhVnTDr6m",
+    "nombre": "Xiaomi Redmi Note 15 256GB/8 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1280000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 108
+    },
+    "desc": "Xiaomi Redmi Note 15 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disp"
+  },
+  {
+    "id": "8WeEYvSwk8UMOe6obi96",
+    "nombre": "Xiaomi Redmi 15c 8gb Ram 256gb Dual Sim 50mp Huella Fm Dimm Azul",
+    "contado": 1110000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 16,
+      "camara": 50,
+      "pantalla": 6.9,
+      "bateria": 6000
+    },
+    "desc": "Xiaomi Redmi 15C (256GB / 16GB RAM)*\n\n🔋 Batería: 6000 mAh + Carga rápida de 33W (Energía para días).\n📱 Pantalla: Gigan"
+  },
+  {
+    "id": "9I7eeyHVurGBKyCxfnK6",
+    "nombre": "Samsung Galaxy S26 FE 512GB/8 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 3850000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 8,
+      "pantalla": 6.4,
+      "bateria": 4700,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy S26 FE 512GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dis"
+  },
+  {
+    "id": "9NxNUgHiKzkNWheuhFml",
+    "nombre": "SAMSUNG Galaxy A56 256GB 5G Gris",
+    "contado": 1700000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "Samsung Galaxy A56 5G (256GB)\n\n📸 Cámara: Triple con tecnología Nightography (Fotos perfectas de noche).\n\n🤖 IA Avanzada"
+  },
+  {
+    "id": "9rTIAWevJpFAfdPEGEUw",
+    "nombre": "Samsung Galaxy A37 128GB/6 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 1480000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": 6,
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy A37 128GB/6 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dispon"
+  },
+  {
+    "id": "AECWFeSs0K5UMR4xIsuB",
+    "nombre": "Apple iPhone 17 Pro Max 512GB 5G",
+    "marca": "Apple",
+    "cat": "Celulares",
+    "contado": 5400000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.9,
+      "bateria": 4800,
+      "camara": 48
+    },
+    "desc": "Apple iPhone 17 Pro Max 512GB 5G.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disp"
+  },
+  {
+    "id": "AJILwvnJVvz8AT8h5On7",
+    "nombre": "Xiaomi Poco C71 64GB/4 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 920000,
+    "specs": {
+      "almacenamiento": 64,
+      "ram": 4,
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi Poco C71 64GB/4 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponible"
+  },
+  {
+    "id": "AjMwU8obJqlmi7DaHXDO",
+    "nombre": "Samsung Galaxy S26 Ultra",
+    "contado": 6000000,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": 320,
+      "pantalla": 6.8,
+      "bateria": null
+    },
+    "desc": "Lleva la tecnología al límite con el nuevo Samsung Galaxy S26 Ultra. Diseñado para quienes exigen rendimiento extremo, f"
+  },
+  {
+    "id": "BIBPPI6rz4GyNUU9p4OI",
+    "nombre": "Samsung Galaxy A17 128GB/4 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 1020000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": 4,
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy A17 128GB/4 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dispon"
+  },
+  {
+    "id": "BPtWSYCAir1bmC1k4aa9",
+    "nombre": "SAMSUNG Galaxy A07 128GB 4G Negro",
+    "contado": 950000,
+    "specs": {
+      "almacenamiento": 64,
+      "ram": 64,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "Samsung Galaxy A07 (64GB / 128GB)\n\n📸 Cámara: Captura con precisión tus momentos favoritos.\n\n🛡️ Diseño: Cuerpo metálico"
+  },
+  {
+    "id": "BQCNpFtVQAukkbQwyW0z",
+    "nombre": "Apple iPad Pro M5 13\" 256GB Wi-Fi",
+    "marca": "Apple",
+    "cat": "Tablets",
+    "contado": 5300000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 12,
+      "pantalla": 13,
+      "bateria": null,
+      "camara": 12
+    },
+    "desc": "Apple iPad Pro M5 13\" 256GB Wi-Fi.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dis"
+  },
+  {
+    "id": "BbnCQcdSdToIu6EtaKBK",
+    "nombre": "Apple iPad A16 128GB Wi-Fi",
+    "marca": "Apple",
+    "cat": "Tablets",
+    "contado": 2000000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": null,
+      "pantalla": 10.9,
+      "bateria": null,
+      "camara": 12
+    },
+    "desc": "Apple iPad A16 128GB Wi-Fi.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponible"
+  },
+  {
+    "id": "CHMbHdeqE4bEZ4s4EPjS",
+    "nombre": "Samsung Galaxy S25 Ultra 5G 256GB/12 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 3300000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 12,
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200
+    },
+    "desc": "Samsung Galaxy S25 Ultra 5G 256GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiac"
+  },
+  {
+    "id": "CRsiAwffAwYEKZGc2ock",
+    "nombre": "Tecno Camon 50 Ultra 5G 256GB/8 RAM + Obsequio",
+    "marca": "Tecno",
+    "cat": "Celulares",
+    "contado": 1780000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Tecno Camon 50 Ultra 5G 256GB/8 RAM + Obsequio.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Fin"
+  },
+  {
+    "id": "E1JPa6g4TWCMS6I1hKIi",
+    "nombre": "Xiaomi Redmi A7 Pro 128GB/4 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 960000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": 4,
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi Redmi A7 Pro 128GB/4 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dispo"
+  },
+  {
+    "id": "EzglKPIVhMCasBe18dqb",
+    "nombre": "Tecno Spark Go 3 64GB/3 RAM",
+    "marca": "Tecno",
+    "cat": "Celulares",
+    "contado": 950000,
+    "specs": {
+      "almacenamiento": 64,
+      "ram": 3,
+      "pantalla": 6.6,
+      "bateria": 5000,
+      "camara": 13
+    },
+    "desc": "Tecno Spark Go 3 64GB/3 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponibl"
+  },
+  {
+    "id": "FTLE1p5sgIn8Tg7Z5ZiW",
+    "nombre": "Xiaomi Redmi 17 256GB/6 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1290000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 6,
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi Redmi 17 256GB/6 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponibl"
+  },
+  {
+    "id": "FqtTcaF6QK8OE2d2Bw05",
+    "nombre": "iPhone 15 128 GB",
+    "contado": 2900000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": null,
+      "camara": 48,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "Apple iPhone 15 (128GB)\n\n🏝️ Dynamic Island: Interactúa con tus alertas y música de forma mágica.\n\n📸 Cámara: 48 MP (Fot"
+  },
+  {
+    "id": "GHlBeOWRgf7mpfASVB5M",
+    "nombre": "Apple iPad Pro M5 11\" 256GB Wi-Fi",
+    "marca": "Apple",
+    "cat": "Tablets",
+    "contado": 4550000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 12,
+      "pantalla": 11,
+      "bateria": null,
+      "camara": 12
+    },
+    "desc": "Apple iPad Pro M5 11\" 256GB Wi-Fi.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dis"
+  },
+  {
+    "id": "GILdgUR8itJzBP57dpcD",
+    "nombre": "Xiaomi Poco X8 Pro 5G 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 2100000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 64
+    },
+    "desc": "Xiaomi Poco X8 Pro 5G 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación di"
+  },
+  {
+    "id": "GfJlbUIjVpKu73J7bLKk",
+    "nombre": "MacBook Neo de 13 pulgadas",
+    "contado": 3200000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "camara": 12,
+      "pantalla": 13.6,
+      "bateria": null
+    },
+    "desc": "Chip A18 Pro de Apple con CPU de 6 núcleos y GPU de 5 núcleos\n8 ram"
+  },
+  {
+    "id": "Hb1NBjK6lwIbKtBjOeqn",
+    "nombre": "iPhone 17 Pro 256GB 5G Plata",
+    "contado": 4300000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": null,
+      "camara": null,
+      "pantalla": 6.3,
+      "bateria": null
+    },
+    "desc": "Apple iPhone 17 Pro (128GB / 256GB)\n\n🧠 Chip A19 Pro: El procesador más potente para Apple Intelligence.\n\n🛡️ Resistenci"
+  },
+  {
+    "id": "IEy58COXSTguBzDYgI4V",
+    "nombre": "Apple iPhone 16 Pro Max 512GB CPO",
+    "marca": "Apple",
+    "cat": "Celulares",
+    "contado": 4550000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 8,
+      "pantalla": 6.9,
+      "bateria": 4685,
+      "camara": 48
+    },
+    "desc": "Apple iPhone 16 Pro Max 512GB CPO.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dis"
+  },
+  {
+    "id": "JgEk2pyMsNY2w1KmLe4C",
+    "nombre": "Samsung Galaxy Z Flip 8 512GB/12 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 4550000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.7,
+      "bateria": 4000,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy Z Flip 8 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación "
+  },
+  {
+    "id": "KFliYwveGgGRZIG85UZ2",
+    "nombre": "SAMSUNG S25 256GB 5G Azul Cielo",
+    "contado": 2400000,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": 6.2,
+      "bateria": null
+    },
+    "desc": "Pantalla: 6.2 pulgadas Dynamic AMOLED 2X.3Resolución: FHD+ (4$2340 \\times 1080$ píxeles).5Tasa de refresco: 120 Hz adapt"
+  },
+  {
+    "id": "KWS4CNiWisJP71yVzYsy",
+    "nombre": "SAMSUNG Galaxy A36 256GB 5G Verde",
+    "contado": 1300000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "camara": 50,
+      "pantalla": 6.7,
+      "bateria": 5000
+    },
+    "desc": "Samsung Galaxy A36 5G (256GB)\n\n📸 Cámara: 50 MP con IA (Fotos increíbles en cualquier lugar).\n\n🔍 Galaxy IA: Función Cir"
+  },
+  {
+    "id": "LOjAzBOoypBqWdPZqeYi",
+    "nombre": "Samsung Galaxy S26 FE 256GB/8 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 3300000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.4,
+      "bateria": 4700,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy S26 FE 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dis"
+  },
+  {
+    "id": "LQ8QSAywtezC49CN1p8U",
+    "nombre": "REDMI Note 15 Pro 256GB 4G Titanium",
+    "contado": 1470000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "camara": 200,
+      "pantalla": 6.8,
+      "bateria": null
+    },
+    "desc": "Potencia, fluidez y una batería épica en un solo lugar. Rinde más, sin complicaciones.\n\n📸 Cámaras Pro: 200MP con IA par"
+  },
+  {
+    "id": "La5n6acEQ4rQBvBQI9FL",
+    "nombre": "Xiaomi Redmi 17 256GB/4 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1220000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 4,
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi Redmi 17 256GB/4 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponibl"
+  },
+  {
+    "id": "LelVmbtZDeEX48kE1E3W",
+    "nombre": "Samsung Galaxy A07 128GB/6 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 975000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": 6,
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy A07 128GB/6 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dispon"
+  },
+  {
+    "id": "M2t8BstZ5PlkwRbpkXw2",
+    "nombre": "Xiaomi Poco M8 Pro 5G 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1780000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 64
+    },
+    "desc": "Xiaomi Poco M8 Pro 5G 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación di"
+  },
+  {
+    "id": "MBp2Yi1rBkZXjh6UbWds",
+    "nombre": "Xiaomi Redmi Note 15 Pro+ 5G 256GB/8 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1850000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200
+    },
+    "desc": "Xiaomi Redmi Note 15 Pro+ 5G 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiac"
+  },
+  {
+    "id": "MX2MoND0NJp4zh2xjVyC",
+    "nombre": "Xiaomi 17T 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 2900000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi 17T 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponible en"
+  },
+  {
+    "id": "NfUCSL2hExtptXfkkclr",
+    "nombre": "Tecno Pova 6 5G 256GB/8 RAM",
+    "marca": "Tecno",
+    "cat": "Celulares",
+    "contado": 1150000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.78,
+      "bateria": 6000,
+      "camara": 50
+    },
+    "desc": "Tecno Pova 6 5G 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponibl"
+  },
+  {
+    "id": "O0YTsviCjgkZoboVMN6b",
+    "nombre": "Xiaomi Redmi 15C 256GB/4+4 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1050000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 4,
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi Redmi 15C 256GB/4+4 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dispon"
+  },
+  {
+    "id": "ORvHZgIyniPpspx6N1Ns",
+    "nombre": "MacBook Air 13\" Pulgadas Chip M3 CPU 8 núcleos GPU 10 núcleos - RAM 8 GB - SSD 256 GB - Blanco Estrella",
+    "contado": 4450000,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": 13,
+      "bateria": null
+    },
+    "desc": "La MacBook Air de 13\" está hecha para que trabajes y te diviertas al máximo. Con la llegada del chip M3, este superportá"
+  },
+  {
+    "id": "OaUli0EpitFISDylhJqZ",
+    "nombre": "Apple iPad Air M4 256GB Wi-Fi 11\"",
+    "marca": "Apple",
+    "cat": "Tablets",
+    "contado": 3550000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 11,
+      "bateria": null,
+      "camara": 12
+    },
+    "desc": "Apple iPad Air M4 256GB Wi-Fi 11\".\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dis"
+  },
+  {
+    "id": "PFh3MzylEj8wAiK6LO5c",
+    "nombre": "SAMSUNG Galaxy A57 256GB 5G Azul oscuro",
+    "contado": 1800000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "camara": 50,
+      "pantalla": 6.6,
+      "bateria": 5000
+    },
+    "desc": "Triple cámara de alta resolución (50 MP + 12 MP + 5 MP)\nInmersión de 30min en hasta 1 metro de agua dulce\nEdición de fot"
+  },
+  {
+    "id": "PJUXwtHUReg7mYreYqp3",
+    "nombre": "Apple iPad A16 256GB Wi-Fi",
+    "marca": "Apple",
+    "cat": "Tablets",
+    "contado": 2550000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "pantalla": 10.9,
+      "bateria": null,
+      "camara": 12
+    },
+    "desc": "Apple iPad A16 256GB Wi-Fi.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponible"
+  },
+  {
+    "id": "PUhF8GvJs5qRYDqVNio6",
+    "nombre": "INFINITIX NOTE 50 PRO/ 256GB/12RAM",
+    "contado": 1200000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "Infinix Note 50 Pro (256GB / 512GB)\n\n🛡️ Máxima Resistencia: Estructura de acero para una durabilidad única.\n\n⚡ Carga Pr"
+  },
+  {
+    "id": "S35YIviUpH6CR9RTOTcg",
+    "nombre": "MOTOROLA Edge 50 Fusion 256GB Azul",
+    "contado": 1300000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "Motorola Edge 50 Fusion (256GB)\n\n🛡️ Protección Total: Diseño premium resistente al agua (Certificación IP68).\n\n📸 Cámar"
+  },
+  {
+    "id": "T0HpsNeuAUmkrUSzXSMW",
+    "nombre": "AirTag 1 Unidad",
+    "contado": 175000,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "El AirTag te ayuda a encontrar tus cosas muy fácilmente. Ponle uno a tus llaves o a tu maletin para que siempre puedas v"
+  },
+  {
+    "id": "TR0BgUAOuTFky5mk6m8U",
+    "nombre": "SAMSUNG Galaxy A17 256GB LTE 4G Azul",
+    "contado": 1210000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "Samsung Galaxy A17 LTE (128GB)\n\n📸 Cámara: Capturas nítidas y brillantes con gran nivel de detalle.\n\n🛡️ Durabilidad: Pr"
+  },
+  {
+    "id": "Uqz5gHY3ogil2eO9hc6j",
+    "nombre": "Tecno Spark 40C 256gb",
+    "contado": 750000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 16,
+      "camara": 13,
+      "pantalla": 67,
+      "bateria": 6000
+    },
+    "desc": "Pantalla: 6.67\" IPS LCD con resolución HD+ y una tasa de refresco muy fluida de 120 Hz.Rendimiento: Procesador MediaTek "
+  },
+  {
+    "id": "VBZehKdoO2MpOVDCnB1w",
+    "nombre": "Infinix Hot 60 Pro+ negro, dual SIM, 8 GB RAM, 256 GB",
+    "contado": 980000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 16,
+      "camara": 50,
+      "pantalla": 3,
+      "bateria": 5160
+    },
+    "desc": "Infinix Hot 60 Pro Plus (256GB / 16GB RAM)*\n\n📱 Pantalla: Curva 3D ultra delgada (El diseño más elegante).\n\n📸 Cámara: 5"
+  },
+  {
+    "id": "VX68POL2n6Ahun68V4Kq",
+    "nombre": "iPhone 16 128 GB",
+    "contado": 3100000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "Apple iPhone 16 (128GB / 256GB)\n\n🧠 Chip A18: Dos generaciones más avanzado para un rendimiento extremo.\n\n🤖 Apple Intel"
+  },
+  {
+    "id": "WPMiSQuNAMVJOtzR7ioC",
+    "nombre": "Xiaomi Redmi Note 15 Pro 5G 512GB/8 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1680000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 8,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200
+    },
+    "desc": "Xiaomi Redmi Note 15 Pro 5G 512GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiaci"
+  },
+  {
+    "id": "WhK4YOLKbazTsAv5pj2p",
+    "nombre": "Xiaomi Redmi 15C 128GB/4 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1010000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": 4,
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi Redmi 15C 128GB/4 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponib"
+  },
+  {
+    "id": "Wk074o10ovGkdLrk0FMK",
+    "nombre": "Xiaomi 17T Pro 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 3300000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi 17T Pro 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponibl"
+  },
+  {
+    "id": "Wq25LVZY5YQPNLH2cVfv",
+    "nombre": "Apple MacBook Air 15\" M4 512GB/24 RAM",
+    "marca": "Apple",
+    "cat": "Laptops",
+    "contado": 6000000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 24,
+      "pantalla": 15.3,
+      "bateria": null,
+      "camara": 12
+    },
+    "desc": "Apple MacBook Air 15\" M4 512GB/24 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación"
+  },
+  {
+    "id": "XSR4VLP3RGNrs0zIpabZ",
+    "nombre": "MacBook Air de 13\" M5",
+    "contado": 5300000,
+    "specs": {
+      "almacenamiento": 16,
+      "ram": 16,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "Chip M5 de Apple con CPU de 10 núcleos y GPU de 8 núcleos\n16GB Ram\n512 GB "
+  },
+  {
+    "id": "XX37YFIiJYNYSgQZDkdb",
+    "nombre": "Xiaomi Redmi Note 15 Pro+ 5G 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 2050000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200
+    },
+    "desc": "Xiaomi Redmi Note 15 Pro+ 5G 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financia"
+  },
+  {
+    "id": "aCuMp0UEf5w7hGIf68SW",
+    "nombre": "Xiaomi Redmi 17 128GB/4 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1130000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": 4,
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi Redmi 17 128GB/4 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponibl"
+  },
+  {
+    "id": "aZDIHgphxGOufvt37uqQ",
+    "nombre": "Celular OPPO A60 256GB Blanco",
+    "contado": 1240000,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    },
+    "desc": "OPPO A60 (Blanco Glaciar)\n\n✨ Diseño: Elegante, delgado y cómodo (Siente la moda en tus manos).\n\n🛡️ Resistencia: Certifi"
+  },
+  {
+    "id": "cWcm3pSCEYKZ0Ko9l4VP",
+    "nombre": "Tecno Spark Go 3 128gb",
+    "contado": 990000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": 4,
+      "camara": 13,
+      "pantalla": 6.6,
+      "bateria": 5000
+    },
+    "desc": "Pantalla fluida de 120 Hz: todo se ve más suave\nBatería duradera de 5000 mAh: te acompaña todo el día\nCámara inteligente"
+  },
+  {
+    "id": "dNOFaqaEr3MqDqUq9aR4",
+    "nombre": "Celular Xiaomi Redmi 15 Sandy Purple 8GB RAM 256GB ROM",
+    "contado": 1190000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "camara": 50,
+      "pantalla": 6.7,
+      "bateria": 5000
+    },
+    "desc": "Xiaomi Redmi 15 (Sandy Purple)\n\n✨ Estilo: Acabado premium en tono Sandy Purple (Elegancia única).\n\n🚀 Potencia: Tecnolog"
+  },
+  {
+    "id": "eFAfYLZXrVbl2LFtnStb",
+    "nombre": "iPhone 17 Pro Max 256GB 5G Azul Oscuro",
+    "contado": 4600000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "camara": null,
+      "pantalla": 86,
+      "bateria": null
+    },
+    "desc": "Apple iPhone 17 Pro Max (256GB / 512GB / 1TB)\n\n📺 Pantalla Gigante: 6.86\" Pro Motion (La más grande e inmersiva jamás vi"
+  },
+  {
+    "id": "eKX8VQ9FuVEFf1coASG5",
+    "nombre": "Infinix Note 60 Pro 256GB | 8GB",
+    "contado": 1920000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "camara": 50,
+      "pantalla": 78,
+      "bateria": 6500
+    },
+    "desc": "🔥 PODER PURO: Snapdragon 7s Gen 4 + 8GB RAM.\n🎮 PANTALLA BRUTAL: 6.78\" de alta definición (1.5K).\n📸 FOTOS PRO: Sensor "
+  },
+  {
+    "id": "fvij4iwPfzrr7ESXaKbm",
+    "nombre": "Samsung Galaxy A07 64GB/4 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 920000,
+    "specs": {
+      "almacenamiento": 64,
+      "ram": 4,
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy A07 64GB/4 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponi"
+  },
+  {
+    "id": "g73GLza6IImjpklW4cpk",
+    "nombre": "Samsung Galaxy A26 5G 256GB/8 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 1450000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy A26 5G 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dis"
+  },
+  {
+    "id": "gwkbNlOUwW0QpVZx37kj",
+    "nombre": "Samsung Galaxy S25 FE 512GB/8 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 2700000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 8,
+      "pantalla": 6.4,
+      "bateria": 4500,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy S25 FE 512GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dis"
+  },
+  {
+    "id": "kYbvqgVvAJ28PMu9DRmb",
+    "nombre": "Samsung Galaxy Z Fold 8 Ultra 512GB/12 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 7150000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 7.6,
+      "bateria": 4500,
+      "camara": 200
+    },
+    "desc": "Samsung Galaxy Z Fold 8 Ultra 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financi"
+  },
+  {
+    "id": "knnjgSVFhbuq26EiGS1F",
+    "nombre": "iPhone 13 128 GB",
+    "contado": 1920000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": null,
+      "camara": null,
+      "pantalla": 6.1,
+      "bateria": null
+    },
+    "desc": "Apple iPhone 13 (128GB)\n\n🧠 Chip A15 Bionic: Potencia de sobra para juegos y apps exigentes.\n\n📱 Pantalla: Super Retina "
+  },
+  {
+    "id": "nI3MVYnURr7orq2lS0J8",
+    "nombre": "Xiaomi Redmi Note 15 Pro 4G 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1590000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 200
+    },
+    "desc": "Xiaomi Redmi Note 15 Pro 4G 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiac"
+  },
+  {
+    "id": "nnRBu3Cmx9YV6NlzAC1u",
+    "nombre": "Tecno Spark 50 Kn4 4g 256gb 4gb Ram Dual Sim Plata",
+    "contado": 870000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "camara": null,
+      "pantalla": 6.7,
+      "bateria": 7000
+    },
+    "desc": "Memoria gigante de 256GB + 8GB RAM\nIdeal para guardar miles de fotos, videos y apps sin preocuparte por el espacio. Adem"
+  },
+  {
+    "id": "o0H3NWp9yYbhsx7QPw5U",
+    "nombre": "Xiaomi Poco X8 Pro 5G 512GB/8 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 1970000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 8,
+      "pantalla": 6.67,
+      "bateria": 5000,
+      "camara": 64
+    },
+    "desc": "Xiaomi Poco X8 Pro 5G 512GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dis"
+  },
+  {
+    "id": "p39epPO9r9uPeYdvf4NN",
+    "nombre": "iPhone 17 256GB 5G Verde Salvia",
+    "contado": 3550000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": null,
+      "camara": 48,
+      "pantalla": 12,
+      "bateria": null
+    },
+    "desc": "Apple iPhone 17 (128GB / 256GB)\n\n🚀 Fluidez Total: Pantalla ProMotion de 120 Hz (Navegación ultra suave).\n\n🧠 Chip A19: "
+  },
+  {
+    "id": "pT8pgFKyVQ32EdUaOjXX",
+    "nombre": "Samsung Galaxy A27 256GB/8 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 1450000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.5,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Samsung Galaxy A27 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dispon"
+  },
+  {
+    "id": "pnAGTA9bxT9hzBUcffmS",
+    "nombre": "INFINIX Smart 10 256GB 4G Negro",
+    "contado": 600000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "camara": null,
+      "pantalla": 67,
+      "bateria": 5000
+    },
+    "desc": "Infinix Smart 10 (256GB / 4G)\n\n📱 Pantalla: 6.67\" con 120Hz y Always-On (Fluidez total y notificaciones siempre a la vis"
+  },
+  {
+    "id": "qPQkNev8y4v2ZIEVRit2",
+    "nombre": "Samsung Galaxy S20+ 5G 128GB/12 RAM + SD 256GB",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 1430000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": 12,
+      "pantalla": 6.7,
+      "bateria": 4500,
+      "camara": 64
+    },
+    "desc": "Samsung Galaxy S20+ 5G 128GB/12 RAM + SD 256GB.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Fin"
+  },
+  {
+    "id": "ryLEz3rUYFbYThWVKBmN",
+    "nombre": "iPhone Air 256GB 5G Azul Cielo",
+    "contado": 4300000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "camara": 48,
+      "pantalla": 6.5,
+      "bateria": null
+    },
+    "desc": "Apple iPhone Air (256GB / 512GB)\n\n✨ Diseño Ultra-Slim: Solo 5.6 mm de grosor en acabado de Titanio Pulido.\n\n🧠 Chip A19 "
+  },
+  {
+    "id": "tCzqYsjKb8L5LXRy1ADW",
+    "nombre": "TECNO Spark 50 5G Dorado",
+    "contado": 1410000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "camara": 50,
+      "pantalla": 6.78,
+      "bateria": 5000
+    },
+    "desc": "Batería 6150mAh: energía que no te abandona.\nCarga rápida 45W: listo para seguir tu ritmo.\nCámara 50MP con IA: fotos más"
+  },
+  {
+    "id": "tfd9IenyDcHA14DHBnS0",
+    "nombre": "Xiaomi Redmi A7 PRO",
+    "contado": 920000,
+    "specs": {
+      "almacenamiento": 64,
+      "ram": 3,
+      "camara": 50,
+      "pantalla": 6.5,
+      "bateria": 5000
+    },
+    "desc": "Xiaomi Redmi A7 Pro\nPotencia y estilo al alcance de todos.\n\nPantalla AMOLED de 120Hz: Fluidez extrema y colores vibrante"
+  },
+  {
+    "id": "ttgWWVd8zkprKG9dCy3S",
+    "nombre": "REDMI Note 15 Pro 256 GB 5G",
+    "contado": 1580000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": null,
+      "camara": 200,
+      "pantalla": 1.5,
+      "bateria": null
+    },
+    "desc": "Creado para quienes exigen potencia sin límites. El equilibrio perfecto entre energía, espacio y control.\n\n🔋 Batería Ép"
+  },
+  {
+    "id": "ugSl18rrnE0AsQThF5Sw",
+    "nombre": "Apple MacBook Air 15\" M4 256GB/16 RAM",
+    "marca": "Apple",
+    "cat": "Laptops",
+    "contado": 5000000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 16,
+      "pantalla": 15.3,
+      "bateria": null,
+      "camara": 12
+    },
+    "desc": "Apple MacBook Air 15\" M4 256GB/16 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación"
+  },
+  {
+    "id": "vhDEIXMnekYweAcL4QiQ",
+    "nombre": "Samsung Galaxy S26 Ultra 5G 512GB/12 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 4150000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200
+    },
+    "desc": "Samsung Galaxy S26 Ultra 5G 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiac"
+  },
+  {
+    "id": "w2hVyGx6NrxcrbIPG8Jl",
+    "nombre": "Tecno Pova Curve 2 5G 256 GB",
+    "contado": 1580000,
+    "specs": {
+      "ram": 8,
+      "camara": null,
+      "pantalla": 78,
+      "bateria": 8000,
+      "almacenamiento": 256
+    },
+    "desc": "El Tecno Pova Curve 2 5G es un smartphone de gama media con una batería masiva de 8000mAh y carga de 45W, destacando por"
+  },
+  {
+    "id": "wPMTzxHm7M5di3uGazgq",
+    "nombre": "Xiaomi Poco C71 128GB/4 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 960000,
+    "specs": {
+      "almacenamiento": 128,
+      "ram": 4,
+      "pantalla": 6.7,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi Poco C71 128GB/4 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponibl"
+  },
+  {
+    "id": "wTjbIsb68Pr6iDgz7ZvF",
+    "nombre": "Xiaomi 17 512GB/12 RAM",
+    "marca": "Xiaomi",
+    "cat": "Celulares",
+    "contado": 3500000,
+    "specs": {
+      "almacenamiento": 512,
+      "ram": 12,
+      "pantalla": 6.36,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Xiaomi 17 512GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación disponible en "
+  },
+  {
+    "id": "xPMRjiE3ZyeJdBOnkmT4",
+    "nombre": "Tecno Pova Slim 5G 256GB/8 RAM",
+    "marca": "Tecno",
+    "cat": "Celulares",
+    "contado": 1530000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "pantalla": 6.78,
+      "bateria": 5000,
+      "camara": 50
+    },
+    "desc": "Tecno Pova Slim 5G 256GB/8 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiación dispon"
+  },
+  {
+    "id": "xTCkBlBmds5li6eQp7fR",
+    "nombre": "Infinix Note Edge 5G 256gb | 8gb",
+    "contado": 1580000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 8,
+      "camara": 50,
+      "pantalla": 6.7,
+      "bateria": 6500
+    },
+    "desc": "Infinix Note Edge 256GB 8GB RAM 5G con pantalla AMOLED 6.78” 120Hz, procesador Dimensity 7100, batería 6500mAh con carga"
+  },
+  {
+    "id": "zQ313mo4cph63BAZeCDr",
+    "nombre": "Samsung Galaxy S26 Ultra 5G 256GB/12 RAM",
+    "marca": "Samsung",
+    "cat": "Celulares",
+    "contado": 3900000,
+    "specs": {
+      "almacenamiento": 256,
+      "ram": 12,
+      "pantalla": 6.8,
+      "bateria": 5000,
+      "camara": 200
+    },
+    "desc": "Samsung Galaxy S26 Ultra 5G 256GB/12 RAM.\n\n✅ 100% Original, Libre de Fábrica con Garantía Oficial Gio-Tech.\n💳 Financiac"
+  }
+]

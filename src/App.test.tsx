@@ -3,12 +3,20 @@ import { render, screen, waitFor } from '@testing-library/react';
 import { MemoryRouter } from 'react-router-dom';
 import App from './App';
 import ThemeProvider from './components/ThemeProvider';
+import { ThemeModeProvider } from './contexts/ThemeModeContext';
 import type { StoreConfig, Product } from './types';
+import { onAuthStateChanged } from 'firebase/auth';
+import { onSnapshot } from 'firebase/firestore';
 
 // Mock Firebase auth & firestore
 vi.mock('firebase/auth', () => ({
   getAuth: vi.fn(() => ({})),
   signOut: vi.fn(() => Promise.resolve()),
+  setPersistence: vi.fn(() => Promise.resolve()),
+  browserLocalPersistence: 'LOCAL',
+  browserSessionPersistence: 'SESSION',
+  signInWithEmailAndPassword: vi.fn(),
+  sendPasswordResetEmail: vi.fn(),
   onAuthStateChanged: vi.fn((_auth, callback) => {
     callback(null);
     return vi.fn();
@@ -17,8 +25,10 @@ vi.mock('firebase/auth', () => ({
 
 vi.mock('firebase/firestore', () => ({
   getFirestore: vi.fn(() => ({})),
-  doc: vi.fn(),
-  collection: vi.fn(),
+  doc: vi.fn((_db, collection, id) => ({ collection, id })),
+  collection: vi.fn((_db, name) => ({ name })),
+  query: vi.fn((c) => c),
+  where: vi.fn(),
   onSnapshot: vi.fn((_ref, callback) => {
     callback({
       exists: () => false,
@@ -37,14 +47,11 @@ vi.mock('./services/config.service', () => ({
     whatsappNumber: '3223652569',
     direccion: 'Cra. 32 #13 36, Puerto Asís, Putumayo',
     theme: {
-      enabled: true,
+      enabled: false,
       start: null,
       end: null,
       vars: {
-        '--theme-name': 'valentine',
-        '--promo-badge-bg': '#d81b60',
-        '--promo-badge-text': '#ffffff',
-        '--promo-highlight': 'rgba(216,27,96,.18)',
+        '--theme-name': 'standard',
       },
     },
   },
@@ -77,6 +84,7 @@ vi.mock('./services/product.service', () => ({
     callback(mockProductsList);
     return vi.fn();
   }),
+  deleteProduct: vi.fn(() => Promise.resolve()),
 }));
 
 vi.mock('./services/productStats.service', () => ({
@@ -84,19 +92,25 @@ vi.mock('./services/productStats.service', () => ({
   recordProductView: vi.fn(),
 }));
 
+const renderAppWithProviders = (initialEntries = ['/']) => {
+  return render(
+    <MemoryRouter initialEntries={initialEntries}>
+      <ThemeProvider>
+        <ThemeModeProvider>
+          <App />
+        </ThemeModeProvider>
+      </ThemeProvider>
+    </MemoryRouter>
+  );
+};
+
 describe('App Root Component and Provider Hierarchy', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
   it('renders <App /> with ThemeProvider and MemoryRouter without throwing runtime exceptions', async () => {
-    const { container } = render(
-      <MemoryRouter initialEntries={['/']}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    const { container } = renderAppWithProviders(['/']);
 
     expect(container).toBeInTheDocument();
 
@@ -110,13 +124,7 @@ describe('App Root Component and Provider Hierarchy', () => {
   });
 
   it('renders Catalogo route correctly within the provider tree', async () => {
-    render(
-      <MemoryRouter initialEntries={['/catalogo']}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderAppWithProviders(['/catalogo']);
 
     // Verify Catalogo route mounts
     await waitFor(() => {
@@ -125,13 +133,7 @@ describe('App Root Component and Provider Hierarchy', () => {
   });
 
   it('renders Servicio Técnico page without crashing', async () => {
-    render(
-      <MemoryRouter initialEntries={['/servicio-tecnico']}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderAppWithProviders(['/servicio-tecnico']);
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Servicio Técnico/i })).toBeInTheDocument();
@@ -139,13 +141,7 @@ describe('App Root Component and Provider Hierarchy', () => {
   });
 
   it('renders Terminos page without crashing and hides Header/Footer', async () => {
-    render(
-      <MemoryRouter initialEntries={['/terminos']}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderAppWithProviders(['/terminos']);
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { level: 1 })).toHaveTextContent(/Términos/i);
@@ -156,13 +152,7 @@ describe('App Root Component and Provider Hierarchy', () => {
   });
 
   it('renders Login page without crashing', async () => {
-    render(
-      <MemoryRouter initialEntries={['/login']}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderAppWithProviders(['/login']);
 
     await waitFor(() => {
       expect(screen.getByRole('heading', { name: /Iniciar sesión/i })).toBeInTheDocument();
@@ -170,13 +160,7 @@ describe('App Root Component and Provider Hierarchy', () => {
   });
 
   it('redirects /?producto=ID to /catalogo?producto=ID and loads Catalogo', async () => {
-    render(
-      <MemoryRouter initialEntries={['/?producto=prod-1']}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderAppWithProviders(['/?producto=prod-1']);
 
     // Verify it redirects to Catalogo and renders the catalog search input
     await waitFor(() => {
@@ -185,17 +169,47 @@ describe('App Root Component and Provider Hierarchy', () => {
   });
 
   it('redirects /?id=ID to /catalogo?id=ID and loads Catalogo', async () => {
-    render(
-      <MemoryRouter initialEntries={['/?id=prod-1']}>
-        <ThemeProvider>
-          <App />
-        </ThemeProvider>
-      </MemoryRouter>
-    );
+    renderAppWithProviders(['/?id=prod-1']);
 
     // Verify it redirects to Catalogo and renders the catalog search input
     await waitFor(() => {
       expect(screen.getByPlaceholderText(/Buscar por nombre o descripción/i)).toBeInTheDocument();
+    });
+  });
+
+  it('redirects /admin to /panel and then to /login for unauthenticated users', async () => {
+    renderAppWithProviders(['/admin']);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Iniciar sesión/i })).toBeInTheDocument();
+    });
+  });
+
+  it('renders AdminPanel for authenticated admin user on /panel', async () => {
+    vi.mocked(onAuthStateChanged).mockImplementation((_auth, callback) => {
+      (callback as (user: unknown) => void)({
+        uid: 'admin-uid',
+        email: 'admin@giotech.com',
+      });
+      return vi.fn();
+    });
+
+    vi.mocked(onSnapshot).mockImplementation((_ref, callback) => {
+      (callback as (snap: unknown) => void)({
+        exists: () => true,
+        data: () => ({
+          rol: 'admin',
+          nombreCompleto: 'Admin Master',
+        }),
+        docs: [],
+      });
+      return vi.fn();
+    });
+
+    renderAppWithProviders(['/panel']);
+
+    await waitFor(() => {
+      expect(screen.getByRole('heading', { name: /Lista de Productos/i })).toBeInTheDocument();
     });
   });
 });

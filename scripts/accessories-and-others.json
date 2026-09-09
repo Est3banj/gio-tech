@@ -1,0 +1,98 @@
+[
+  {
+    "id": "4AGNJuD7YMb5wz3FG0fg",
+    "nombre": "Adaptador|Cargador de Corriente APPLE 20W USB-C Blanco",
+    "contado": 139000,
+    "specs": {
+      "camara": null,
+      "ram": null,
+      "bateria": null,
+      "almacenamiento": null,
+      "pantalla": null
+    }
+  },
+  {
+    "id": "4y9EFxK0zvRRfbizQwPo",
+    "nombre": "UGREEN Cargador USB C de 30 W, Nexode plegable GaN PPS compacto y rápido cargador de pared, adaptador de corriente USB-C",
+    "contado": 80000,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    }
+  },
+  {
+    "id": "7fLdojxmlatExf7ZjgsS",
+    "nombre": "65\" Samsung QLED Q6F 4K Smart TV",
+    "contado": 2999999,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": 65,
+      "bateria": null
+    }
+  },
+  {
+    "id": "FfStozFuc2iptbVIAlvm",
+    "nombre": "Audifonos REDMI Inalambricos Bluetooth In Ear Buds 6 Lite",
+    "contado": 144998,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    }
+  },
+  {
+    "id": "OTbA0qCvmcqbf5fFhnYk",
+    "nombre": "UGREEN Uno - Bloque de cargador USB C de 30 W, cargador rápido compacto robot GaN",
+    "contado": 145000,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    }
+  },
+  {
+    "id": "dJ09a00QUgziEjHvikOl",
+    "nombre": "Cable APPLE USB‑C a Lightning de 1.0 Metro Blanco",
+    "contado": 89999,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    }
+  },
+  {
+    "id": "sqbEXTcwDA9uRkN8gZLg",
+    "nombre": "TV - HARVIC 55\"",
+    "contado": 1800000,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": 55,
+      "bateria": null
+    }
+  },
+  {
+    "id": "uKGRphQErHmwFekcNImD",
+    "nombre": "UGREEN Uno - Bloque de cargador USB C de 30 W, cargador rápido compacto robot GaN",
+    "contado": 145000,
+    "specs": {
+      "almacenamiento": null,
+      "ram": null,
+      "camara": null,
+      "pantalla": null,
+      "bateria": null
+    }
+  }
+]

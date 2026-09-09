@@ -354,6 +354,144 @@ html[data-theme-name="halloween"] .gio-product-card-v2:hover {
 }
 
 /* ============================================================
+   🏷️ BLACK FRIDAY – ULTRA-CLEAN GOLD & DARK ELEGANCE
+   ============================================================ */
+
+html[data-theme-name="blackfriday"] body,
+html[data-theme-name="blackfriday"] #root,
+html[data-theme-name="blackfriday"] .landing-wrapper {
+  background-image:
+    radial-gradient(circle at 50% -80px, rgba(255, 215, 0, 0.12) 0%, rgba(245, 158, 11, 0.04) 450px, transparent 800px),
+    radial-gradient(circle at 90% 20%, rgba(255, 215, 0, 0.05) 0%, transparent 500px);
+  background-repeat: no-repeat;
+}
+
+html[data-theme-name="blackfriday"] body.dark-mode,
+html[data-theme-name="blackfriday"] body.dark-mode #root,
+html[data-theme-name="blackfriday"].dark-mode body,
+html[data-theme-name="blackfriday"].dark-mode #root,
+html[data-theme-name="blackfriday"] body.dark-mode .landing-wrapper {
+  background-image:
+    radial-gradient(circle at 50% -80px, rgba(255, 215, 0, 0.22) 0%, rgba(180, 83, 9, 0.1) 500px, transparent 900px),
+    radial-gradient(circle at 90% 20%, rgba(255, 215, 0, 0.08) 0%, transparent 600px);
+  background-repeat: no-repeat;
+}
+
+html[data-theme-name="blackfriday"] header::after,
+html[data-theme-name="blackfriday"] .gio-header::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2.5px;
+  background: linear-gradient(90deg, transparent 0%, #f59e0b 20%, #ffd700 50%, #f59e0b 80%, transparent 100%);
+  box-shadow: 0 0 16px rgba(255, 215, 0, 0.85);
+  opacity: 0.95;
+  z-index: 10;
+  pointer-events: none;
+}
+
+html[data-theme-name="blackfriday"] .gio-top-trust-bar {
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.85) 0%, rgba(254, 243, 199, 0.75) 50%, rgba(255, 255, 255, 0.85) 100%);
+  border-bottom-color: rgba(245, 158, 11, 0.3);
+}
+
+html[data-theme-name="blackfriday"] body.dark-mode .gio-top-trust-bar,
+html[data-theme-name="blackfriday"].dark-mode .gio-top-trust-bar {
+  background: linear-gradient(90deg, rgba(15, 23, 42, 0.9) 0%, rgba(69, 26, 3, 0.5) 50%, rgba(15, 23, 42, 0.9) 100%);
+  border-bottom-color: rgba(245, 158, 11, 0.35);
+}
+
+.seasonal-ticker-pill-blackfriday {
+  background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+  color: #ffd700;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.25);
+}
+
+html[data-theme-name="blackfriday"] .season-particles,
+html[data-theme-name="blackfriday"] body .season-particles {
+  background-image:
+    radial-gradient(circle, rgba(255, 215, 0, 0.6) 1.5px, transparent 1.5px),
+    radial-gradient(circle, rgba(245, 158, 11, 0.45) 2px, transparent 2px),
+    radial-gradient(circle, rgba(255, 255, 255, 0.5) 1px, transparent 1px);
+  background-size: 80px 80px, 140px 140px, 200px 200px;
+  background-position: 0 0, 40px 60px, 100px 30px;
+  opacity: 0.75;
+}
+
+html[data-theme-name="blackfriday"] body.dark-mode .season-particles,
+html[data-theme-name="blackfriday"].dark-mode .season-particles {
+  opacity: 0.85;
+}
+
+html[data-theme-name="blackfriday"] .gio-badge-promo {
+  background: linear-gradient(135deg, #111827 0%, #1f2937 100%) !important;
+  color: #ffd700 !important;
+  border: 1px solid rgba(255, 215, 0, 0.4);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+}
+
+html[data-theme-name="blackfriday"] .btn-card-action-pro,
+html[data-theme-name="blackfriday"] .product-cta-btn {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  color: #ffd700 !important;
+  border: 1px solid rgba(255, 215, 0, 0.35);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.3) !important;
+}
+
+html[data-theme-name="blackfriday"] .btn-card-action-pro:hover,
+html[data-theme-name="blackfriday"] .product-cta-btn:hover {
+  background: linear-gradient(135deg, #0f172a 0%, #020617 100%) !important;
+  border-color: #ffd700;
+  box-shadow: 0 6px 20px rgba(255, 215, 0, 0.3) !important;
+}
+
+html[data-theme-name="blackfriday"] .featured-catalog-btn {
+  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+  color: #ffd700 !important;
+  border: 1px solid rgba(255, 215, 0, 0.45);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+html[data-theme-name="blackfriday"] .featured-catalog-btn:hover {
+  background: linear-gradient(135deg, #0f172a 0%, #020617 100%) !important;
+  border-color: #ffd700;
+  box-shadow: 0 14px 30px rgba(255, 215, 0, 0.4) !important;
+}
+
+html[data-theme-name="blackfriday"] .featured-eyebrow {
+  color: #f59e0b !important;
+  background: rgba(245, 158, 11, 0.08) !important;
+  border: 1px solid rgba(245, 158, 11, 0.25) !important;
+}
+
+html[data-theme-name="blackfriday"] body.dark-mode .featured-eyebrow,
+html[data-theme-name="blackfriday"].dark-mode .featured-eyebrow {
+  color: #ffd700 !important;
+  background: rgba(255, 215, 0, 0.15) !important;
+  border-color: rgba(255, 215, 0, 0.35) !important;
+}
+
+html[data-theme-name="blackfriday"] .product-card:hover,
+html[data-theme-name="blackfriday"] .gio-product-card-v2:hover {
+  box-shadow: 0 14px 35px rgba(255, 215, 0, 0.2) !important;
+  border-color: rgba(255, 215, 0, 0.45) !important;
+}
+
+html[data-theme-name="blackfriday"] .cuota-term-pill:hover,
+html[data-theme-name="blackfriday"] .cuota-term-pill.active {
+  border-color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+  color: #d97706;
+}
+
+html[data-theme-name="blackfriday"] .cuota-term-pill.active small {
+  color: #d97706;
+}
+
+/* ============================================================
    RESPONSIVE & ACCESSIBILITY
    ============================================================ */
 

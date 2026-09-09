@@ -357,4 +357,46 @@ describe('BannerSlider Component - Optimizado CRO, Touch Swipe, Smart Pause & CL
     expect(container.firstChild).toBeNull();
     consoleSpy.mockRestore();
   });
+
+  it('debe renderizar el fallback de gradiente de marca con logo GIO TECH si la imagen falla con onError', () => {
+    render(
+      <MemoryRouter>
+        <BannerSlider />
+      </MemoryRouter>
+    );
+
+    act(() => {
+      snapshotCallback?.({
+        docs: [
+          {
+            id: 'broken-banner-1',
+            data: () => ({
+              url_imagen: 'https://img.test/broken-banner.jpg',
+              titulo: 'Mega Oferta Putumayo',
+              descripcion: 'Financiación disponible',
+              enlace: '/catalogo',
+              orden: 1,
+              activo: true,
+            }),
+          },
+        ],
+      });
+    });
+
+    const img = screen.getByAltText('Mega Oferta Putumayo');
+    expect(img).toBeInTheDocument();
+
+    // Trigger onError
+    fireEvent.error(img);
+
+    // Fallback de gradiente con logo/texto GIO TECH
+    const gradientFallback = screen.getByTestId('banner-fallback-gradient');
+    expect(gradientFallback).toBeInTheDocument();
+    expect(screen.getByText('GIO TECH')).toBeInTheDocument();
+    expect(screen.getByText(/Garantía Oficial/i)).toBeInTheDocument();
+
+    // El título y CTA siguen visibles sobre el banner
+    expect(screen.getByText('Mega Oferta Putumayo')).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /Ver promoción de Mega Oferta Putumayo/i })).toBeInTheDocument();
+  });
 });

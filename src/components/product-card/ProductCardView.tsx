@@ -3,6 +3,7 @@ import type { Product, ProductSpecs } from "../../types";
 import type { DerivadosPricing } from "./useProductPricing";
 import ProductBadges from "./ProductBadges";
 import PriceDisplay from "./PriceDisplay";
+import ProductImage from "../common/ProductImage";
 import { extractProductSpecs } from "../../utils/specs-parser";
 import { getProductType } from "../../data/financieras";
 
@@ -120,11 +121,15 @@ const ProductCardView: React.FC<ProductCardViewProps> = ({ producto, isPopular =
       {/* ─── Image Stage con Halo Radial y Hover Zoom fluido ─── */}
       <div className="product-image-stage product-image-container">
         <div className="product-image-halo" aria-hidden="true"></div>
-        <img
-          src={imagen || "https://via.placeholder.com/300x300?text=Sin+imagen"}
+        <ProductImage
+          src={imagen}
           alt={nombre}
+          brand={marca}
+          category={producto.categoria}
           className="product-card-img product-image"
+          variant="card"
           loading="lazy"
+          decoding="async"
         />
       </div>
 

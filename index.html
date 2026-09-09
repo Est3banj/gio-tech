@@ -1,8 +1,27 @@
 <!doctype html>
-<html lang="es" data-theme-name="valentine">
+<html lang="es">
 
 <head>
   <meta charset="UTF-8" />
+  <script>
+    (function() {
+      try {
+        var savedTheme = localStorage.getItem('theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var isDark = savedTheme === 'dark' || (!savedTheme && prefersDark);
+        if (isDark) {
+          document.documentElement.classList.add('dark-mode');
+          if (document.body) {
+            document.body.classList.add('dark-mode');
+          } else {
+            document.addEventListener('DOMContentLoaded', function() {
+              document.body.classList.add('dark-mode');
+            });
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
   <link rel="icon" type="image/svg+xml" href="/giotech-favicon.png" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 

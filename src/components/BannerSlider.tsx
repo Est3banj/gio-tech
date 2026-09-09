@@ -39,6 +39,7 @@ const BannerSlider: React.FC = () => {
   const [isPaused, setIsPaused] = useState(false);
   const [touchStartX, setTouchStartX] = useState<number | null>(null);
   const [touchEndX, setTouchEndX] = useState<number | null>(null);
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     const unsubscribe = onSnapshot(
@@ -184,12 +185,40 @@ const BannerSlider: React.FC = () => {
           className="banner-slide"
           data-testid={`banner-slide-${currentIndex}`}
         >
-          <img
-            src={currentBanner.image || currentBanner.imageUrl}
-            alt={currentBanner.title || 'Banner promocional'}
-            className="banner-slide-img"
-            loading={currentIndex === 0 ? 'eager' : 'lazy'}
-          />
+          {(() => {
+            const bannerSrc = currentBanner.image || currentBanner.imageUrl;
+            const bannerKey = currentBanner.id || `slide-${currentIndex}`;
+            const hasError = imageErrors[bannerKey] || !bannerSrc?.trim();
+
+            if (hasError) {
+              return (
+                <div
+                  className="banner-slide-fallback-gradient"
+                  data-testid="banner-fallback-gradient"
+                  role="img"
+                  aria-label={currentBanner.title || 'Banner promocional GIO TECH'}
+                >
+                  <div className="banner-fallback-brand-badge">
+                    <span className="banner-fallback-brand-name">GIO TECH</span>
+                    <span className="banner-fallback-brand-sub">Tecnología &bull; Garantía Oficial</span>
+                  </div>
+                </div>
+              );
+            }
+
+            return (
+              <img
+                src={bannerSrc}
+                alt={currentBanner.title || 'Banner promocional'}
+                className="banner-slide-img"
+                loading={currentIndex === 0 ? 'eager' : 'lazy'}
+                decoding="async"
+                onError={() => {
+                  setImageErrors((prev) => ({ ...prev, [bannerKey]: true }));
+                }}
+              />
+            );
+          })()}
 
           {/* Overlay + animated text and interactive CTA */}
           {(currentBanner.title || currentBanner.description || hasLink) && (

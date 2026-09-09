@@ -1,70 +1,48 @@
 // src/components/AsesorPanel.tsx
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase';
-import { doc, getDoc, updateDoc } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
-import { Container, Form, Button, Card, Alert } from 'react-bootstrap';
-
-interface AsesorData {
-  nombreCompleto?: string;
-  whatsappNumber?: string;
-  rol?: string;
-}
+import { doc, updateDoc } from 'firebase/firestore';
+import { Container, Form, Button, Card, Alert, Spinner } from 'react-bootstrap';
+import { useAuth } from '../hooks/useAuth';
 
 const AsesorPanel: React.FC = () => {
-  const auth = getAuth();
-  const currentUser = auth.currentUser;
+  const { user } = useAuth();
+  const navigate = useNavigate();
 
   const [whatsappNumber, setWhatsappNumber] = useState('');
   const [success, setSuccess] = useState('');
   const [error, setError] = useState('');
   const [shareLink, setShareLink] = useState('');
-  const [asesorData, setAsesorData] = useState<AsesorData | null>(null);
+  const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    if (currentUser && currentUser.uid) {
-      const fetchAsesorData = async () => {
-        try {
-          const docRef = doc(db, "usuarios", currentUser.uid);
-          const docSnap = await getDoc(docRef);
-          if (docSnap.exists()) {
-            const data = docSnap.data() as AsesorData;
-            setAsesorData(data);
-            setWhatsappNumber(data.whatsappNumber || '');
-          } else {
-            console.warn(`Documento de usuario para ${currentUser.email} no encontrado en Firestore.`);
-            setError("Tus datos no se encontraron en la base de datos. Contacta al administrador.");
-          }
-
-          const baseUrl = window.location.origin;
-          setShareLink(`${baseUrl}/?asesor=${currentUser.uid}`);
-        } catch (err) {
-          console.error("Error al cargar datos del asesor:", err);
-          setError("Error al cargar tus datos. Asegúrate de que tu perfil exista en Firestore.");
-        }
-      };
-      fetchAsesorData();
+    if (user && user.uid) {
+      setWhatsappNumber(user.whatsappNumber || '');
+      const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
+      setShareLink(`${baseUrl}/?asesor=${user.uid}`);
     } else {
-      setAsesorData(null);
       setWhatsappNumber('');
       setShareLink('');
     }
-  }, [currentUser]);
+  }, [user]);
 
   const handleUpdateWhatsapp = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     setSuccess('');
-    if (!currentUser || !currentUser.uid) {
+    if (!user || !user.uid) {
       setError("No hay usuario autenticado para actualizar.");
       return;
     }
+
+    setIsUpdating(true);
     try {
-      await updateDoc(doc(db, "usuarios", currentUser.uid), {
+      await updateDoc(doc(db, "usuarios", user.uid), {
         whatsappNumber: whatsappNumber
       });
       try {
-        await updateDoc(doc(db, "perfiles_publicos", currentUser.uid), {
+        await updateDoc(doc(db, "perfiles_publicos", user.uid), {
           whatsappNumber: whatsappNumber
         });
       } catch (mirrorErr) {
@@ -73,11 +51,13 @@ const AsesorPanel: React.FC = () => {
           mirrorErr,
         );
       }
-      setSuccess("Número de WhatsApp actualizado exitosamente!");
+      setSuccess("¡Número de WhatsApp actualizado exitosamente!");
     } catch (err) {
       console.error("Error al actualizar WhatsApp:", err);
       const errorObj = err as { message?: string };
-      setError(`Error al actualizar: ${errorObj.message}`);
+      setError(`Error al actualizar: ${errorObj.message || 'Error desconocido'}`);
+    } finally {
+      setIsUpdating(false);
     }
   };
 
@@ -87,21 +67,23 @@ const AsesorPanel: React.FC = () => {
     setTimeout(() => setSuccess(''), 3000);
   };
 
-  if (!currentUser) {
+  if (!user) {
     return (
       <Container className="py-5 text-center">
         <p>Por favor, inicia sesión para acceder al Panel del Asesor.</p>
-        <Button variant="primary" onClick={() => window.location.href = "/login"}>Ir a Login</Button>
+        <Button variant="primary" onClick={() => navigate("/login")}>Ir a Login</Button>
       </Container>
     );
   }
 
   return (
     <Container className="py-4">
-      <h2 className="text-center mb-4">Panel del Asesor - {asesorData?.nombreCompleto || currentUser?.email}</h2>
+      <h2 className="text-center mb-4">
+        Panel del Asesor - {user.nombreCompleto || user.email}
+      </h2>
 
-      {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
+      {error && <Alert variant="danger" dismissible onClose={() => setError('')}>{error}</Alert>}
+      {success && <Alert variant="success" dismissible onClose={() => setSuccess('')}>{success}</Alert>}
 
       <Card className="p-4 mb-4 shadow-sm">
         <h3 className="mb-3">Tu Información de Contacto</h3>
@@ -113,13 +95,23 @@ const AsesorPanel: React.FC = () => {
               value={whatsappNumber}
               onChange={(e) => setWhatsappNumber(e.target.value)}
               placeholder="Ej: 573XXYYYYYYY"
+              disabled={isUpdating}
               required
             />
             <Form.Text className="text-muted">
               Este es el número al que los clientes te contactarán al usar tu enlace único.
             </Form.Text>
           </Form.Group>
-          <Button variant="primary" type="submit">Actualizar Número</Button>
+          <Button variant="primary" type="submit" disabled={isUpdating}>
+            {isUpdating ? (
+              <>
+                <Spinner as="span" animation="border" size="sm" role="status" aria-hidden="true" className="me-2" />
+                Actualizando...
+              </>
+            ) : (
+              "Actualizar Número"
+            )}
+          </Button>
         </Form>
       </Card>
 

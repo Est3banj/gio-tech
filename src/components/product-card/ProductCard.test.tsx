@@ -696,4 +696,42 @@ describe('ProductCard', () => {
       expect(screen.getByText('1TB')).toBeInTheDocument()
     })
   })
+
+  describe('Resilient Image Fallback System', () => {
+    it('renders image with lazy loading and switches to glassmorphic vector fallback on onError without breaking UI', () => {
+      const prod = baseProduct({
+        id: 'iphone-img-error',
+        nombre: 'iPhone 15 Pro',
+        marca: 'Apple',
+        imagen: 'https://img.test/invalid-url.jpg',
+      })
+
+      renderCard(prod)
+
+      const img = screen.getByAltText('iPhone 15 Pro')
+      expect(img).toBeInTheDocument()
+      expect(img).toHaveAttribute('loading', 'lazy')
+
+      // Trigger onError
+      fireEvent.error(img)
+
+      // Fallback is rendered safely
+      expect(screen.getByTestId('product-image-fallback')).toBeInTheDocument()
+      expect(screen.getByTestId('product-fallback-brand-logo')).toBeInTheDocument()
+    })
+
+    it('renders local vector fallback directly when imagen is empty string', () => {
+      const prod = baseProduct({
+        id: 'samsung-no-img',
+        nombre: 'Samsung Galaxy A55',
+        marca: 'Samsung',
+        imagen: '',
+      })
+
+      renderCard(prod)
+
+      expect(screen.getByTestId('product-image-fallback')).toBeInTheDocument()
+      expect(screen.getByTestId('product-fallback-brand-logo')).toBeInTheDocument()
+    })
+  })
 })

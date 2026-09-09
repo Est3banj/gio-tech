@@ -138,4 +138,35 @@ describe('CartFloatingButton Component', () => {
       })
     );
   });
+
+  it('renders resilient thumbnail fallback on onError or empty image in cart list', () => {
+    const items: CartItem[] = [
+      {
+        itemId: 'prod-broken-img',
+        productId: 'prod-broken',
+        nombre: 'Cargador Rápido 67W',
+        imagen: 'https://img.test/invalid-thumb.jpg',
+        contado: 120000,
+        cuotas6: 0,
+        cuotas8: 0,
+        cotizacionType: 'contado',
+        cantidad: 1,
+      },
+    ];
+
+    renderCartWithItems(items);
+
+    const cartBtn = screen.getByRole('button', { name: /Ver carrito/i });
+    fireEvent.click(cartBtn);
+
+    const img = screen.getByAltText('Cargador Rápido 67W');
+    expect(img).toBeInTheDocument();
+
+    // Trigger onError
+    fireEvent.error(img);
+
+    // Fallback renders without broken image
+    const thumbFallback = screen.getByTestId('product-image-fallback-thumb');
+    expect(thumbFallback).toBeInTheDocument();
+  });
 });

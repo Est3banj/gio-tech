@@ -2,8 +2,28 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function getUserData() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data;
+    }
+
+    function getUserRole() {
+      return getUserData().rol;
+    }
+
     function isAdmin() {
-      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+      return isAuthenticated() && getUserRole() == 'admin';
+    }
+
+    function isAsesor() {
+      return isAuthenticated() && getUserRole() == 'asesor';
+    }
+
+    function isStaff() {
+      return isAuthenticated() && (getUserRole() == 'admin' || getUserRole() == 'asesor');
     }
 
     // --- PRODUCTO_STATS ---
@@ -18,44 +38,44 @@ service cloud.firestore {
         && request.resource.data.ultimaVista is timestamp;
     }
 
-    // --- NUEVA REGLA PARA EL CARRUSEL ---
+    // --- CARRUSEL HERO ---
     match /carrusel/{slideId} {
       allow read: if true;
-      allow create, update, delete: if request.auth != null && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+      allow create, update, delete: if isAdmin();
     }
 
-    // Reglas para la colección 'productos' (Catálogo público)
+    // --- PRODUCTOS (Catálogo público, gestión admin y asesor) ---
     match /productos/{productId} {
       allow read: if true;  
-      allow create, update, delete: if request.auth != null && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+      allow create, update, delete: if isStaff();
     }
 
-    // Reglas para la colección 'configuracion'
+    // --- CONFIGURACIÓN DEL NEGOCIO ---
     match /configuracion/{docId} {
       allow read: if true;
-      allow write: if request.auth != null && get(/databases/$(database)/documents/usuarios/$(request.auth.uid)).data.rol == 'admin';
+      allow write: if isAdmin();
     }
 
-    // Reglas para la colección 'usuarios'
+    // --- USUARIOS ---
     match /usuarios/{userId} {
-      allow get: if request.auth != null && (request.auth.uid == userId || isAdmin());
-      allow list: if request.auth != null && isAdmin();
-      allow create: if request.auth != null && isAdmin();
-      allow update: if (request.auth != null && request.auth.uid == userId && !isAdmin() &&
+      allow get: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isAdmin();
+      allow update: if (isAuthenticated() && request.auth.uid == userId && !isAdmin() &&
           request.resource.data.diff(resource.data).affectedKeys().hasOnly(['whatsappNumber', 'nombreCompleto']) &&
           request.resource.data.whatsappNumber is string &&
           request.resource.data.nombreCompleto is string)
-        || (request.auth != null && isAdmin());
-      allow delete: if request.auth != null && isAdmin();
+        || isAdmin();
+      allow delete: if isAdmin();
     }
 
-    // Vista pública mínima para el enlace ?asesor= (SOLO nombreCompleto + whatsappNumber)
+    // --- PERFILES PÚBLICOS (?asesor=) ---
     match /perfiles_publicos/{uid} {
       allow read: if true;   // público POR DISEÑO: datos mínimos no sensibles
-      allow create: if request.auth != null && (request.auth.uid == uid || isAdmin());
-      allow update: if request.auth != null && (request.auth.uid == uid || isAdmin()) &&
+      allow create: if isAuthenticated() && (request.auth.uid == uid || isAdmin());
+      allow update: if isAuthenticated() && (request.auth.uid == uid || isAdmin()) &&
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['nombreCompleto', 'whatsappNumber']);
-      allow delete: if request.auth != null && isAdmin();
+      allow delete: if isAdmin();
     }
 
   }
