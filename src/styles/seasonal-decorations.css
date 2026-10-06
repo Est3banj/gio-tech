@@ -29,12 +29,32 @@ html[data-theme-name] .gio-product-card-v2 {
   left: 0;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   pointer-events: none;
   z-index: 6;
   background-repeat: repeat;
   animation: floatParticles 24s linear infinite;
   opacity: 0;
   transition: opacity 0.6s ease;
+  will-change: transform; /* GPU layer */
+}
+
+/* Performance: disable particles on mobile (battery/jank) */
+@media (max-width: 768px) {
+  .season-particles {
+    animation: none !important;
+    opacity: 0 !important;
+    display: none;
+  }
+}
+
+/* Reduced motion: disable particle animation */
+@media (prefers-reduced-motion: reduce) {
+  .season-particles {
+    animation: none !important;
+    opacity: 0 !important;
+    display: none;
+  }
 }
 
 @keyframes floatParticles {

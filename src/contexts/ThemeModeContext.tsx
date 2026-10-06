@@ -42,11 +42,17 @@ export const ThemeModeProvider: React.FC<ThemeModeProviderProps> = ({
 }) => {
   const [mode, setMode] = useState<ThemeMode>(() => getInitialTheme(defaultMode));
 
-  // Sincronización del DOM (document.body classList) y persistencia en localStorage
+  // Sincronización del DOM y persistencia en localStorage
   useEffect(() => {
     const isDark = mode === 'dark';
-    if (typeof document !== 'undefined' && document.body) {
-      document.body.classList.toggle('dark-mode', isDark);
+    if (typeof document !== 'undefined') {
+      // index.html agrega dark-mode a <html> en la carga inicial; si solo
+      // tocamos <body>, quedaría atascado en dark y el toggle no funcionaría
+      // tras un reload. Mantenemos ambos nodos sincronizados.
+      document.documentElement.classList.toggle('dark-mode', isDark);
+      if (document.body) {
+        document.body.classList.toggle('dark-mode', isDark);
+      }
     }
     try {
       localStorage.setItem('theme', mode);
