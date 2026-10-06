@@ -23,7 +23,7 @@
     })();
   </script>
   <link rel="icon" type="image/svg+xml" href="/giotech-favicon.png" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
   <!-- SEO Principal -->
   <title>GIO TECH - Tu Tienda de Tecnología en Putumayo</title>
@@ -82,26 +82,21 @@
   </script>
 
   <!-- Theme Color para móviles -->
-  <meta name="theme-color" content="#0ea5e9" />
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#F8F8F8" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#111827" />
+  <meta name="color-scheme" content="light dark" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <!-- Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-1KGCQBPN75"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-1KGCQBPN75');
-  </script>
-
-  <!-- Meta Pixel Code -->
-  <script>!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '939199705550194'); fbq('track', 'PageView');</script>
+  <!--
+    Trackers (GA4 y Meta Pixel) NO se cargan acá:
+    se cargan condicionalmente desde src/services/analytics.loader.ts
+    sólo si el usuario dio consentimiento (ver banner de cookies).
+  -->
 </head>
 
 <body>
-  <noscript><img height="1" width="1" src="https://www.facebook.com/tr?id=939199705550194&ev=PageView&noscript=1" alt="" /></noscript>
   <div id="root"></div>
   <script type="module" src="/src/main.tsx"></script>
   <div class="season-particles"></div>

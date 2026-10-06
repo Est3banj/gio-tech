@@ -4,6 +4,7 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useConfig } from '../hooks/useConfig';
 import { WhatsappNumberContext, DEFAULT_WHATSAPP_NUMBER } from '../contexts/whatsapp-number-context';
+import { openCookiePreferences } from '../services/consent.service';
 
 export const DEFAULT_FOOTER_ADDRESS = 'Cra. 32 #13 36, Puerto Asís, Putumayo';
 export const DEFAULT_MAPS_URL = 'https://maps.google.com/?q=GIO+TECH,+Cra.+32+%2313+36,+Puerto+As%C3%ADs,+Putumayo';
@@ -116,6 +117,22 @@ const Footer: React.FC = () => {
                   <i className="bi bi-shield-check me-2 footer-link-icon" aria-hidden="true"></i>
                   <span>Términos y Garantías</span>
                 </Link>
+              </li>
+              <li className="footer-nav-item">
+                <Link to="/cookies" className="footer-nav-link">
+                  <i className="bi bi-cookie me-2 footer-link-icon" aria-hidden="true"></i>
+                  <span>Política de cookies</span>
+                </Link>
+              </li>
+              <li className="footer-nav-item">
+                <button
+                  type="button"
+                  className="footer-nav-link footer-nav-btn"
+                  onClick={openCookiePreferences}
+                >
+                  <i className="bi bi-sliders me-2 footer-link-icon" aria-hidden="true"></i>
+                  <span>Preferencias de cookies</span>
+                </button>
               </li>
               <li className="footer-nav-item">
                 <a

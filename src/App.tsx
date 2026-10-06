@@ -8,6 +8,7 @@ import CartFloatingButton from "./components/CartFloatingButton";
 import SnowfallEffect from "./components/SnowfallEffect";
 import WhatsappFloatingButton from "./components/WhatsappFloatingButton";
 import ProtectedRoute from "./components/ProtectedRoute";
+import CookieConsentBanner from "./components/CookieConsentBanner";
 
 import { AuthProvider } from "./contexts/AuthContext";
 import { CartProvider } from "./contexts/CartContext";
@@ -26,6 +27,9 @@ const AsesorPanel = lazy(() => import("./components/AsesorPanel"));
 const LandingPage = lazy(() => import("./components/LandingPage"));
 const ServicioTecnicoPage = lazy(() => import("./components/ServicioTecnicoPage"));
 const TerminosPage = lazy(() => import("./components/TerminosPage"));
+const CookiesPage = lazy(() => import("./components/CookiesPage"));
+const ProductPage = lazy(() => import("./components/ProductPage"));
+const ShopPage = lazy(() => import("./components/ShopPage"));
 
 const RootRoute = () => {
   const location = useLocation();
@@ -90,11 +94,13 @@ function AppContent() {
 
   const routesToHideSessionInfo = ["/", "/login", "/servicio-tecnico", "/panel", "/admin"];
   const showSessionInfo = user && !routesToHideSessionInfo.includes(location.pathname);
+  // Páginas legales en "documento limpio" (sin header/footer/WhatsApp): mismo patrón que /terminos.
   const showHeaderAndFooter =
     location.pathname !== "/login" &&
     !location.pathname.startsWith("/panel") &&
     !location.pathname.startsWith("/admin") &&
-    location.pathname !== "/terminos";
+    location.pathname !== "/terminos" &&
+    location.pathname !== "/cookies";
 
   return (
     <div className="d-flex flex-column min-vh-100">
@@ -115,6 +121,27 @@ function AppContent() {
         <Routes>
           <Route path="/" element={<RootRoute />} />
           <Route path="/catalogo" element={<Catalogo />} />
+          <Route path="/tienda" element={
+            <Suspense fallback={
+              <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+                <p className="lead mb-0">Cargando tienda…</p>
+              </div>
+            }>
+              <ShopPage />
+            </Suspense>
+          } />
+          <Route
+            path="/producto/:productId"
+            element={
+              <Suspense fallback={
+                <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+                  <p className="lead mb-0">Cargando producto…</p>
+                </div>
+              }>
+                <ProductPage />
+              </Suspense>
+            }
+          />
           <Route
             path="/servicio-tecnico"
             element={
@@ -136,6 +163,18 @@ function AppContent() {
                 </div>
               }>
                 <TerminosPage />
+              </Suspense>
+            }
+          />
+          <Route
+            path="/cookies"
+            element={
+              <Suspense fallback={
+                <div className="d-flex justify-content-center align-items-center" style={{ minHeight: '300px' }}>
+                  <p className="lead mb-0">Cargando…</p>
+                </div>
+              }>
+                <CookiesPage />
               </Suspense>
             }
           />
@@ -174,6 +213,8 @@ function AppContent() {
       {(location.pathname === "/" || location.pathname === "/catalogo") && <CartFloatingButton />}
 
       {showHeaderAndFooter && <WhatsappFloatingButton />}
+
+      <CookieConsentBanner />
     </div>
   );
 }

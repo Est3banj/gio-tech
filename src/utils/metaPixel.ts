@@ -1,6 +1,8 @@
 // src/utils/metaPixel.ts
-// Utilidades para tracking de Meta Pixel
+// Utilidades para tracking de Meta Pixel / GA4.
+// Choke point único de consentimiento: sin permiso explícito, no-op.
 
+import { hasAnalyticsConsent, hasMarketingConsent } from '../services/consent.service';
 import type { Product } from '../types';
 import type { CartItem, CotizacionType } from '../types';
 
@@ -17,14 +19,17 @@ interface MetaParams {
 
 /**
  * Dispara un evento de Meta Pixel
+ * No-op si el usuario no dio consentimiento de marketing (Meta Pixel).
  * @param eventName - Nombre del evento
  * @param params - Parámetros del evento (opcional)
  */
 export const trackMetaEvent = (eventName: MetaEventName, params: MetaParams = {}): void => {
+  if (!hasMarketingConsent()) return;
+
   if (typeof window !== 'undefined' && typeof window.fbq === 'function') {
     window.fbq('track', eventName, params);
   } else {
-    console.warn('[Meta Pixel] Pixel no disponible - asegúrate de que el código está instalado en index.html');
+    console.warn('[Meta Pixel] Consentimiento otorgado pero el pixel no está cargado');
   }
 };
 
@@ -66,13 +71,18 @@ export const trackPurchase = (cartItems: CartItem[]): void => {
 
 /**
  * Track de Lead - el usuario inicia una conversación o envía una cotización por WhatsApp
- * (intención de compra, no pago confirmado). También dispara GA4 'generate_lead' si gtag existe.
+ * (intención de compra, no pago confirmado). También dispara GA4 'generate_lead' si hay
+ * consentimiento de analítica y gtag está cargado.
  * @param params - Parámetros del evento (opcional)
  */
 export const trackLead = (params?: MetaParams): void => {
   trackMetaEvent('Lead', params ?? {});
 
-  if (typeof window !== 'undefined' && typeof window.gtag === 'function') {
+  if (
+    hasAnalyticsConsent() &&
+    typeof window !== 'undefined' &&
+    typeof window.gtag === 'function'
+  ) {
     window.gtag('event', 'generate_lead', params ?? {});
   }
 };
