@@ -1,4 +1,20 @@
 import type { Financiera } from '../types';
+import { POLICY_VERSION } from '../data/legal-copy';
+
+/**
+ * Línea de evidencia de la autorización de datos, al final del mensaje enviado.
+ * Se agrega en el momento del envío (los mensajes base quedan intactos).
+ */
+export function buildConsentEvidenceLine(): string {
+  const now = new Date();
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const fecha = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+  return `Autorizacion de datos aceptada (Terminos y Condiciones v.${POLICY_VERSION}, ${fecha})`;
+}
+
+export function appendConsentEvidence(message: string): string {
+  return `${message}\n${buildConsentEvidenceLine()}`;
+}
 
 export interface ContadoMsgInput {
   nombre: string;

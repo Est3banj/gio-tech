@@ -4,6 +4,7 @@ import { Button, Row, Col } from "react-bootstrap";
 import SistecreditoValidation from "./SistecreditoValidation";
 import type { ValidacionStatus } from "./SistecreditoValidation";
 import type { Financiera } from "../../types";
+import ConsentCheckbox from "../ConsentCheckbox";
 
 import type { ProductType } from "../../data/financieras";
 
@@ -198,23 +199,8 @@ const CreditForm: React.FC<CreditFormProps> = ({
             </div>
           ))}
 
-          {/* Términos y condiciones (para todas las financieras) */}
-          <div className="form-field-group terminos-checkbox">
-            <label className="checkbox-label">
-              <input
-                type="checkbox"
-                checked={aceptaTerminos}
-                onChange={(e) => setAceptaTerminos(e.target.checked)}
-              />
-              <span>
-                Autorizo el tratamiento de mis datos personales de acuerdo con los{' '}
-                <a href="/terminos" target="_blank" rel="noopener noreferrer">
-                  Términos y Condiciones
-                </a>{' '}
-                de GIO TECH
-              </span>
-            </label>
-          </div>
+          {/* Consentimiento de datos (componente compartido) */}
+          <ConsentCheckbox checked={aceptaTerminos} onChange={setAceptaTerminos} />
         </div>
       )}
 

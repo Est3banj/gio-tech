@@ -6,6 +6,7 @@ import CartFloatingButton from './CartFloatingButton';
 import { CartProvider } from '../contexts/CartContext';
 import { WhatsappNumberProvider } from '../contexts/WhatsappNumberContext';
 import { trackLead } from '../utils/metaPixel';
+import { AUTHORIZE_DATA_LABEL } from '../data/legal-copy';
 import type { CartItem } from '../types';
 
 vi.mock('../utils/metaPixel', () => ({
@@ -123,8 +124,22 @@ describe('CartFloatingButton Component', () => {
     fireEvent.change(nameInput, { target: { value: 'Carlos Mendoza' } });
 
     const sendBtn = screen.getByRole('button', { name: /Enviar Pedido a WhatsApp/i });
+
+    // Gating de consentimiento: sin tildar no se envía
+    expect(sendBtn).toHaveAttribute('aria-disabled', 'true');
+    expect(sendBtn).toHaveClass('disabled');
+    fireEvent.click(sendBtn);
+    expect(trackLead).not.toHaveBeenCalled();
+    expect(localStorage.getItem('gio-legal-consent-v1')).toBeNull();
+
+    const consent = screen.getByRole('checkbox', { name: AUTHORIZE_DATA_LABEL });
+    fireEvent.click(consent);
+
+    expect(sendBtn.getAttribute('aria-disabled')).toBeNull();
+    expect(sendBtn).not.toHaveClass('disabled');
     expect(sendBtn.getAttribute('href')).toContain('Carlos%20Mendoza');
     expect(sendBtn.getAttribute('href')).toContain('Puerto%20As%C3%ADs');
+    expect(sendBtn.getAttribute('href')).toContain('Autorizacion%20de%20datos%20aceptada');
 
     fireEvent.click(sendBtn);
 
@@ -137,6 +152,9 @@ describe('CartFloatingButton Component', () => {
         currency: 'COP',
       })
     );
+
+    const records = JSON.parse(localStorage.getItem('gio-legal-consent-v1') || '[]');
+    expect(records[records.length - 1]).toMatchObject({ form: 'checkout', policyVersion: '2026-10' });
   });
 
   it('renders resilient thumbnail fallback on onError or empty image in cart list', () => {

@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function TerminosPage() {
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export default function TerminosPage() {
           Términos, Condiciones de Uso y Políticas de Privacidad – GIO TECH
         </h1>
         <p className="terminos-date">
-          <em>Última actualización: Junio de 2026</em>
+          <em>Última actualización: Octubre de 2026</em>
         </p>
 
         <p>
@@ -34,7 +34,7 @@ export default function TerminosPage() {
           detenidamente.
         </p>
 
-        <h2>1. Información General</h2>
+        <h2 id="informacion-general">1. Información General</h2>
         <p>
           El sitio web es operado por <strong>GIO TECH</strong>, establecimiento comercial
           ubicado en Puerto Asís, Putumayo, Colombia. Para cualquier duda, reclamación o
@@ -49,7 +49,7 @@ export default function TerminosPage() {
           </li>
         </ul>
 
-        <h2>2. Proceso de Compra y Métodos de Pago</h2>
+        <h2 id="compra">2. Proceso de Compra y Métodos de Pago</h2>
         <p>
           Actualmente, nuestro sitio web funciona como un catálogo digital interactivo y no
           cuenta con pasarela de pagos automatizada. El proceso de compra se gestiona de la
@@ -67,7 +67,7 @@ export default function TerminosPage() {
           </li>
         </ul>
 
-        <h2>3. Políticas de Envío y Entrega</h2>
+        <h2 id="envios">3. Políticas de Envío y Entrega</h2>
         <p>
           Realizamos entregas locales y envíos a diferentes regiones del país. Los costos y
           condiciones de envío se manejan bajo los siguientes criterios:
@@ -85,7 +85,7 @@ export default function TerminosPage() {
           </li>
         </ul>
 
-        <h2>4. Políticas de Garantía</h2>
+        <h2 id="garantias">4. Políticas de Garantía</h2>
         <p>
           En GIO TECH nos tomamos muy en serio la satisfacción de nuestros clientes. Nuestras
           garantías se aplican bajo las siguientes normativas:
@@ -123,12 +123,15 @@ export default function TerminosPage() {
           internos de la tienda han sido removidos o alterados.
         </p>
 
-        <h2>5. Política de Privacidad y Tratamiento de Datos</h2>
+        <h2 id="privacidad">5. Política de Privacidad y Tratamiento de Datos</h2>
         <p>
           En cumplimiento de las normativas de protección de datos personales en Colombia,
-          GIO TECH se compromete a proteger la privacidad de sus usuarios. Los datos
-          solicitados en la plataforma (nombre, teléfono, dirección) se manejan bajo las
-          siguientes condiciones:
+          GIO TECH se compromete a proteger la privacidad de sus usuarios. Los datos que
+          recolectamos según el formulario utilizado son: nombre, municipio de ubicación y
+          datos de contacto; en el servicio técnico, además marca, modelo y descripción de la
+          falla; en la solicitud de crédito, información financiera necesaria para la
+          evaluación de la entidad elegida. Estos datos se manejan bajo las siguientes
+          condiciones:
         </p>
         <ul>
           <li>
@@ -141,13 +144,104 @@ export default function TerminosPage() {
             de servicio técnico y contacto directo con el cliente.
           </li>
           <li>
-            <strong>Seguridad:</strong> GIO TECH no venderá, alquilará ni compartirá los
-            datos personales de los usuarios con ninguna empresa externa o terceros con fines
-            publicitarios.
+            <strong>Encargados y transferencias:</strong> GIO TECH no vende ni alquila datos
+            personales. Sí los tratamos con proveedores que actúan como encargados y bajo
+            nuestras instrucciones (lista en «Responsable del tratamiento» más abajo). Las
+            herramientas de medición y publicitarias (Google Analytics y Meta Pixel) se cargan
+            únicamente si diste tu consentimiento previo, y los datos de interacción que ellas
+            recopilan pueden tratarse fuera de Colombia por empresas de Estados Unidos.
           </li>
         </ul>
 
-        <h2>6. Ley Aplicable</h2>
+        <p>
+          Como titular de tus datos personales tienes derecho a: (i) conocer, actualizar y
+          rectificar la información que tenemos sobre ti; (ii) solicitar prueba de la
+          autorización que nos otorgaste; (iii) revocar esa autorización cuando proceda; (iv)
+          presentar reclamos ante la Superintendencia de Industria y Comercio por el
+          tratamiento indebido de tus datos. Para ejercer estos derechos, escríbenos a
+          giotech.telefonia@gmail.com.
+        </p>
+
+        <p>
+          Otorgas tu autorización mediante el casillero que aparece en los formularios de
+          pedido, crédito y servicio técnico, justo antes de enviar tu solicitud. Cada
+          autorización queda registrada con su fecha y con la versión de estas políticas
+          vigente al momento de aceptar. Puedes revocarla en cualquier momento escribiendo a
+          nuestro correo de contacto.
+        </p>
+
+        <h3>Responsable del tratamiento</h3>
+        <ul>
+          <li>
+            <strong>Responsable:</strong> GIO TECH — [RAZÓN SOCIAL — pendiente] (NIT
+            [PENDIENTE]).
+          </li>
+          <li>
+            <strong>Dirección:</strong> Cra. 32 #13 36, Puerto Asís, Putumayo, Colombia.
+          </li>
+          <li>
+            <strong>Correo de contacto:</strong> giotech.telefonia@gmail.com
+          </li>
+        </ul>
+        <p>
+          <strong>Encargados relevantes del tratamiento:</strong>
+        </p>
+        <ul>
+          <li>
+            <strong>Google LLC (EE. UU.):</strong> alojamiento del sitio (Firebase) y, sólo si
+            lo autorizas, medición estadística con Google Analytics 4.
+          </li>
+          <li>
+            <strong>Groq (EE. UU.):</strong> proveedor del asistente de chat con inteligencia
+            artificial del sitio.
+          </li>
+          <li>
+            <strong>Meta Platforms Inc. (EE. UU.):</strong> sólo si lo autorizas, Meta Pixel
+            para medir campañas y eventos de negocio.
+          </li>
+          <li>
+            <strong>WhatsApp (Meta Platforms Ireland Limited)</strong> — canal de envío de las
+            solicitudes que haces en nuestros formularios; los datos se transmiten por
+            WhatsApp conforme a su propia política de privacidad.
+          </li>
+          <li>
+            <strong>Entidades financieras (Sistecrédito, Esmiopción, PayJoy, Krediya, Celya)</strong>{' '}
+            — cuando solicitas un crédito, los datos del formulario se envían por WhatsApp a GIO
+            TECH y se comparten con la entidad que elegiste para evaluar tu solicitud; en
+            algunos casos serás redirigido al sitio de la entidad para completar el proceso por
+            cuenta propia.
+          </li>
+        </ul>
+
+        <h2 id="tecnologias">6. Tecnologías de rastreo y cookies</h2>
+        <p>
+          Este sitio utiliza dos tecnologías de rastreo de terceros. Ninguna se descarga en tu
+          navegador hasta que tú lo autorizas mediante el banner de cookies o el botón
+          «Preferencias de cookies» del pie de página:
+        </p>
+        <ul>
+          <li>
+            <strong>Google Analytics 4 (GA4)</strong> — proveedor: Google LLC, Estados Unidos.
+            Identificador <code>G-1KGCQBPN75</code>. Registra interacción con el sitio (páginas
+            vistas, eventos) con fines estadísticos. Categoría: analítica.
+          </li>
+          <li>
+            <strong>Meta Pixel</strong> — proveedor: Meta Platforms Inc., Estados Unidos.
+            Identificador <code>939199705550194</code>. Registra interacción con el sitio y
+            eventos de compra/lead (agregar al carrito, contacto por WhatsApp) con fines de
+            medición de campañas publicitarias. Categoría: publicidad.
+          </li>
+        </ul>
+        <p>
+          Puedes aceptarlo todo, quedarte sólo con las cookies necesarias o elegir categoría por
+          categoría. En cualquier momento puedes <strong>revocar tu consentimiento</strong> con
+          el botón «Preferencias de cookies» del pie de página; si reduces permisos, la página
+          se recarga para descargar únicamente lo que sigues autorizando. El detalle de cada
+          categoría y de las cookies técnicas está en la{' '}
+          <Link to="/cookies">Política de cookies</Link>.
+        </p>
+
+        <h2 id="ley-aplicable">7. Ley Aplicable</h2>
         <p>
           Estos términos y condiciones se rigen por las leyes de la República de Colombia.
           Cualquier disputa relacionada con el uso de este sitio web o los servicios
@@ -185,6 +279,7 @@ export default function TerminosPage() {
           margin-top: 1.5rem;
           margin-bottom: 0.5rem;
           color: var(--text-primary, #111);
+          scroll-margin-top: 5rem;
         }
         .terminos-container h3 {
           font-size: 1.05rem;

@@ -5,8 +5,10 @@ import { useCart } from '../contexts/cart-context';
 import { useWhatsappNumber } from '../contexts/whatsapp-number-context';
 import { formatPrice } from '../utils/formatters';
 import { trackLead } from '../utils/metaPixel';
-import { buildCartWhatsAppMessage, buildWhatsAppUrl } from '../utils/whatsapp-messages';
+import { buildCartWhatsAppMessage, buildWhatsAppUrl, appendConsentEvidence } from '../utils/whatsapp-messages';
+import { recordLegalConsent } from '../services/legal-consent.service';
 import ProductImage from './common/ProductImage';
+import ConsentCheckbox from './ConsentCheckbox';
 
 const MUNICIPIOS_PUTUMAYO = [
   'Puerto Asís',
@@ -38,6 +40,7 @@ const CartFloatingButton: React.FC = () => {
   const [nombreCliente, setNombreCliente] = useState('');
   const [municipioCliente, setMunicipioCliente] = useState('Puerto Asís');
   const [otroMunicipio, setOtroMunicipio] = useState('');
+  const [aceptaTerminos, setAceptaTerminos] = useState(false);
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -51,7 +54,11 @@ const CartFloatingButton: React.FC = () => {
     0
   );
 
-  const handleSendToWhatsapp = () => {
+  const handleSendToWhatsapp = (event: React.MouseEvent<HTMLElement>) => {
+    if (!phoneNumber || !aceptaTerminos) {
+      event.preventDefault();
+      return;
+    }
     if (cartItems.length > 0) {
       // Valor del lead calculado sobre el total de contado acumulado con cantidades
       const totalValue = totalContadoEstimado;
@@ -67,13 +74,16 @@ const CartFloatingButton: React.FC = () => {
     } else {
       trackLead();
     }
+    recordLegalConsent('checkout');
     handleClose();
   };
 
-  const whatsappMessage = buildCartWhatsAppMessage(cartItems, {
-    nombre: nombreCliente,
-    municipio: municipioFinal,
-  });
+  const whatsappMessage = appendConsentEvidence(
+    buildCartWhatsAppMessage(cartItems, {
+      nombre: nombreCliente,
+      municipio: municipioFinal,
+    })
+  );
 
   const whatsappUrl = phoneNumber
     ? buildWhatsAppUrl(phoneNumber, whatsappMessage)
@@ -264,7 +274,7 @@ const CartFloatingButton: React.FC = () => {
               </ListGroup>
 
               {/* Sección de Pre-checkout: Datos del Cliente */}
-              <div className="p-3 bg-light rounded border mb-3">
+              <div className="p-3 bg-light rounded border mb-3 checkout-consent-block">
                 <h6 className="fw-bold mb-2 text-dark small text-uppercase letter-spacing">
                   <i className="bi bi-person-lines-fill me-1 text-primary"></i> Datos para el pedido
                 </h6>
@@ -305,6 +315,7 @@ const CartFloatingButton: React.FC = () => {
                     />
                   )}
                 </Form.Group>
+                <ConsentCheckbox checked={aceptaTerminos} onChange={setAceptaTerminos} />
               </div>
 
               {/* Resumen de Total y Botones de Acción */}
@@ -325,7 +336,7 @@ const CartFloatingButton: React.FC = () => {
                     onClick={handleSendToWhatsapp}
                     className="fw-bold py-2 shadow-sm"
                     style={{ backgroundColor: 'var(--brand-green)', borderColor: 'var(--brand-green)' }}
-                    disabled={!phoneNumber}
+                    disabled={!phoneNumber || !aceptaTerminos}
                   >
                     <i className="bi bi-whatsapp me-2"></i> Enviar Pedido a WhatsApp
                   </Button>

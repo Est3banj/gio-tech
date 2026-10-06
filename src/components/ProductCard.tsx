@@ -1,11 +1,13 @@
 // src/components/ProductCard.tsx
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Button, Row, Col } from "react-bootstrap";
+import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../contexts/cart-context";
 import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
-import { buildContadoWhatsAppMessage, buildCreditoWhatsAppMessage, buildWhatsAppUrl } from "../utils/whatsapp-messages";
+import { buildContadoWhatsAppMessage, buildCreditoWhatsAppMessage, buildWhatsAppUrl, appendConsentEvidence } from "../utils/whatsapp-messages";
 import { trackLead } from "../utils/metaPixel";
 import { recordProductView } from "../services/productStats.service";
+import { recordLegalConsent } from "../services/legal-consent.service";
 import { useProductPricing } from "./product-card/useProductPricing";
 import CreditForm from "./product-card/CreditForm";
 import type { CreditFormStatus, AutovalidacionStatus } from "./product-card/CreditForm";
@@ -23,6 +25,8 @@ interface ProductCardProps {
   isPopular?: boolean;
   autoOpen?: boolean;
   onCloseModal?: () => void;
+  /** If true, navigate to ProductPage instead of opening modal */
+  usePageNavigation?: boolean;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({
@@ -30,7 +34,10 @@ const ProductCard: React.FC<ProductCardProps> = ({
   isPopular = false,
   autoOpen = false,
   onCloseModal,
+  usePageNavigation = false,
 }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [mostrar, setMostrar] = useState(false);
   const [step, setStep] = useState<'product' | 'payment' | 'credito-financieras' | 'credito-form'>('product');
   const [paymentAction, setPaymentAction] = useState<'comprar' | 'carrito'>('comprar');
@@ -51,12 +58,16 @@ const ProductCard: React.FC<ProductCardProps> = ({
     if (producto?.id) {
       recordProductView(producto.id);
     }
-    setMostrar(true);
-    setStep('product');
+    if (usePageNavigation) {
+      navigate(`/producto/${producto.id}`);
+    } else {
+      setMostrar(true);
+      setStep('product');
+    }
   };
 
   // Auto-abrir modal si la prop autoOpen es verdadera (deep links)
-  React.useEffect(() => {
+  useEffect(() => {
     if (autoOpen) {
       abrir();
     }
@@ -181,17 +192,19 @@ const ProductCard: React.FC<ProductCardProps> = ({
     if (!selectedFinanciera) return;
     if (!formValid) return;
 
-    const mensaje = buildCreditoWhatsAppMessage({
-      financiera: selectedFinanciera,
-      nombre,
-      precioStr: showPromoPrice ? pricePromoStr : priceRegularStr,
-      cuotaInicialStr,
-      solo12Meses,
-      cuotas12Str,
-      cuotas6Str,
-      cuotas8Str,
-      formData,
-    });
+    const mensaje = appendConsentEvidence(
+      buildCreditoWhatsAppMessage({
+        financiera: selectedFinanciera,
+        nombre,
+        precioStr: showPromoPrice ? pricePromoStr : priceRegularStr,
+        cuotaInicialStr,
+        solo12Meses,
+        cuotas12Str,
+        cuotas6Str,
+        cuotas8Str,
+        formData,
+      })
+    );
 
     trackLead({
       content_type: 'product',
@@ -200,6 +213,8 @@ const ProductCard: React.FC<ProductCardProps> = ({
       value: producto.cuotas6 || producto.cuotas8 || 0,
       currency: 'COP',
     });
+
+    recordLegalConsent('credit');
 
     if (phoneNumber) {
       window.open(buildWhatsAppUrl(phoneNumber, mensaje), '_blank');

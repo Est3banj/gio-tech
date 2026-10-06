@@ -8,6 +8,7 @@ import ServicioTecnicoPage, {
 } from './ServicioTecnicoPage';
 import { WhatsappNumberContext } from '../contexts/whatsapp-number-context';
 import { DEFAULT_MAPS_URL } from './Footer';
+import { AUTHORIZE_DATA_LABEL } from '../data/legal-copy';
 
 describe('ServicioTecnicoPage — Rediseño Ultra-Minimalista Estilo Apple Support & Soporte Híbrido de Video', () => {
   const customWhatsappNumber = '573223652569';
@@ -47,6 +48,14 @@ describe('ServicioTecnicoPage — Rediseño Ultra-Minimalista Estilo Apple Suppo
     expect(
       screen.getByText(/Confirmamos disponibilidad inmediata de repuestos en bodega/i)
     ).toBeInTheDocument();
+
+    // CTA bloqueado hasta aceptar la autorización de datos
+    const ctaAntes = screen.getByText(/Solicitar Cotización con el Técnico en WhatsApp/i)
+      .closest('a');
+    expect(ctaAntes).toHaveAttribute('aria-disabled', 'true');
+    expect(ctaAntes).not.toHaveAttribute('href');
+
+    fireEvent.click(screen.getByRole('checkbox', { name: AUTHORIZE_DATA_LABEL }));
 
     // Botón principal CTA
     expect(
@@ -148,6 +157,8 @@ describe('ServicioTecnicoPage — Rediseño Ultra-Minimalista Estilo Apple Suppo
 
     const symptomsInput = screen.getByPlaceholderText(/El táctil no responde en la parte superior/i);
     fireEvent.change(symptomsInput, { target: { value: 'Se cayó y parpadea en verde' } });
+
+    fireEvent.click(screen.getByRole('checkbox', { name: AUTHORIZE_DATA_LABEL }));
 
     const whatsappLink = screen.getByRole('link', { name: /Solicitar Cotización con el Técnico en WhatsApp/i });
     const href = whatsappLink.getAttribute('href') || '';

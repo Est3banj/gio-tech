@@ -6,6 +6,9 @@ import {
   PUTUMAYO_MUNICIPALITIES,
   type PutumayoMunicipality,
 } from '../data/repair-prices';
+import ConsentCheckbox from './ConsentCheckbox';
+import { recordLegalConsent } from '../services/legal-consent.service';
+import { appendConsentEvidence } from '../utils/whatsapp-messages';
 
 export const FACEBOOK_REPAIR_VIDEO_URL = 'https://www.facebook.com/share/v/1EeYRgs6MY/?mibextid=wwXIfr';
 export const FACEBOOK_REPAIR_EMBED_URL = 'https://www.facebook.com/plugins/video.php?href=https%3A%2F%2Fwww.facebook.com%2Fshare%2Fv%2F1EeYRgs6MY%2F&show_text=false&autoplay=true';
@@ -77,6 +80,7 @@ const ServicioTecnicoPage: React.FC<ServicioTecnicoPageProps> = ({
   const [clientName, setClientName] = useState<string>('');
   const [clientMunicipality, setClientMunicipality] = useState<PutumayoMunicipality>('Puerto Asís');
   const [clientSymptoms, setClientSymptoms] = useState<string>('');
+  const [aceptaTerminos, setAceptaTerminos] = useState<boolean>(false);
 
   const handleOpenFacebook = () => {
     window.open(facebookUrl, '_blank', 'noopener,noreferrer');
@@ -121,8 +125,16 @@ const ServicioTecnicoPage: React.FC<ServicioTecnicoPageProps> = ({
     msg += `📍 *Sede Física:* Cra. 32 #13 36, Puerto Asís, Putumayo\n`;
     msg += `Hola, deseo consultar disponibilidad de repuestos en bodega y cotización para mi equipo.`;
 
-    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(msg)}`;
+    return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(appendConsentEvidence(msg))}`;
   }, [selectedBrand, selectedFalla, modelInput, clientName, clientMunicipality, clientSymptoms, phoneNumber]);
+
+  const handleCtaClick = (event: React.MouseEvent<HTMLAnchorElement>) => {
+    if (!aceptaTerminos) {
+      event.preventDefault();
+      return;
+    }
+    recordLegalConsent('service');
+  };
 
   return (
     <div className="landing-wrapper st-page">
@@ -270,13 +282,20 @@ const ServicioTecnicoPage: React.FC<ServicioTecnicoPageProps> = ({
               </div>
             </div>
 
+            {/* Consentimiento de datos (componente compartido) */}
+            <div className="st-consent-block">
+              <ConsentCheckbox checked={aceptaTerminos} onChange={setAceptaTerminos} />
+            </div>
+
             {/* Botón Principal CTA */}
             <div className="text-center mt-4">
               <a
-                href={whatsappUrl}
+                href={aceptaTerminos ? whatsappUrl : undefined}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="st-whatsapp-cta-btn"
+                className={`st-whatsapp-cta-btn${aceptaTerminos ? '' : ' is-blocked'}`}
+                aria-disabled={!aceptaTerminos}
+                onClick={handleCtaClick}
               >
                 <i className="bi bi-whatsapp me-2"></i>
                 Solicitar Cotización con el Técnico en WhatsApp
