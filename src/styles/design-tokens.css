@@ -1,0 +1,505 @@
+/* ============================================================
+   GIO TECH — DESIGN TOKEN SYSTEM (Single Source of Truth)
+   v2.0 | Nexton-inspired minimal retail + GIO TECH brand red
+   ============================================================ */
+
+/* ─── BRAND COLORS (Constant across modes) ─────────────────── */
+:root {
+  /* Primary Brand — GIO TECH RED (untouched) */
+  --color-brand-primary: #C8102E;
+  --color-brand-primary-dark: #A00C24;
+  --color-brand-primary-light: rgba(200, 16, 46, 0.1);
+  --color-brand-primary-glow: rgba(200, 16, 46, 0.25);
+  --color-brand-primary-soft: rgba(200, 16, 46, 0.07);
+
+  /* Brand Extensions — Nexton-inspired */
+  --color-brand-green: #22c55e;
+  --color-brand-green-dark: #16a34a;
+  --color-brand-green-light: rgba(34, 197, 94, 0.1);
+  --color-brand-blue: #0ea5e9;        /* Nexton accent blue */
+  --color-brand-blue-dark: #0284c7;
+
+  /* Trust/Neutral — Nexton neutrals */
+  --color-neutral-900: #111827;       /* Headings, primary text */
+  --color-neutral-800: #1f2937;
+  --color-neutral-700: #374151;
+  --color-neutral-600: #4B5563;       /* Body text */
+  --color-neutral-500: #6B7280;       /* Muted text */
+  --color-neutral-400: #9CA3AF;       /* Disabled, placeholders */
+  --color-neutral-300: #D1D5DB;       /* Borders hover */
+  --color-neutral-200: #E5E7EB;       /* Borders default */
+  --color-neutral-100: #F3F4F6;       /* Hover backgrounds */
+  --color-neutral-50:  #F8F8F8;       /* Section backgrounds */
+  --color-neutral-0:   #FFFFFF;       /* Card backgrounds */
+
+  /* Semantic accents — Nexton style */
+  --color-accent: #0EA5E9;            /* Links, focus, active states */
+  --color-accent-hover: #0284C7;
+  --color-promo: #FBBF24;             /* Promo badges, rating stars */
+  --color-promo-dark: #F59E0B;
+  --color-rating-star: #FBBF24;
+
+  /* Semantic Shadows (Brand) */
+  --shadow-brand-green: 0 6px 20px rgba(34, 197, 94, 0.32);
+  --shadow-brand-green-hover: 0 10px 28px rgba(34, 197, 94, 0.42);
+  --shadow-brand-red: 0 4px 12px rgba(200, 16, 46, 0.2);
+  --shadow-success: 0 4px 12px rgba(34, 197, 94, 0.2);
+  --shadow-warning: 0 4px 12px rgba(245, 158, 11, 0.2);
+  --shadow-error: 0 4px 12px rgba(239, 68, 68, 0.2);
+}
+
+/* ─── SEMANTIC COLOR SYSTEM (Light Mode Default) ───────────── */
+:root {
+  /* Backgrounds — Nexton clean neutrals */
+  --bg-app: #F8F8F8;
+  --bg-primary: #F8F8F8;
+  --bg-secondary: #FFFFFF;
+  --bg-tertiary: #F3F4F6;
+  --bg-card: #FFFFFF;
+  --bg-input: #FFFFFF;
+  --bg-modal: #FFFFFF;
+  --bg-filter: #F3F4F6;
+  --bg-header: rgba(248, 248, 248, 0.85);
+  --bg-hover: #F3F4F6;
+  --bg-active: #E5E7EB;
+  --bg-disabled: #F3F4F6;
+
+  /* Glassmorphism — subtle */
+  --bg-glass: rgba(255, 255, 255, 0.8);
+  --bg-glass-card: rgba(255, 255, 255, 0.9);
+  --glass-blur: blur(16px) saturate(150%);
+  --border-translucent: rgba(255, 255, 255, 0.2);
+
+  /* Text — Nexton neutrals */
+  --text-primary: #111827;
+  --text-secondary: #4B5563;
+  --text-tertiary: #6B7280;
+  --text-muted: #9CA3AF;
+  --text-disabled: #D1D5DB;
+  --text-placeholder: #9CA3AF;
+  --text-inverse: #FFFFFF;
+  --text-nav: #111827;
+  --text-link: var(--color-brand-primary);
+
+  /* Borders — Nexton subtle */
+  --border-color: #E5E7EB;
+  --border-input: #E5E7EB;
+  --border-subtle: #F3F4F6;
+  --border-focus: var(--color-brand-primary);
+  --border-error: #EF4444;
+
+  /* Semantic Status Colors — Nexton inspired */
+  --success: #22C55E;
+  --success-light: rgba(34, 197, 94, 0.1);
+  --success-dark: #16A34A;
+  --warning: #F59E0B;
+  --warning-light: rgba(245, 158, 11, 0.1);
+  --warning-dark: #D97706;
+  --error: #EF4444;
+  --error-light: rgba(239, 68, 68, 0.1);
+  --error-dark: #DC2626;
+  --info: #0EA5E9;
+  --info-light: rgba(14, 165, 233, 0.1);
+  --info-dark: #0284C7;
+
+  /* Elevation / Shadows — Nexton subtle (no heavy shadows on rest) */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.05), 0 2px 4px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.06), 0 4px 8px rgba(0, 0, 0, 0.04);
+  --shadow-xl: 0 20px 30px rgba(0, 0, 0, 0.07);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.08);
+  --shadow-brand: 0 4px 12px rgba(200, 16, 46, 0.2);
+  --shadow-glow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  --shadow-focus: 0 0 0 3px rgba(200, 16, 46, 0.2);
+
+  /* Radius — Nexton softer (12px cards) */
+  --radius-none: 0;
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+  --radius-full: 9999px;
+  --radius-card: 12px;
+
+  /* Spacing Scale (4px base) */
+  --space-0: 0;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-14: 56px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-32: 128px;
+
+  /* Spacing Semantic Aliases */
+  --space-xs: var(--space-1);
+  --space-sm: var(--space-2);
+  --space-md: var(--space-4);
+  --space-lg: var(--space-6);
+  --space-xl: var(--space-8);
+  --space-2xl: var(--space-12);
+  --space-3xl: var(--space-16);
+
+  /* Typography — Fluid Scale with clamp() */
+  /* Base: 1rem = 16px */
+  --font-family-sans: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Font Sizes (fluid) */
+  --text-xs: clamp(0.7rem, 0.65rem + 0.25vw, 0.75rem);      /* ~11-12px */
+  --text-sm: clamp(0.8rem, 0.75rem + 0.25vw, 0.875rem);     /* ~13-14px */
+  --text-base: clamp(0.9375rem, 0.875rem + 0.3125vw, 1rem); /* ~15-16px */
+  --text-lg: clamp(1rem, 0.9375rem + 0.3125vw, 1.0625rem);  /* ~16-17px */
+  --text-xl: clamp(1.125rem, 1.0625rem + 0.3125vw, 1.1875rem); /* ~18-19px */
+  --text-2xl: clamp(1.25rem, 1.125rem + 0.625vw, 1.5rem);   /* ~20-24px */
+  --text-3xl: clamp(1.5rem, 1.25rem + 1.25vw, 2rem);        /* ~24-32px */
+  --text-4xl: clamp(2rem, 1.5rem + 2.5vw, 3rem);            /* ~32-48px */
+  --text-5xl: clamp(2.5rem, 2rem + 2.5vw, 3.5rem);          /* ~40-56px */
+  --text-6xl: clamp(3rem, 2.5rem + 2.5vw, 4.5rem);          /* ~48-72px */
+
+  /* Font Weights */
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+
+  /* Line Heights */
+  --leading-none: 1;
+  --leading-tight: 1.1;
+  --leading-snug: 1.25;
+  --leading-normal: 1.4;
+  --leading-relaxed: 1.5;
+  --leading-loose: 1.6;
+
+  /* Letter Spacing */
+  --tracking-tighter: -0.03em;
+  --tracking-tight: -0.02em;
+  --tracking-normal: 0;
+  --tracking-wide: 0.01em;
+  --tracking-wider: 0.02em;
+  --tracking-widest: 0.04em;
+
+  /* Motion — Durations */
+  --duration-instant: 0ms;
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --duration-normal: 250ms;
+  --duration-slow: 300ms;
+  --duration-modal: 400ms;
+  --duration-slowest: 500ms;
+
+  /* Motion — Easings */
+  --ease-linear: linear;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);        /* Strong ease-out — UI entrances */
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);     /* Strong ease-in-out for on-screen movement */
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);      /* iOS-like drawer curve (Ionic) */
+  --ease-sharp: cubic-bezier(0.4, 0, 0.2, 1);         /* Material standard */
+
+  /* Motion — Transitions (Semantic) */
+  --trans-fast: var(--duration-fast) var(--ease-out);
+  --trans-base: var(--duration-base) var(--ease-out);
+  --trans-normal: var(--duration-normal) var(--ease-out);
+  --trans-slow: var(--duration-slow) var(--ease-out);
+  --trans-modal: var(--duration-modal) var(--ease-out);
+  --trans-spring: var(--duration-normal) var(--ease-out); /* Use transition with ease-out for spring-like feel */
+
+  /* Spring Configs (for JS/WAAPI usage — not CSS variables) */
+  /* Apple-style spring: { type: "spring", duration: 0.5, bounce: 0.2 } */
+  /* Traditional physics: { type: "spring", mass: 1, stiffness: 100, damping: 10 } */
+  /* Keep bounce subtle (0.1–0.3); avoid bounce in most UI — reserve for drag-to-dismiss and playful interactions */
+
+  /* Breakpoints (Mobile-first) */
+  --bp-xs: 375px;
+  --bp-sm: 576px;
+  --bp-md: 768px;
+  --bp-lg: 992px;
+  --bp-xl: 1200px;
+  --bp-2xl: 1400px;
+
+  /* Container Max Widths */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+  --container-2xl: 1360px;
+  --container-full: 100%;
+
+  /* Z-Index Scale */
+  --z-hide: -1;
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-fixed: 300;
+  --z-modal-backdrop: 1000;
+  --z-modal: 1050;
+  --z-popover: 1100;
+  --z-tooltip: 1200;
+  --z-toast: 1300;
+  --z-max: 2147483647;
+
+  /* Border Widths */
+  --border-width-hairline: 0.5px;
+  --border-width-thin: 1px;
+  --border-width-base: 1.5px;
+  --border-width-thick: 2px;
+  --border-width-thicker: 3px;
+
+  /* Opacity */
+  --opacity-0: 0;
+  --opacity-5: 0.05;
+  --opacity-10: 0.1;
+  --opacity-20: 0.2;
+  --opacity-30: 0.3;
+  --opacity-40: 0.4;
+  --opacity-50: 0.5;
+  --opacity-60: 0.6;
+  --opacity-70: 0.7;
+  --opacity-80: 0.8;
+  --opacity-90: 0.9;
+  --opacity-100: 1;
+
+  /* Derived Helpers */
+  --focus-ring: 0 0 0 3px var(--color-brand-primary-light);
+  --focus-ring-error: 0 0 0 3px var(--error-light);
+  --focus-ring-success: 0 0 0 3px var(--success-light);
+}
+
+/* ─── DARK MODE OVERRIDES ──────────────────────────────────── */
+.dark-mode {
+  /* Backgrounds — Nexton dark */
+  --bg-app: #111827;
+  --bg-primary: #111827;
+  --bg-secondary: #1F2937;
+  --bg-tertiary: #374151;
+  --bg-card: #1F2937;
+  --bg-input: #1F2937;
+  --bg-modal: #1F2937;
+  --bg-filter: #374151;
+  --bg-header: rgba(17, 24, 39, 0.92);
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --bg-active: rgba(255, 255, 255, 0.1);
+  --bg-disabled: #374151;
+
+  --bg-glass: rgba(17, 24, 39, 0.8);
+  --bg-glass-card: rgba(31, 41, 55, 0.8);
+  --border-translucent: rgba(255, 255, 255, 0.06);
+
+  /* Text — Nexton dark */
+  --text-primary: #F9FAFB;
+  --text-secondary: #D1D5DB;
+  --text-tertiary: #9CA3AF;
+  --text-muted: #6B7280;
+  --text-disabled: #4B5563;
+  --text-placeholder: #6B7280;
+  --text-inverse: #111827;
+  --text-nav: #F9FAFB;
+  --text-link: #F87171;
+
+  /* Borders — Nexton dark */
+  --border-color: #374151;
+  --border-input: #4B5563;
+  --border-subtle: #1F2937;
+  --border-focus: var(--color-brand-primary);
+
+  /* Elevation — Nexton dark subtle */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 8px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.6);
+  --shadow-xl: 0 20px 30px rgba(0, 0, 0, 0.7);
+  --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.8);
+  --shadow-brand: 0 4px 12px rgba(200, 16, 46, 0.3);
+  --shadow-glow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  --shadow-focus: 0 0 0 3px rgba(200, 16, 46, 0.3);
+
+  /* Semantic Status (adjusted for dark) */
+  --success-light: rgba(34, 197, 94, 0.15);
+  --warning-light: rgba(245, 158, 11, 0.15);
+  --error-light: rgba(239, 68, 68, 0.15);
+  --info-light: rgba(14, 165, 233, 0.15);
+}
+
+/* ─── REDUCED MOTION (Global Kill Switch) ──────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Keep opacity/color transitions for comprehension */
+  * {
+    transition-property: opacity, color, background-color, border-color, fill, stroke !important;
+  }
+}
+
+/* ─── FOCUS VISIBLE (Global Accessibility) ─────────────────── */
+:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: 2px;
+}
+
+.dark-mode :focus-visible {
+  outline-color: var(--color-brand-primary);
+}
+
+/* ─── NATIVE MOBILE FEEL ───────────────────────────────────── */
+html {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Press feedback for all interactive elements */
+button,
+a[role="button"],
+button:not(:disabled),
+a[role="button"]:not([aria-disabled="true"]),
+input[type="button"],
+input[type="submit"],
+input[type="reset"],
+[role="button"]:not([aria-disabled="true"]) {
+  transition: transform var(--trans-fast), background-color var(--trans-fast), box-shadow var(--trans-fast);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  button:hover,
+  a[role="button"]:hover,
+  button:not(:disabled):hover,
+  a[role="button"]:not([aria-disabled="true"]):hover,
+  input[type="button"]:hover,
+  input[type="submit"]:hover,
+  [role="button"]:not([aria-disabled="true"]):hover {
+    transform: translateY(-1px);
+  }
+}
+
+button:active,
+a[role="button"]:active,
+button:not(:disabled):active,
+a[role="button"]:not([aria-disabled="true"]):active,
+input[type="button"]:active,
+input[type="submit"]:active,
+[role="button"]:not([aria-disabled="true"]):active {
+  transform: scale(0.97);
+}
+
+input, select, textarea {
+  font-size: 16px; /* Prevents iOS zoom on focus */
+}
+
+/* Overscroll behavior */
+html, body {
+  overscroll-behavior: none;
+}
+
+/* ─── SAFE AREA INSETS (iOS notch/home indicator) ──────────── */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-left { padding-left: env(safe-area-inset-left); }
+.safe-right { padding-right: env(safe-area-inset-right); }
+.safe-all { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }
+
+/* ─── FLUID TYPE UTILITY CLASSES ───────────────────────────── */
+.text-display { font-size: var(--text-6xl); font-weight: var(--font-weight-extrabold); line-height: var(--leading-tight); letter-spacing: var(--tracking-tighter); }
+.text-h1 { font-size: var(--text-5xl); font-weight: var(--font-weight-extrabold); line-height: var(--leading-tight); letter-spacing: var(--tracking-tighter); }
+.text-h2 { font-size: var(--text-4xl); font-weight: var(--font-weight-bold); line-height: var(--leading-snug); letter-spacing: var(--tracking-tight); }
+.text-h3 { font-size: var(--text-3xl); font-weight: var(--font-weight-bold); line-height: var(--leading-snug); letter-spacing: var(--tracking-tight); }
+.text-h4 { font-size: var(--text-2xl); font-weight: var(--font-weight-bold); line-height: var(--leading-normal); }
+.text-h5 { font-size: var(--text-xl); font-weight: var(--font-weight-semibold); line-height: var(--leading-normal); }
+.text-h6 { font-size: var(--text-lg); font-weight: var(--font-weight-semibold); line-height: var(--leading-normal); }
+
+.text-body-lg { font-size: var(--text-lg); line-height: var(--leading-relaxed); }
+.text-body { font-size: var(--text-base); line-height: var(--leading-normal); }
+.text-body-sm { font-size: var(--text-sm); line-height: var(--leading-normal); }
+.text-caption { font-size: var(--text-xs); line-height: var(--leading-normal); letter-spacing: var(--tracking-wide); text-transform: uppercase; }
+
+/* ─── SPACING UTILITY CLASSES ──────────────────────────────── */
+.p-0 { padding: var(--space-0); }
+.p-1 { padding: var(--space-1); }
+.p-2 { padding: var(--space-2); }
+.p-3 { padding: var(--space-3); }
+.p-4 { padding: var(--space-4); }
+.p-5 { padding: var(--space-5); }
+.p-6 { padding: var(--space-6); }
+.p-8 { padding: var(--space-8); }
+.p-10 { padding: var(--space-10); }
+.p-12 { padding: var(--space-12); }
+.p-16 { padding: var(--space-16); }
+
+.m-0 { margin: var(--space-0); }
+.m-1 { margin: var(--space-1); }
+.m-2 { margin: var(--space-2); }
+.m-3 { margin: var(--space-3); }
+.m-4 { margin: var(--space-4); }
+.m-5 { margin: var(--space-5); }
+.m-6 { margin: var(--space-6); }
+.m-8 { margin: var(--space-8); }
+.m-10 { margin: var(--space-10); }
+.m-12 { margin: var(--space-12); }
+.m-16 { margin: var(--space-16); }
+
+.mx-auto { margin-left: auto; margin-right: auto; }
+.my-auto { margin-top: auto; margin-bottom: auto; }
+
+/* ─── SHADOW UTILITY CLASSES ───────────────────────────────── */
+.shadow-xs { box-shadow: var(--shadow-xs); }
+.shadow-sm { box-shadow: var(--shadow-sm); }
+.shadow-md { box-shadow: var(--shadow-md); }
+.shadow-lg { box-shadow: var(--shadow-lg); }
+.shadow-xl { box-shadow: var(--shadow-xl); }
+.shadow-2xl { box-shadow: var(--shadow-2xl); }
+.shadow-brand { box-shadow: var(--shadow-brand); }
+.shadow-glow { box-shadow: var(--shadow-glow); }
+
+/* ─── RADIUS UTILITY CLASSES ───────────────────────────────── */
+.rounded-none { border-radius: var(--radius-none); }
+.rounded-xs { border-radius: var(--radius-xs); }
+.rounded-sm { border-radius: var(--radius-sm); }
+.rounded-md { border-radius: var(--radius-md); }
+.rounded-lg { border-radius: var(--radius-lg); }
+.rounded-xl { border-radius: var(--radius-xl); }
+.rounded-2xl { border-radius: var(--radius-2xl); }
+.rounded-full { border-radius: var(--radius-full); }
+.rounded-card { border-radius: var(--radius-card); }
+
+/* ─── TRANSITION UTILITY CLASSES ───────────────────────────── */
+.trans-fast { transition: all var(--trans-fast); }
+.trans-base { transition: all var(--trans-base); }
+.trans-slow { transition: all var(--trans-slow); }
+.trans-spring { transition: all var(--trans-spring); }
+
+/* ─── CONTAINER UTILITY ────────────────────────────────────── */
+.container {
+  width: 100%;
+  max-width: var(--container-2xl);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+}
+
+@media (max-width: 576px) {
+  .container { padding-left: var(--space-4); padding-right: var(--space-4); }
+}
+
+/* ─── SAFE AREA INSETS (iOS notch/home indicator) ──────────── */
+.safe-top { padding-top: env(safe-area-inset-top); }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
+.safe-left { padding-left: env(safe-area-inset-left); }
+.safe-right { padding-right: env(safe-area-inset-right); }
+.safe-all { padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left); }

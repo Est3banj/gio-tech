@@ -1,0 +1,484 @@
+/* ============================================================
+   src/components/search-autocomplete.css
+   SEARCH AUTOCOMPLETE — NEXTON STYLE
+   ============================================================ */
+
+/* ─── Wrapper ─────────────────────────────────────────────── */
+.search-autocomplete {
+  position: relative;
+  width: 100%;
+}
+
+.search-autocomplete .form-control {
+  padding-right: 48px; /* Space for clear button */
+  transition: border-color var(--trans-fast), box-shadow var(--trans-fast);
+}
+
+.search-autocomplete .form-control:focus {
+  border-color: var(--color-brand-primary);
+  box-shadow: var(--shadow-focus);
+}
+
+/* Size variants */
+.search-autocomplete-sm .form-control {
+  padding: 0.4rem 40px 0.4rem 0.75rem;
+  font-size: 0.85rem;
+}
+
+.search-autocomplete-lg .form-control {
+  padding: 1rem 56px 1rem 1.25rem;
+  font-size: 1.125rem;
+}
+
+/* Icon */
+.search-autocomplete-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-tertiary);
+  font-size: 1.1rem;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.search-autocomplete-sm .search-autocomplete-icon {
+  left: 0.65rem;
+  font-size: 1rem;
+}
+
+.search-autocomplete-lg .search-autocomplete-icon {
+  left: 1.15rem;
+  font-size: 1.25rem;
+}
+
+.search-autocomplete .form-control {
+  padding-left: 2.75rem;
+}
+
+.search-autocomplete-sm .form-control {
+  padding-left: 2.25rem;
+}
+
+.search-autocomplete-lg .form-control {
+  padding-left: 3.25rem;
+}
+
+/* Clear button */
+.search-autocomplete-clear {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  color: var(--text-tertiary);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  transition: all var(--trans-fast);
+  z-index: 3;
+}
+
+@media (hover: hover) {
+  .search-autocomplete-clear:hover {
+    background: var(--color-neutral-100);
+    color: var(--color-brand-primary);
+  }
+}
+
+.dark-mode .search-autocomplete-clear:hover {
+  background: var(--color-neutral-800);
+}
+
+/* ─── Results Dropdown ────────────────────────────────────── */
+.search-autocomplete-results {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  z-index: 1050;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  overflow: hidden;
+  animation: dropdownIn 0.15s var(--ease-out);
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+@keyframes dropdownIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dark-mode .search-autocomplete-results {
+  background: var(--bg-modal);
+  border-color: var(--border-color);
+  box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+}
+
+/* ─── Encabezado de sección (Acceso rápido) ───────────────── */
+.search-section-header {
+  padding: 0.6rem 1rem 0.35rem;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-tertiary);
+  border-bottom: 1px solid var(--border-color);
+  background: var(--color-neutral-50);
+}
+
+.dark-mode .search-section-header {
+  color: var(--text-tertiary);
+  background: var(--color-neutral-800);
+  border-bottom-color: var(--border-color);
+}
+
+/* ─── Suggestion Items ────────────────────────────────────── */
+.search-suggestion {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: none;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background var(--trans-fast);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.search-suggestion:last-child {
+  border-bottom: none;
+}
+
+@media (hover: hover) {
+  .search-suggestion:hover {
+    background: var(--color-brand-primary-light);
+  }
+}
+
+.search-suggestion.highlighted {
+  background: var(--color-brand-primary-light);
+}
+
+.search-suggestion:focus-visible {
+  outline: none;
+  background: var(--color-brand-primary-light);
+}
+
+/* Content layout */
+.suggestion-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.suggestion-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-sublabel {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.suggestion-price {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.15rem;
+}
+
+.suggestion-price .suggestion-price-value {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--color-brand-primary);
+}
+
+.suggestion-original-price {
+  font-size: 0.7rem;
+  color: var(--text-tertiary);
+  text-decoration: line-through;
+}
+
+/* Image */
+.suggestion-image {
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+  background: var(--color-neutral-50);
+}
+
+.dark-mode .suggestion-image {
+  background: var(--color-neutral-800);
+}
+
+.suggestion-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 0.25rem;
+}
+
+/* Badges */
+.suggestion-badge {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 0.15rem 0.5rem;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.suggestion-badge.product {
+  background: var(--info-light);
+  color: var(--info);
+}
+
+.suggestion-badge.category {
+  background: var(--success-light);
+  color: var(--success);
+}
+
+.suggestion-badge.recent {
+  background: var(--color-neutral-100);
+  color: var(--text-tertiary);
+}
+
+.dark-mode .suggestion-badge.recent {
+  background: var(--color-neutral-800);
+  color: var(--text-tertiary);
+}
+
+/* Category icon */
+.suggestion-category-icon {
+  font-size: 1.25rem;
+  color: var(--color-accent);
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+}
+
+/* Recent icon */
+.suggestion-recent-icon {
+  font-size: 1rem;
+  color: var(--text-tertiary);
+  flex-shrink: 0;
+  width: 24px;
+  text-align: center;
+}
+
+/* ─── Empty State ─────────────────────────────────────────── */
+.search-suggestion-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  color: var(--text-tertiary);
+}
+
+.search-suggestion-empty i {
+  font-size: 2.5rem;
+  opacity: 0.4;
+}
+
+.search-suggestion-empty span {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.search-suggestion-empty .btn-link {
+  font-weight: 600;
+  color: var(--color-accent);
+}
+
+@media (hover: hover) {
+  .search-suggestion-empty .btn-link:hover {
+    color: var(--color-accent-hover);
+    text-decoration: underline;
+  }
+}
+
+/* ─── Loading State ───────────────────────────────────────── */
+.search-autocomplete-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  color: var(--text-tertiary);
+}
+
+.search-autocomplete-loading .spinner-border {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+/* ─── Size Variants ───────────────────────────────────────── */
+.search-autocomplete-sm .form-control {
+  padding: 0.4rem 40px 0.4rem 2.5rem;
+  font-size: 0.85rem;
+  min-height: 40px;
+}
+
+.search-autocomplete-lg .form-control {
+  padding: 1rem 56px 1rem 3.25rem;
+  font-size: 1.125rem;
+  min-height: 56px;
+}
+
+.search-autocomplete-lg .search-autocomplete-icon {
+  font-size: 1.25rem;
+}
+
+.search-autocomplete-lg .search-autocomplete-clear {
+  width: 40px;
+  height: 40px;
+}
+
+/* Results sizing */
+.search-autocomplete-lg .search-autocomplete-results {
+  font-size: 1rem;
+}
+
+.search-autocomplete-lg .search-suggestion {
+  padding: 1rem 1.25rem;
+}
+
+.search-autocomplete-lg .suggestion-label {
+  font-size: 1rem;
+}
+
+.search-autocomplete-lg .suggestion-image {
+  width: 56px;
+  height: 56px;
+}
+
+/* ─── Mobile Optimizations ────────────────────────────────── */
+@media (max-width: 768px) {
+  .search-autocomplete-results {
+    position: fixed;
+    top: auto;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
+    max-height: 70vh;
+    border-top: 1px solid var(--border-color);
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+    animation: slideUp 0.25s var(--ease-spring);
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .search-suggestion {
+    padding: 1rem;
+  }
+
+  .suggestion-image {
+    width: 56px;
+    height: 56px;
+  }
+}
+
+/* ─── Focus Visible ───────────────────────────────────────── */
+.search-autocomplete-input:focus-visible {
+  outline: none;
+}
+
+.search-suggestion:focus-visible {
+  outline: 2px solid var(--color-brand-primary);
+  outline-offset: -2px;
+}
+
+/* ─── Scrollbar ───────────────────────────────────────────── */
+.search-autocomplete-results::-webkit-scrollbar {
+  width: 6px;
+}
+
+.search-autocomplete-results::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.search-autocomplete-results::-webkit-scrollbar-thumb {
+  background: var(--color-neutral-300);
+  border-radius: 3px;
+}
+
+@media (hover: hover) {
+  .search-autocomplete-results::-webkit-scrollbar-thumb:hover {
+    background: var(--color-neutral-400);
+  }
+}
+
+/* ─── Disabled State ──────────────────────────────────────── */
+.search-autocomplete .form-control:disabled {
+  background: var(--bg-disabled);
+  color: var(--text-disabled);
+  cursor: not-allowed;
+}
+
+/* ─── RTL Support ─────────────────────────────────────────── */
+[dir="rtl"] .search-autocomplete-icon {
+  left: auto;
+  right: 0.85rem;
+}
+
+[dir="rtl"] .search-autocomplete .form-control {
+  padding-left: 0.75rem;
+  padding-right: 2.75rem;
+}
+
+[dir="rtl"] .search-autocomplete-clear {
+  right: auto;
+  left: 0.5rem;
+}
+
+[dir="rtl"] .search-suggestion {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .suggestion-content {
+  text-align: right;
+}
