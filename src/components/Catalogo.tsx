@@ -4,6 +4,7 @@ import Fuse from "fuse.js";
 import { useProducts } from "../hooks/useProducts";
 import { normalizeText } from "../utils/formatters";
 import ProductCard from "./ProductCard";
+import Reveal from "./Reveal";
 import { Row, Col, Form, Spinner } from 'react-bootstrap';
 import BannerSlider from "./BannerSlider";
 import GeminiChat from "./GeminiChat";
@@ -160,15 +161,24 @@ const Catalogo: React.FC = () => {
         const prodName = normalizeText(producto.nombre || "");
         const prodDesc = normalizeText(producto.descripcion || "");
 
-        const aliasMatch = KNOWN_BRAND_MAP[marcaFiltrada]?.aliases.some(
-          (alias) => prodName.includes(alias) || prodDesc.includes(alias)
+        // Coincidencia por PALABRA COMPLETA — un includes() suelto hacía que
+        // 'mi' o 'poco' (aliases de Xiaomi) matchearan media descripción y
+        // ?marca=Xiaomi devolviera Samsung/Apple/UGREEN.
+        const wordMatch = (text: string, term: string) =>
+          new RegExp(`(^|\\s)${term}(\\s|$)`, "i").test(text);
+
+        // Aliases (redmi, spark, galaxy...) solo al INICIO del nombre: 'note'
+        // o 'smart' a mitad de frase no identifican la marca (ej. "Redmi Note"
+        // o "Smart TV" no son Infinix).
+        const aliasMatch = KNOWN_BRAND_MAP[marcaFiltrada]?.aliases.some((alias) =>
+          new RegExp(`^${alias}(\\s|$)`, "i").test(prodName)
         );
 
         coincideMarca =
           prodBrand === marcaFiltrada ||
           rawBrand === marcaFiltrada ||
-          prodName.includes(marcaFiltrada) ||
-          prodDesc.includes(marcaFiltrada) ||
+          wordMatch(prodName, marcaFiltrada) ||
+          wordMatch(prodDesc, marcaFiltrada) ||
           Boolean(aliasMatch);
       }
 
@@ -360,13 +370,16 @@ const Catalogo: React.FC = () => {
           </div>
         ) : (
           <Row className="g-3 g-sm-3 g-md-4 justify-content-start">
-            {productosOrdenados.map((producto) => (
+            {productosOrdenados.map((producto, i) => (
               <Col key={producto.id} xs={12} sm={6} md={6} lg={4} xl={4} xxl={3} className="d-flex">
-                <ProductCard
-                  producto={producto}
-                  autoOpen={isTargetProduct(producto)}
-                  onCloseModal={handleProductModalClose}
-                />
+                <Reveal delay={(i % 8) * 40} className="w-100">
+                  <ProductCard
+                    producto={producto}
+                    autoOpen={isTargetProduct(producto)}
+                    onCloseModal={handleProductModalClose}
+                    usePageNavigation={isTargetProduct(producto)}
+                  />
+                </Reveal>
               </Col>
             ))}
           </Row>
@@ -379,6 +392,7 @@ const Catalogo: React.FC = () => {
               producto={deepLinkedProduct}
               autoOpen={true}
               onCloseModal={handleProductModalClose}
+              usePageNavigation={true}
             />
           </div>
         )}
