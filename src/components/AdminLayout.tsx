@@ -48,6 +48,12 @@ const menuItems = [
     badgeKey: "totalAsesores" as const,
     adminOnly: true,
   },
+  {
+    key: "opiniones",
+    label: "Opiniones de Google",
+    icon: "bi-star-fill",
+    adminOnly: true,
+  },
 ];
 
 const sectionTitles: Record<string, { title: string; subtitle: string }> = {
@@ -70,6 +76,10 @@ const sectionTitles: Record<string, { title: string; subtitle: string }> = {
   asesores: {
     title: "Equipo & Asesores",
     subtitle: "Gestión de asesores comerciales y permisos de acceso al sistema",
+  },
+  opiniones: {
+    title: "Opiniones de Google",
+    subtitle: "Reseñas reales de tu ficha de Google para la página de inicio",
   },
 };
 

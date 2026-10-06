@@ -208,6 +208,20 @@ export interface Asesor {
 }
 
 // ---------------------------------------------------------------------
+// OPINIONES DE GOOGLE (reseñas reales curadas desde el panel admin)
+// ---------------------------------------------------------------------
+export interface Opinion {
+  id: string;
+  autor: string;
+  estrellas: number;
+  texto: string;
+  ubicacion?: string;
+  perfilUrl?: string;
+  activo: boolean;
+  createdAt?: Date;
+}
+
+// ---------------------------------------------------------------------
 // 💬 CHAT / MENSAJES
 // ---------------------------------------------------------------------
 export interface ChatMessage {

@@ -16,6 +16,7 @@ import AdminLayout from "./AdminLayout";
 import AdminProductsList from "./AdminProductsList";
 import AdminBusinessConfig from "./AdminBusinessConfig";
 import AdminAsesoresTab from "./AdminAsesoresTab";
+import AdminOpinionsTab from "./AdminOpinionsTab";
 import AdminCarouselManager from "./AdminCarouselManager";
 import AdminAddProductTab from "./AdminAddProductTab";
 import SimpleModal from "./SimpleModal";
@@ -329,7 +330,7 @@ function AdminPanel() {
     <AdminLayout
       currentSection={key}
       onSectionChange={(k) => {
-        if ((k === "negocio" || k === "asesores") && role !== "admin") {
+        if ((k === "negocio" || k === "asesores" || k === "opiniones") && role !== "admin") {
           setKey("productos");
           return;
         }
@@ -373,7 +374,7 @@ function AdminPanel() {
           activeKey={key}
           onSelect={(k) => {
             const nextKey = k || "productos";
-            if ((nextKey === "negocio" || nextKey === "asesores") && role !== "admin") {
+            if ((nextKey === "negocio" || nextKey === "asesores" || nextKey === "opiniones") && role !== "admin") {
               setKey("productos");
             } else {
               setKey(nextKey);
@@ -553,6 +554,13 @@ function AdminPanel() {
               setKey={setKey}
             />
           </Tab>
+
+          {/* TAB 6: OPINIONES DE GOOGLE (Admin Only) */}
+          {role === "admin" && (
+            <Tab eventKey="opiniones" title="Opiniones">
+              <AdminOpinionsTab setError={setError} setSuccess={setSuccess} />
+            </Tab>
+          )}
         </Tabs>
 
         {/* Safe 1-Step Delete Product Modal */}

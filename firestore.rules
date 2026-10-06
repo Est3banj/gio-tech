@@ -78,5 +78,11 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // --- OPINIONES DE GOOGLE (reseñas reales curadas en el panel admin) ---
+    match /opiniones/{opinionId} {
+      allow read: if true;
+      allow create, update, delete: if isAdmin();
+    }
+
   }
 }

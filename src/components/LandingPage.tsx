@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, Navigate, useSearchParams } from "react-router-dom";
+import React, { useState } from "react";
+import { Link, Navigate, useSearchParams, useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import { usePopularProducts } from "../hooks/usePopularProducts";
 import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
@@ -8,6 +8,10 @@ import BannerSlider from "./BannerSlider";
 import { BrandLogo } from "./BrandLogos";
 import { seleccionarDestacados } from "../utils/featured-products";
 import { DEFAULT_MAPS_URL } from "./Footer";
+import SearchAutocomplete from "./SearchAutocomplete";
+import Reveal from "./Reveal";
+import ReviewsFeed, { type FeedReview } from "./ReviewsFeed";
+import { useOpinions } from "../hooks/useOpinions";
 import type { Product } from "../types";
 
 interface TrustItem {
@@ -20,14 +24,6 @@ export interface BrandShortcut {
   name: string;
   queryParam: string;
   subtitle: string;
-}
-
-interface Review {
-  name: string;
-  rating: number;
-  text: string;
-  location: string;
-  avatar: string;
 }
 
 const trustItems: TrustItem[] = [
@@ -60,52 +56,109 @@ export const brandShortcuts: BrandShortcut[] = [
   { name: "Motorola", queryParam: "Motorola", subtitle: "Moto G & Edge" },
   { name: "Tecno", queryParam: "Tecno", subtitle: "Spark & Camon" },
   { name: "Infinix", queryParam: "Infinix", subtitle: "Hot & Note" },
-  { name: "Honor", queryParam: "Honor", subtitle: "Magic & Serie X" },
 ];
 
-const reviews: Review[] = [
+/** Iniciales para el avatar del feed (2 letras máx.). */
+function initialsFrom(name: string): string {
+  const parts = name.trim().split(/\s+/).filter(Boolean);
+  if (parts.length === 0) return "?";
+  const first = parts[0].charAt(0);
+  const second = parts.length > 1 ? parts[parts.length - 1].charAt(0) : "";
+  return (first + second).toUpperCase();
+}
+
+// Datos de prueba SOLO para desarrollo local (/?mockReviews=1).
+// En producción import.meta.env.DEV es false y esto se poda del bundle.
+const MOCK_OPINIONES_DEV: FeedReview[] = [
   {
-    name: "Valentina R.",
+    id: "m1",
+    name: "Andrea P.",
     rating: 5,
-    text: "Excelente atención. Me asesoraron para elegir el celular ideal para mi trabajo y llegó impecable.",
+    text: "Compré el iPhone 15 y me lo entregaron el mismo día. La atención en la tienda de Puerto Asís es de primera.",
     location: "Puerto Asís, Putumayo",
-    avatar: "VR",
+    avatar: "AP",
+    url: "https://www.google.com/maps",
   },
   {
-    name: "Carlos M.",
+    id: "m2",
+    name: "Jorge M.",
     rating: 5,
-    text: "Compré a crédito con Sistecrédito y el proceso fue súper rápido. El equipo lo retiré el mismo día.",
+    text: "El equipo llegó con todos los accesorios y con garantía. Me asesoraron por WhatsApp antes de comprar.",
     location: "Mocoa, Putumayo",
-    avatar: "CM",
+    avatar: "JM",
   },
   {
-    name: "Laura P.",
-    rating: 5,
-    text: "El servicio técnico resolvió el problema de pantalla de mi teléfono en 45 minutos. Profesionales reales.",
+    id: "m3",
+    name: "Diana C.",
+    rating: 4,
+    text: "Buena variedad de celulares y precios justos. La financiación con Sistecrédito me salvó el mes.",
     location: "Orito, Putumayo",
-    avatar: "LP",
+    avatar: "DC",
   },
   {
-    name: "Andrés F.",
+    id: "m4",
+    name: "Andrés V.",
     rating: 5,
-    text: "Llevo dos compras con ellos y siempre la misma seriedad. La asesoría por WhatsApp es inmediata.",
+    text: "Cambiaron la pantalla de mi Moto G en menos de una hora. Trabajo impecable y precio fair.",
     location: "La Hormiga, Putumayo",
-    avatar: "AF",
+    avatar: "AV",
   },
   {
-    name: "Paula G.",
+    id: "m5",
+    name: "Camila T.",
     rating: 5,
-    text: "Me garantizaron el mejor precio de la región con garantía por escrito. Totalmente recomendados.",
+    text: "Súper recomendados. Compré la tablet para mis clases y me la entregaron configurada.",
     location: "Puerto Asís, Putumayo",
-    avatar: "PG",
+    avatar: "CT",
+    url: "https://www.google.com/maps",
+  },
+  {
+    id: "m6",
+    name: "Hernán L.",
+    rating: 5,
+    text: "Servicio técnico rápido y honesto: me dijeron el precio antes de empezar y no hubo sorpresas.",
+    location: "Sibundoy, Putumayo",
+    avatar: "HL",
+  },
+  {
+    id: "m7",
+    name: "Rosa E.",
+    rating: 4,
+    text: "Atención cordial en el mostrador. Me ayudaron a elegir un equipo dentro de mi presupuesto.",
+    location: "Mocoa, Putumayo",
+    avatar: "RE",
+  },
+  {
+    id: "m8",
+    name: "Iván Q.",
+    rating: 5,
+    text: "Ya es mi segunda compra. El Galaxy S25 llegó antes de lo prometido y con factura al día.",
+    location: "Puerto Asís, Putumayo",
+    avatar: "IQ",
   },
 ];
 
 const LandingPage: React.FC = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { products } = useProducts();
   const { popularIds } = usePopularProducts();
   const phoneNumber = useWhatsappNumber() || "573223652569";
+  const { opinions } = useOpinions();
+
+  // En dev se puede simular el feed con /?mockReviews=1 (no existe en prod).
+  const showMockOpiniones = import.meta.env.DEV && searchParams.has("mockReviews");
+  const feedReviews: FeedReview[] = showMockOpiniones
+    ? MOCK_OPINIONES_DEV
+    : opinions.map((o) => ({
+        id: o.id,
+        name: o.autor,
+        rating: o.estrellas,
+        text: o.texto,
+        location: o.ubicacion || "",
+        avatar: initialsFrom(o.autor),
+        url: o.perfilUrl || undefined,
+      }));
 
   const hasProductQuery = Boolean(searchParams.get("producto") || searchParams.get("id"));
 
@@ -113,17 +166,71 @@ const LandingPage: React.FC = () => {
     return <Navigate to={`/catalogo?${searchParams.toString()}`} replace />;
   }
 
-  const productosDestacados: Product[] = seleccionarDestacados(products, popularIds);
+  // Una sola grilla de productos: ranking real de vistas (top 4),
+  // con fallback a rotación editorial si aún no hay datos de vistas.
+  const rankingVistas: Product[] = popularIds
+    .map((id) => products.find((p) => p.id === id))
+    .filter((p): p is Product => Boolean(p))
+    .slice(0, 4);
+  const productosDestacados: Product[] =
+    rankingVistas.length > 0 ? rankingVistas : seleccionarDestacados(products, []);
   const waTechLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent("Hola GIO TECH, me gustaría consultar por el servicio técnico express para mi celular")}`;
+
+  // Conteo por marca (match exacto) para la prueba de inventario en Marcas oficiales
+  const brandCounts: Record<string, number> = {};
+  for (const p of products) {
+    const m = (p.marca ?? "").trim().toLowerCase();
+    if (m) brandCounts[m] = (brandCounts[m] ?? 0) + 1;
+  }
+
+  const handleSearch = (query: string) => {
+    navigate(`/catalogo?buscar=${encodeURIComponent(query)}`);
+  };
+
+  const handleSelect = (suggestion: { href?: string }) => {
+    if (suggestion.href) navigate(suggestion.href);
+  };
 
   return (
     <div className="landing-wrapper">
-      {/* 1. HERO BANNER SLIDER */}
-      <section className="landing-banner-section banner-section" aria-label="Banners y promociones destacadas">
-        <BannerSlider />
+      {/* ─── 1. HERO EDITORIAL ─── */}
+      <section className="editorial-hero" aria-label="Buscador principal GIO TECH">
+        <div className="landing-container">
+          <h1 className="editorial-title">
+            Tu nuevo celular al <span className="editorial-accent">mejor precio</span>
+            <br />
+            en Puerto Asís
+          </h1>
+          <p className="editorial-sub">
+            ¿Buscando smartphone? Aquí te financiamos rápido —incluso si estás reportado o no tienes vida crediticia—, te lo mandamos a cualquier municipio del Putumayo y te respondemos con garantía.
+          </p>
+          <div className="editorial-search">
+            <SearchAutocomplete
+              size="lg"
+              onSearch={handleSearch}
+              onSelect={handleSelect}
+              placeholder="¿Qué equipo estás buscando hoy?"
+              maxProducts={6}
+              maxCategories={5}
+              showRecent={true}
+              ariaLabel="Buscar productos, marcas, reparaciones"
+            />
+          </div>
+          <div className="editorial-chips">
+            {brandShortcuts.map((brand) => (
+              <Link
+                key={brand.name}
+                to={`/catalogo?marca=${encodeURIComponent(brand.queryParam)}`}
+                className="editorial-chip"
+              >
+                {brand.name}
+              </Link>
+            ))}
+          </div>
+        </div>
       </section>
 
-      {/* 2. 4 PILARES DE CONFIANZA */}
+      {/* ─── 2. TRUST PILARS ─── */}
       <section className="trust-section" aria-label="Pilares de confianza GIO TECH">
         <div className="landing-container">
           <div className="trust-grid">
@@ -140,191 +247,47 @@ const LandingPage: React.FC = () => {
         </div>
       </section>
 
-      {/* 3. EQUIPOS DESTACADOS (ARRIBA - CRO) */}
-      <section className="featured-section featured-products-section" aria-label="Equipos destacados del día">
+      {/* ─── 4. FEATURED PRODUCTS (Recommended) ─── */}
+      {productosDestacados.length > 0 && (
+        <section className="featured-section featured-products-section" aria-label="Equipos recomendados">
+          <div className="landing-container">
+            <Reveal>
+              <div className="section-header section-header--split">
+                <div className="section-header-text">
+                  <span className="featured-eyebrow">
+                    <i className="bi bi-award-fill me-1" aria-hidden="true" />
+                    Recomendados para ti
+                  </span>
+                  <h2 className="section-title">Equipos destacados</h2>
+                  <p className="section-subtitle">
+                    Lo que más compran nuestros clientes en Putumayo
+                  </p>
+                </div>
+                <Link to="/catalogo" className="section-header-btn">
+                  Ver catálogo completo <i className="bi bi-arrow-right" aria-hidden="true" />
+                </Link>
+              </div>
+            </Reveal>
+            <div className="landing-featured-grid">
+              {productosDestacados.map((producto, i) => (
+                <Reveal key={producto.id} delay={i * 60} className="h-100">
+                  <ProductCard producto={producto} />
+                </Reveal>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
+
+      {/* ─── 8. REVIEWS (feed rotativo de opiniones reales de Google) ─── */}
+      <section className="reviews-section" aria-label="Opiniones de clientes">
         <div className="landing-container">
           <div className="section-header">
             <span className="featured-eyebrow">
-              <i className="bi bi-fire me-1" aria-hidden="true" />
-              Smartphones recomendados
+              <i className="bi bi-star-fill me-1" aria-hidden="true" />
+              Lo que dicen nuestros clientes
             </span>
-            <h2 className="section-title">Equipos Destacados</h2>
-            <p className="section-sub">
-              Los celulares más cotizados del día con disponibilidad inmediata en Puerto Asís y precios de contado o a cuotas.
-            </p>
-          </div>
-
-          {productosDestacados.length > 0 ? (
-            <div className="featured-grid landing-featured-grid products-grid">
-              {productosDestacados.map((producto) => (
-                <div key={producto.id} className="featured-card-wrap">
-                  <ProductCard producto={producto} isPopular={producto.esDestacado} />
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="featured-empty-placeholder text-center py-5">
-              <p className="text-muted">Cargando los mejores equipos para ti...</p>
-            </div>
-          )}
-
-          <div className="featured-catalog-cta">
-            <Link to="/catalogo" className="featured-catalog-btn" aria-label="Explorar todo el catálogo de celulares">
-              <i className="bi bi-phone me-2" aria-hidden="true" />
-              <span>Explorar todo el catálogo de celulares</span>
-              <i className="bi bi-arrow-right ms-2" aria-hidden="true" />
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. ATAJOS RÁPIDOS POR MARCA */}
-      <section className="brand-shortcuts-section" aria-label="Marcas destacadas de smartphones">
-        <div className="landing-container">
-          <div className="section-header">
-            <span className="brand-shortcuts-eyebrow">
-              <i className="bi bi-grid-fill me-1" aria-hidden="true" />
-              Filtrado directo
-            </span>
-            <h2 className="section-title">Atajos Rápidos por Marca</h2>
-            <p className="section-sub">
-              Explorá al instante los modelos disponibles de las marcas líderes en tecnología móvil.
-            </p>
-          </div>
-
-          <div className="brand-shortcuts-grid">
-            {brandShortcuts.map((brand) => (
-              <Link
-                key={brand.name}
-                to={`/catalogo?marca=${encodeURIComponent(brand.queryParam)}`}
-                className="brand-shortcut-card"
-                aria-label={`Ver celulares de la marca ${brand.name}`}
-              >
-                <div className="brand-shortcut-icon-wrap">
-                  <BrandLogo
-                    brand={brand.name}
-                    className="brand-shortcut-logo"
-                    alt={`Logo oficial ${brand.name}`}
-                  />
-                </div>
-                <span className="brand-shortcut-name">{brand.name}</span>
-                <span className="brand-shortcut-subtitle">{brand.subtitle}</span>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 5. SERVICIO TÉCNICO EXPRESS */}
-      <section className="lab-express-section" aria-label="Servicio técnico express de celulares">
-        <div className="landing-container">
-          <div className="lab-express-card">
-            <div className="lab-express-badge">
-              <i className="bi bi-tools me-1" aria-hidden="true" />
-              Laboratorio Técnico Especializado
-            </div>
-            <h2 className="lab-express-title">
-              ¿Pantalla rota o batería degradada? Reparaciones en 45 min en Puerto Asís con garantía
-            </h2>
-            <p className="lab-express-desc">
-              Contamos con banco de trabajo profesional, técnicos certificados e instrumental de precisión para reparar tu iPhone o Android en tiempo récord con repuestos de máxima calidad.
-            </p>
-
-            <div className="lab-express-features">
-              <div className="lab-express-feature-item">
-                <i className="bi bi-stopwatch text-danger me-2" aria-hidden="true" />
-                <span>Reparación express en 45 minutos</span>
-              </div>
-              <div className="lab-express-feature-item">
-                <i className="bi bi-patch-check-fill text-success me-2" aria-hidden="true" />
-                <span>Garantía real por escrito</span>
-              </div>
-              <div className="lab-express-feature-item">
-                <i className="bi bi-clipboard2-pulse text-primary me-2" aria-hidden="true" />
-                <span>Diagnóstico inicial sin costo</span>
-              </div>
-              <div className="lab-express-feature-item">
-                <i className="bi bi-shield-lock-fill text-warning me-2" aria-hidden="true" />
-                <span>Técnicos certificados iPhone & Android</span>
-              </div>
-            </div>
-
-            <div className="lab-express-actions">
-              <Link to="/servicio-tecnico" className="landing-btn-primary" aria-label="Ir a cotizar servicio técnico">
-                <i className="bi bi-wrench-adjustable me-2" aria-hidden="true" />
-                <span>Cotizar Reparación Express</span>
-              </Link>
-              <a
-                href={waTechLink}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="landing-btn-ghost"
-                aria-label="Contactar al laboratorio técnico por WhatsApp"
-              >
-                <i className="bi bi-whatsapp text-success me-2" aria-hidden="true" />
-                <span>Hablar con el Técnico</span>
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. SEDE FÍSICA & RESEÑAS GOOGLE MAPS */}
-      <section className="store-physical-section" aria-label="Sede física y opiniones en Google Maps">
-        <div className="landing-container">
-          {/* Tarjeta de Sede Física */}
-          <div className="store-physical-card">
-            <div className="store-physical-grid">
-              <div className="store-physical-info">
-                <span className="store-physical-eyebrow">
-                  <i className="bi bi-shop me-1" aria-hidden="true" />
-                  Punto de Atención Presencial
-                </span>
-                <h3 className="store-physical-heading">Visítanos en Nuestra Sede Oficial</h3>
-                <div className="store-physical-details">
-                  <div className="store-physical-item">
-                    <div className="store-physical-icon" aria-hidden="true">
-                      <i className="bi bi-geo-alt-fill" />
-                    </div>
-                    <div>
-                      <div className="store-physical-title">Dirección</div>
-                      <div className="store-physical-value">Cra. 32 #13 36, Puerto Asís, Putumayo</div>
-                    </div>
-                  </div>
-                  <div className="store-physical-item">
-                    <div className="store-physical-icon" aria-hidden="true">
-                      <i className="bi bi-clock-fill" />
-                    </div>
-                    <div>
-                      <div className="store-physical-title">Horarios de Atención</div>
-                      <div className="store-physical-value">Lunes a Sábado: 8:00 AM - 7:00 PM</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="store-physical-action text-md-end">
-                <a
-                  href={DEFAULT_MAPS_URL}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="landing-btn-google-primary"
-                  aria-label="Abrir dirección de GIO TECH en Google Maps"
-                >
-                  <i className="bi bi-geo-alt-fill text-danger me-2" aria-hidden="true" />
-                  <span>Abrir en Google Maps</span>
-                  <i className="bi bi-box-arrow-up-right ms-2" aria-hidden="true" />
-                </a>
-              </div>
-            </div>
-          </div>
-
-          {/* Sección de Reseñas */}
-          <div className="section-header">
-            <h2 className="section-title">Lo que dicen nuestros clientes</h2>
-            <p className="section-sub">
-              Opiniones 100% reales de clientes que compran y reparan con nosotros en Putumayo.
-            </p>
+            <h2 className="section-title">Opiniones reales</h2>
             <div className="mt-4">
               <a
                 href="https://g.page/r/CUMXzI9Acx9nEAE/review"
@@ -338,32 +301,73 @@ const LandingPage: React.FC = () => {
               </a>
             </div>
           </div>
+          {feedReviews.length > 0 && <ReviewsFeed reviews={feedReviews} />}
         </div>
+      </section>
 
-        {/* Carrusel horizontal de testimonios */}
-        <div className="reviews-scroll-wrapper" role="region" aria-label="Carrusel de opiniones de clientes">
-          <div className="reviews-track">
-            {reviews.map((r, i) => (
-              <div key={i} className="review-card">
-                <div className="review-google-verify">
-                  <i className="bi bi-patch-check-fill text-primary me-1" aria-hidden="true" />
-                  <span>Google Review</span>
-                </div>
-                <div className="review-stars" aria-label={`Calificación: ${r.rating} de 5 estrellas`}>
-                  {Array.from({ length: r.rating }).map((_, k) => (
-                    <i key={k} className="bi bi-star-fill" aria-hidden="true" />
-                  ))}
-                </div>
-                <p className="review-text">"{r.text}"</p>
-                <div className="review-author">
-                  <div className="review-avatar" aria-hidden="true">{r.avatar}</div>
-                  <div>
-                    <div className="review-name">{r.name}</div>
-                    <small className="text-muted" style={{ fontSize: '0.75rem' }}>{r.location}</small>
-                  </div>
-                </div>
-              </div>
-            ))}
+      {/* ─── 9. BRAND SHORTCUTS (Footer CRO) ─── */}
+      <section className="brand-shortcuts-section" aria-label="Marcas disponibles">
+        <div className="landing-container">
+          <div className="section-header section-header--split">
+            <div className="section-header-text">
+              <span className="featured-eyebrow">Trabajamos con</span>
+              <h2 className="section-title">Marcas oficiales</h2>
+            </div>
+            <Link to="/catalogo" className="section-header-btn">
+              Ver catálogo <i className="bi bi-arrow-right" aria-hidden="true" />
+            </Link>
+          </div>
+          <div className="brand-shortcuts-grid">
+            {brandShortcuts.map((brand, i) => {
+              const count = brandCounts[brand.name.trim().toLowerCase()] ?? 0;
+              return (
+                <Reveal key={brand.name} delay={i * 50}>
+                  <Link
+                    to={`/catalogo?marca=${encodeURIComponent(brand.queryParam)}`}
+                    className="brand-shortcut-card"
+                    aria-label={`${brand.name} - ${brand.subtitle}`}
+                  >
+                    <div className="brand-shortcut-icon-wrap">
+                      <BrandLogo brand={brand.name} className="brand-shortcut-logo" />
+                    </div>
+                    <h3 className="brand-shortcut-name">{brand.name}</h3>
+                    <p className="brand-shortcut-subtitle">{brand.subtitle}</p>
+                    {count > 0 && (
+                      <span className="brand-shortcut-count">
+                        {count} equipo{count === 1 ? "" : "s"}
+                      </span>
+                    )}
+                  </Link>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── 10. CTA FINAL ─── */}
+      <section className="cta-section cta-section--final" aria-label="Contacto final">
+        <div className="landing-container">
+          <div className="cta-card cta-card--final">
+            <h2 className="cta-title">¿Listo para tu próximo smartphone?</h2>
+            <p className="cta-desc">
+              Envíos a todo Putumayo · Financiación inmediata · Garantía por escrito
+            </p>
+            <div className="cta-actions">
+              <Link to="/catalogo" className="cta-btn cta-btn--primary">
+                <i className="bi bi-phone me-2" aria-hidden="true" />
+                Explorar catálogo
+              </Link>
+              <a
+                href={waTechLink}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="cta-btn cta-btn--whatsapp"
+              >
+                <i className="bi bi-whatsapp me-2" aria-hidden="true" />
+                Asesoría WhatsApp
+              </a>
+            </div>
           </div>
         </div>
       </section>
