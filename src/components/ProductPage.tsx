@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { useParams, Link, Navigate, useSearchParams } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
+import { usePopularProducts } from "../hooks/usePopularProducts";
 import { useCart } from "../contexts/cart-context";
 import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
 import { buildContadoWhatsAppMessage, buildCreditoWhatsAppMessage, buildWhatsAppUrl, appendConsentEvidence } from "../utils/whatsapp-messages";
@@ -9,8 +10,8 @@ import { recordProductView } from "../services/productStats.service";
 import { recordLegalConsent } from "../services/legal-consent.service";
 import { useProductPricing } from "./product-card/useProductPricing";
 import CreditForm from "./product-card/CreditForm";
-import type { CreditFormStatus, AutovalidacionStatus } from "./product-card/CreditForm";
-import type { ValidacionPhase, ValidacionResultType, ValidacionStatus } from "./product-card/SistecreditoValidation";
+import type { CreditFormStatus } from "./product-card/CreditForm";
+import type { ValidacionPhase, ValidacionStatus } from "./product-card/SistecreditoValidation";
 import ProductCardView from "./product-card/ProductCardView";
 import PriceDisplay from "./product-card/PriceDisplay";
 import PlanCuotas from "./product-card/PlanCuotas";
@@ -18,6 +19,7 @@ import FinancieraGrid from "./product-card/FinancieraGrid";
 import ProductImage from "./common/ProductImage";
 import { getProductType, FINANCIERAS } from "../data/financieras";
 import { extractProductSpecs } from "../utils/specs-parser";
+import { seleccionarDestacados } from "../utils/featured-products";
 import type { Product, CotizacionType, Financiera } from "../types";
 import ProductCard from "./ProductCard";
 import Reveal from "./Reveal";
@@ -31,7 +33,7 @@ interface ProductPageProps {
 
 const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) => {
   const { productId: paramProductId } = useParams<{ productId?: string }>();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [searchParams] = useSearchParams();
   const { products, isLoading } = useProducts();
   const { addToCart } = useCart();
   const rawPhoneNumber = useWhatsappNumber();
@@ -52,6 +54,60 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
       recordProductView(producto.id);
     }
   }, [producto?.id]);
+
+  // Pricing derivations (hook-safe: useProductPricing no usa hooks internos y tolera null)
+  const der = useProductPricing(producto);
+  const {
+    nombre,
+    descripcion,
+    contado,
+    showPromoPrice,
+    priceRegularStr,
+    pricePromoStr,
+    cuotaInicialStr,
+    solo12Meses,
+    cuotas12Str,
+    cuotas6Str,
+    cuotas8Str,
+    financierasDisponibles,
+    tieneFinanciacion,
+  } = der;
+
+  // Specs extraction
+  const isAccesorio = useMemo(() => {
+    if (!producto) return false;
+    const cat = (producto.categoria || '').toLowerCase();
+    if (cat.includes('accesorio') || cat.includes('accessory')) return true;
+    return getProductType(producto.marca, producto.nombre, producto.categoria) === 'accesorio';
+  }, [producto]);
+
+  const specs = useMemo(() => {
+    if (!producto || isAccesorio) {
+      return { almacenamiento: null, ram: null, camara: null, pantalla: null, bateria: null };
+    }
+    return extractProductSpecs(producto);
+  }, [producto, isAccesorio]);
+
+  const hasAnySpec = Boolean(
+    !isAccesorio && (specs.almacenamiento || specs.ram || specs.camara || specs.pantalla || specs.bateria)
+  );
+
+  // State
+  const [step, setStep] = useState<Step>('product');
+  const [paymentAction] = useState<'comprar' | 'carrito'>('comprar');
+  const [selectedFinanciera, setSelectedFinanciera] = useState<Financiera | null>(null);
+  const [formData, setFormData] = useState<Record<string, string>>({});
+  const [formValid, setFormValid] = useState(false);
+  const [validPhase, setValidPhase] = useState<ValidacionPhase>('idle');
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+
+  // Gallery images (mock - would come from product.images in real scenario)
+  const galleryImages = useMemo(() => {
+    if (!producto) return [];
+    const main = producto.imagen;
+    const additional = producto.imagenes || [];
+    return main ? [main, ...additional] : [];
+  }, [producto]);
 
   // Product not found
   if (!producto) {
@@ -77,63 +133,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
       </div>
     );
   }
-
-  // Pricing derivations
-  const der = useProductPricing(producto);
-  const {
-    nombre,
-    descripcion,
-    contado,
-    showPromoPrice,
-    priceRegularStr,
-    pricePromoStr,
-    cuotaInicial,
-    cuotaInicialStr,
-    solo12Meses,
-    cuotas12,
-    cuotas12Str,
-    cuotas6Str,
-    cuotas8Str,
-    financierasDisponibles,
-    tieneFinanciacion,
-  } = der;
-
-  // Specs extraction
-  const isAccesorio = useMemo(() => {
-    const cat = (producto.categoria || '').toLowerCase();
-    if (cat.includes('accesorio') || cat.includes('accessory')) return true;
-    return getProductType(producto.marca, producto.nombre, producto.categoria) === 'accesorio';
-  }, [producto.marca, producto.nombre, producto.categoria]);
-
-  const specs = useMemo(() => {
-    if (isAccesorio) {
-      return { almacenamiento: null, ram: null, camara: null, pantalla: null, bateria: null };
-    }
-    return extractProductSpecs(producto);
-  }, [producto, isAccesorio]);
-
-  const hasAnySpec = Boolean(
-    !isAccesorio && (specs.almacenamiento || specs.ram || specs.camara || specs.pantalla || specs.bateria)
-  );
-
-  // State
-  const [step, setStep] = useState<Step>('product');
-  const [paymentAction, setPaymentAction] = useState<'comprar' | 'carrito'>('comprar');
-  const [selectedFinanciera, setSelectedFinanciera] = useState<Financiera | null>(null);
-  const [formData, setFormData] = useState<Record<string, string>>({});
-  const [autovalidacionStatus, setAutovalidacionStatus] = useState<AutovalidacionStatus>('pendiente');
-  const [formValid, setFormValid] = useState(false);
-  const [validPhase, setValidPhase] = useState<ValidacionPhase>('idle');
-  const [validResultType, setValidResultType] = useState<ValidacionResultType>(null);
-  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [showThumbnails, setShowThumbnails] = useState(false);
-
-  // Gallery images (mock - would come from product.images in real scenario)
-  const galleryImages = useMemo(() => {
-    const main = producto.imagen;
-    const additional = producto.imagenes || [];
-    return main ? [main, ...additional] : [];
-  }, [producto.imagen, producto.imagenes]);
 
   // WhatsApp message for contado
   const mensajeWhatsAppContadoDirecto = buildContadoWhatsAppMessage({
@@ -171,21 +170,27 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
   const handleSelectFinanciera = (financiera: Financiera) => {
     setSelectedFinanciera(financiera);
     setFormData({});
-    setAutovalidacionStatus('pendiente');
     setFormValid(false);
     setValidPhase('idle');
-    setValidResultType(null);
+    setStep('credito-form');
   };
 
   const handleCreditFormStatus = (status: CreditFormStatus) => {
     setFormData(status.formData);
-    setAutovalidacionStatus(status.autovalidacionStatus);
     setFormValid(status.isValid);
   };
 
   const handleValidacionStatus = (status: ValidacionStatus) => {
     setValidPhase(status.validPhase);
-    setValidResultType(status.validResultType);
+  };
+
+  const handleSwitchFinanciera = (finId: string) => {
+    const fin = FINANCIERAS.find((f) => f.id === finId);
+    if (fin) {
+      handleSelectFinanciera(fin);
+    } else {
+      setStep('credito-financieras');
+    }
   };
 
   const handleEnviarWhatsApp = () => {
@@ -260,7 +265,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
       <nav className="product-breadcrumb" aria-label="Navegación">
         <div className="container">
           <ol className="breadcrumb mb-0">
-            {breadcrumbItems.map((item, idx) => (
+            {breadcrumbItems.map((item) => (
               <li key={item.label} className="breadcrumb-item">
                 {item.href ? (
                   <Link to={item.href} className="text-muted">{item.label}</Link>
@@ -480,7 +485,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
                     <div className="step-content">
                       <h3 id="step-title" className="step-title">Selecciona una financiera</h3>
                       <FinancieraGrid
-                        financieras={financierasDisponibles}
+                        financierasDisponibles={financierasDisponibles}
                         onSelect={handleSelectFinanciera}
                       />
                     </div>
@@ -493,11 +498,15 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
                         {selectedFinanciera.nombre}
                       </h3>
                       <CreditForm
+                        key={selectedFinanciera.id}
                         financiera={selectedFinanciera}
-                        producto={producto}
-                        der={der}
+                        contado={contado}
+                        productType={productType}
+                        productName={nombre}
+                        onValidSubmit={() => handleEnviarWhatsApp()}
                         onStatusChange={handleCreditFormStatus}
-                        onValidacionChange={handleValidacionStatus}
+                        onValidacionStatusChange={handleValidacionStatus}
+                        onSwitchFinanciera={handleSwitchFinanciera}
                       />
                       <div className="credit-form-actions">
                         <button
@@ -573,7 +582,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
 function RecommendedProducts({ currentProductId }: { currentProductId: string }) {
   const { products } = useProducts();
   const { popularIds } = usePopularProducts();
-  const { seleccionarDestacados } = require("../utils/featured-products");
 
   const recomendados = useMemo(() => {
     return seleccionarDestacados(products, popularIds)

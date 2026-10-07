@@ -42,7 +42,7 @@ export interface DerivadosPricing {
   productType: ProductType;
 }
 
-export function useProductPricing(producto: Product): DerivadosPricing {
+export function useProductPricing(producto: Product | null): DerivadosPricing {
   const {
     nombre = "Producto sin nombre",
     descripcion = "",
