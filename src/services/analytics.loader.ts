@@ -4,8 +4,13 @@
 
 import { getConsent, subscribeConsent } from './consent.service';
 
-export const GA4_MEASUREMENT_ID = 'G-1KGCQBPN75';
-export const META_PIXEL_ID = '939199705550194';
+// IDs de medición públicos (visibles en cualquier page view): no son secretos.
+// Viven en .env para poder rotarlos por entorno; el fallback evita romper el
+// tracking si falta la variable.
+export const GA4_MEASUREMENT_ID: string =
+  import.meta.env.VITE_GA4_MEASUREMENT_ID || 'G-1KGCQBPN75';
+export const META_PIXEL_ID: string =
+  import.meta.env.VITE_META_PIXEL_ID || '939199705550194';
 
 const META_PIXEL_SRC = 'https://connect.facebook.net/en_US/fbevents.js';
 
