@@ -1,7 +1,44 @@
+import { useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
 export default function TerminosPage() {
   const navigate = useNavigate();
+
+  // Carga fría con hash (#privacidad): React.lazy renderiza DESPUÉS de que el
+  // navegador procesa el hash, así que el scroll nativo nunca llega a ejecutarse.
+  // Hashchange en SPA sí lo resuelve el navegador, por eso solo necesitamos el montaje.
+  useEffect(() => {
+    const id = window.location.hash.replace(/^#/, '');
+    if (!id) return;
+
+    let observer: MutationObserver | null = null;
+    let timeoutId = 0;
+
+    const scrollToTarget = () => {
+      const target = document.getElementById(id);
+      if (!target) return false;
+      target.scrollIntoView();
+      return true;
+    };
+
+    if (scrollToTarget()) return;
+
+    const rafId = requestAnimationFrame(() => {
+      if (scrollToTarget()) return;
+      // El nodo puede llegar un render tarde: lo esperamos sin timeouts largos.
+      observer = new MutationObserver(() => {
+        if (scrollToTarget() && observer) observer.disconnect();
+      });
+      observer.observe(document.body, { childList: true, subtree: true });
+      timeoutId = window.setTimeout(() => observer?.disconnect(), 1500);
+    });
+
+    return () => {
+      cancelAnimationFrame(rafId);
+      observer?.disconnect();
+      window.clearTimeout(timeoutId);
+    };
+  }, []);
 
   const handleVolver = () => {
     if (window.history.length > 1) {
@@ -153,6 +190,7 @@ export default function TerminosPage() {
           </li>
         </ul>
 
+        <h3>Derechos ARCO (derechos del titular)</h3>
         <p>
           Como titular de tus datos personales tienes derecho a: (i) conocer, actualizar y
           rectificar la información que tenemos sobre ti; (ii) solicitar prueba de la
