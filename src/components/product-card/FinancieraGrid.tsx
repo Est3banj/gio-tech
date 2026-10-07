@@ -19,7 +19,19 @@ const FinancieraGrid: React.FC<FinancieraGridProps> = ({ financierasDisponibles,
           <Col xs={6} key={f.id}>
             <div
               className={`financiera-card${!isAvailable ? ' financiera-card-disabled' : ''}`}
-              onClick={() => isAvailable && onSelect(f)}
+              role={isAvailable ? 'button' : undefined}
+              tabIndex={isAvailable ? 0 : -1}
+              aria-disabled={isAvailable ? undefined : true}
+              onClick={isAvailable ? () => onSelect(f) : undefined}
+              onKeyDown={
+                isAvailable
+                  ? (event) => {
+                      if (event.key !== 'Enter' && event.key !== ' ') return;
+                      event.preventDefault();
+                      onSelect(f);
+                    }
+                  : undefined
+              }
             >
               <img src={f.logo} alt={f.nombre} loading="lazy" />
               <div className="financiera-name">{f.nombre}</div>

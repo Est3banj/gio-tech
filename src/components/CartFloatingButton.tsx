@@ -207,7 +207,7 @@ const CartFloatingButton: React.FC = () => {
                           <h6 className="mb-1 text-truncate fw-bold fs-6">{item.nombre}</h6>
                           <div className="small text-muted">
                             {item.cotizacionType === 'contado' ? (
-                              <span className="text-success fw-semibold">
+                              <span className="text-success-emphasis fw-semibold">
                                 Contado: {formatPrice(item.contado)}
                               </span>
                             ) : item.solo12Meses && item.cuotas12 ? (
