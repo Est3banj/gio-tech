@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { MemoryRouter, useLocation } from 'react-router-dom';
 import App from './App';
 import ThemeProvider from './components/ThemeProvider';
 import { ThemeModeProvider } from './contexts/ThemeModeContext';
@@ -92,9 +92,17 @@ vi.mock('./services/productStats.service', () => ({
   recordProductView: vi.fn(),
 }));
 
+// Sonda de location para assertear redirects SIN depender del render interno
+// de App (CookieConsentBanner lanza ResizeObserver no definido en jsdom).
+const LocationProbe = () => {
+  const location = useLocation();
+  return <div data-testid="location-probe">{location.pathname}</div>;
+};
+
 const renderAppWithProviders = (initialEntries = ['/']) => {
   return render(
     <MemoryRouter initialEntries={initialEntries}>
+      <LocationProbe />
       <ThemeProvider>
         <ThemeModeProvider>
           <App />
@@ -159,21 +167,21 @@ describe('App Root Component and Provider Hierarchy', () => {
     });
   });
 
-  it('redirects /?producto=ID to /catalogo?producto=ID and loads Catalogo', async () => {
+  it('redirects /?producto=ID to /producto/ID and loads ProductPage', async () => {
     renderAppWithProviders(['/?producto=prod-1']);
 
-    // Verify it redirects to Catalogo and renders the catalog search input
+    // Deep link legacy va directo al detalle (ya no al catálogo)
     await waitFor(() => {
-      expect(screen.getByPlaceholderText(/Buscar por nombre o descripción/i)).toBeInTheDocument();
+      expect(screen.getByTestId('location-probe')).toHaveTextContent('/producto/prod-1');
     });
   });
 
-  it('redirects /?id=ID to /catalogo?id=ID and loads Catalogo', async () => {
+  it('redirects /?id=ID to /producto/ID and loads ProductPage', async () => {
     renderAppWithProviders(['/?id=prod-1']);
 
-    // Verify it redirects to Catalogo and renders the catalog search input
+    // Variante legacy ?id= también va directo al detalle
     await waitFor(() => {
-      expect(screen.getByPlaceholderText(/Buscar por nombre o descripción/i)).toBeInTheDocument();
+      expect(screen.getByTestId('location-probe')).toHaveTextContent('/producto/prod-1');
     });
   });
 

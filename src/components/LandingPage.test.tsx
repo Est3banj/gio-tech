@@ -81,6 +81,7 @@ function renderLandingPage(initialEntries = ['/']) {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/catalogo" element={<div data-testid="catalogo-page">Página de Catálogo</div>} />
+            <Route path="/producto/:productId" element={<div data-testid="producto-page">Página de Producto</div>} />
           </Routes>
         </CartProvider>
       </WhatsappNumberProvider>
@@ -234,9 +235,11 @@ describe('LandingPage Component - Reestructuración CRO de Alto Impacto', () => 
     expect(reviewGoogleBtn).toHaveAttribute('href', 'https://g.page/r/CUMXzI9Acx9nEAE/review');
   });
 
-  it('debe redirigir a /catalogo si se recibe un query param de producto (?producto=ID o ?id=ID)', () => {
+  it('debe redirigir a /producto/:id si se recibe un query param de producto (?producto=ID o ?id=ID)', () => {
     renderLandingPage(['/?producto=prod-1']);
-    expect(screen.getByTestId('catalogo-page')).toBeInTheDocument();
+    // Deep links legacy van DIRECTO al detalle (ya no al catálogo)
+    expect(screen.getByTestId('producto-page')).toBeInTheDocument();
+    expect(screen.queryByTestId('catalogo-page')).not.toBeInTheDocument();
   });
 
   it('7. Elementos de Temporada en Landing: no debe renderizar badge flotante lateral (.seasonal-side-badge) ni ribbons en bloque', () => {

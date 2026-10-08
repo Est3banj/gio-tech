@@ -115,4 +115,22 @@ describe('PriceDisplay', () => {
     expect(screen.getByText('$2.000.000')).toBeInTheDocument();
     expect(screen.getByText('OFERTA')).toBeInTheDocument();
   });
+
+  it('renders page variant with regular + promo price (same block as modal)', () => {
+    const der: DerivadosPricing = {
+      ...baseDer,
+      showPromoPrice: true,
+      priceRegularStr: '$2.500.000',
+      pricePromoStr: '$2.000.000',
+      promoBadgeText: 'OFERTA',
+    };
+
+    render(<PriceDisplay variant="page" der={der} />);
+
+    expect(screen.getByText('Precio regular:')).toBeInTheDocument();
+    expect(screen.getByText('$2.500.000')).toBeInTheDocument();
+    expect(screen.getByText('Precio promocional:')).toBeInTheDocument();
+    expect(screen.getByText('$2.000.000')).toBeInTheDocument();
+    expect(screen.getByText('OFERTA')).toBeInTheDocument();
+  });
 });

@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest'
 import {
   buildContadoWhatsAppMessage,
   buildCreditoWhatsAppMessage,
+  buildProductWhatsAppMessage,
   buildWhatsAppUrl,
   CAMPO_LABELS,
   labelDeCampo,
@@ -124,6 +125,20 @@ describe('buildCreditoWhatsAppMessage', () => {
       },
     })
     expect(result).toBe('🧾 *Solicitud de crédito - Sistecredito*\n\n📱 *Producto:* iPhone 16 Pro\n💰 *Precio:* $\u00A05.000.000\n\n👤 *Datos del cliente:*\n▸ keyNueva: valor\n')
+  })
+})
+
+describe('buildProductWhatsAppMessage', () => {
+  // golden nuevo — copy genérico aprobado byte-exacto (sin "al contado")
+  it('golden: copy byte-exacto del mensaje genérico de producto', () => {
+    const result = buildProductWhatsAppMessage({ nombre: 'Notebook Galaxy X' })
+    expect(result).toBe('Hola, estoy interesado en el Notebook Galaxy X. ¿Me confirmas disponibilidad y precio? Gracias.')
+  })
+
+  it('edge: nombre con acentos y signos se sustituye literalmente y la puntuación se mantiene', () => {
+    const result = buildProductWhatsAppMessage({ nombre: 'Consola Ñandú 500GB ¿usada?' })
+    expect(result).toBe('Hola, estoy interesado en el Consola Ñandú 500GB ¿usada?. ¿Me confirmas disponibilidad y precio? Gracias.')
+    expect(result).not.toContain('al contado')
   })
 })
 

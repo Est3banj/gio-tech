@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
+import { render, screen, fireEvent } from '@testing-library/react';
+import { MemoryRouter, Routes, Route, useParams } from 'react-router-dom';
 import Catalogo from './Catalogo';
 import { WhatsappNumberProvider } from '../contexts/WhatsappNumberContext';
 import { CartProvider } from '../contexts/CartContext';
@@ -71,12 +71,21 @@ const mockProductsList: Product[] = [
   },
 ];
 
+// Stub de la ruta de detalle: permite assertear el redirect a /producto/:id
+const ProductoPageStub = () => {
+  const { productId } = useParams();
+  return <div data-testid="producto-page">Producto {productId}</div>;
+};
+
 function renderCatalogo(initialEntries = ['/catalogo']) {
   return render(
     <MemoryRouter initialEntries={initialEntries}>
       <WhatsappNumberProvider>
         <CartProvider>
-          <Catalogo />
+          <Routes>
+            <Route path="/catalogo" element={<Catalogo />} />
+            <Route path="/producto/:productId" element={<ProductoPageStub />} />
+          </Routes>
         </CartProvider>
       </WhatsappNumberProvider>
     </MemoryRouter>
@@ -261,88 +270,53 @@ describe('Catalogo Component - Control Hub Redesign', () => {
     expect(screen.getByText('Xiaomi Redmi Note 13 Pro')).toBeInTheDocument();
   });
 
-  it('automatically opens product modal when URL contains ?producto=ID query param (deep link)', () => {
+  it('deep link ?producto=ID redirige a /producto/ID sin renderizar catálogo ni prompt', () => {
     renderCatalogo(['/catalogo?producto=3']);
 
-    // Apple iPhone 15 Pro modal should automatically open
-    expect(screen.getByText('Titanio con chip A17 Pro y 256GB')).toBeInTheDocument();
-    expect(screen.getByText('¿Qué quieres hacer?')).toBeInTheDocument();
+    // Redirect directo al detalle (Apple iPhone 15 Pro = id 3)
+    expect(screen.getByTestId('producto-page')).toHaveTextContent('Producto 3');
+    // Sin catálogo ni prompt "¿Qué quieres hacer?"
+    expect(screen.queryByLabelText('Buscar dispositivos')).not.toBeInTheDocument();
+    expect(screen.queryByText('¿Qué quieres hacer?')).not.toBeInTheDocument();
   });
 
-  it('automatically opens product modal when URL contains ?id=ID query param', () => {
+  it('deep link ?id=ID (variante legacy) redirige a /producto/ID', () => {
     renderCatalogo(['/catalogo?id=1']);
 
-    // Samsung Galaxy S24 Ultra modal should automatically open
-    expect(screen.getByText('Smartphone de alta gama con cámara de 200MP y 256GB')).toBeInTheDocument();
-    expect(screen.getByText('¿Qué quieres hacer?')).toBeInTheDocument();
+    expect(screen.getByTestId('producto-page')).toHaveTextContent('Producto 1');
+    expect(screen.queryByLabelText('Buscar dispositivos')).not.toBeInTheDocument();
+    expect(screen.queryByText('¿Qué quieres hacer?')).not.toBeInTheDocument();
   });
 
-  it('opens modal correctly when products initially load asynchronously (isLoading true -> false)', () => {
-    // 1. Initial render with loading state
+  it('redirige aunque los productos aún estén cargando (isLoading true)', () => {
     mockUseProducts.mockReturnValue({
       products: [],
       isLoading: true,
       error: null,
     });
 
-    const { rerender } = render(
-      <MemoryRouter initialEntries={['/catalogo?producto=2']}>
-        <WhatsappNumberProvider>
-          <CartProvider>
-            <Catalogo />
-          </CartProvider>
-        </WhatsappNumberProvider>
-      </MemoryRouter>
-    );
+    renderCatalogo(['/catalogo?producto=2']);
 
-    expect(screen.getByText(/Cargando catálogo de tecnología/i)).toBeInTheDocument();
+    // El redirect es en render: no espera a los datos ni muestra el spinner
+    expect(screen.getByTestId('producto-page')).toHaveTextContent('Producto 2');
+    expect(screen.queryByText(/Cargando catálogo de tecnología/i)).not.toBeInTheDocument();
     expect(screen.queryByText('¿Qué quieres hacer?')).not.toBeInTheDocument();
-
-    // 2. Data arrives from Firestore
-    mockUseProducts.mockReturnValue({
-      products: mockProductsList,
-      isLoading: false,
-      error: null,
-    });
-
-    rerender(
-      <MemoryRouter initialEntries={['/catalogo?producto=2']}>
-        <WhatsappNumberProvider>
-          <CartProvider>
-            <Catalogo />
-          </CartProvider>
-        </WhatsappNumberProvider>
-      </MemoryRouter>
-    );
-
-    // Modal for Xiaomi Redmi Note 13 Pro (id: '2') must open
-    expect(screen.getByText('Excelente relación calidad precio con 128GB')).toBeInTheDocument();
-    expect(screen.getByText('¿Qué quieres hacer?')).toBeInTheDocument();
   });
 
-  it('opens modal via fallback even if product is outside active brand filter', () => {
-    renderCatalogo(['/catalogo?producto=3']); // Apple iPhone 15 Pro
+  it('redirige aunque el producto esté fuera del filtro activo (fallback ya no hace falta)', () => {
+    // Marca que excluye al producto target (Samsung excluye al iPhone id 3)
+    renderCatalogo(['/catalogo?producto=3&marca=Samsung']);
 
-    // Filter by Samsung (which excludes Apple from the main grid)
-    const brandSelect = screen.getByLabelText('Filtrar por marca') as HTMLSelectElement;
-    fireEvent.change(brandSelect, { target: { value: 'Samsung' } });
-
-    // The modal for product 3 should still be rendered/opened
-    expect(screen.getByText('Titanio con chip A17 Pro y 256GB')).toBeInTheDocument();
+    expect(screen.getByTestId('producto-page')).toHaveTextContent('Producto 3');
+    expect(screen.queryByText('Titanio con chip A17 Pro y 256GB')).not.toBeInTheDocument();
   });
 
-  it('clears query param when modal is closed', async () => {
-    renderCatalogo(['/catalogo?producto=1']);
+  it('edge: redirige a /producto/ID aunque el producto no exista', () => {
+    renderCatalogo(['/catalogo?producto=99999']);
 
-    expect(screen.getByText('¿Qué quieres hacer?')).toBeInTheDocument();
-
-    // Click modal close button
-    const closeBtn = screen.getByRole('button', { name: 'Cerrar' });
-    fireEvent.click(closeBtn);
-
-    await waitFor(() => {
-      expect(screen.queryByText('¿Qué quieres hacer?')).not.toBeInTheDocument();
-    });
+    expect(screen.getByTestId('producto-page')).toHaveTextContent('Producto 99999');
+    expect(screen.queryByText(/No se encontraron productos/i)).not.toBeInTheDocument();
+    expect(screen.queryByText('¿Qué quieres hacer?')).not.toBeInTheDocument();
   });
 });
 
