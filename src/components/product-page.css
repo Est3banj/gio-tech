@@ -11,7 +11,8 @@
 }
 
 .product-page-loading,
-.product-page-not-found {
+.product-page-not-found,
+.product-page-load-error {
   min-height: 60vh;
   display: flex;
   align-items: center;
@@ -20,9 +21,26 @@
 
 /* ─── Breadcrumb ──────────────────────────────────────────── */
 .product-breadcrumb {
-  padding: 1rem 0;
+  /* El header es fixed (85px desktop) y siempre sólido en /producto: sin
+     este offset el breadcrumb y el control "Volver al catálogo" quedaban
+     100% debajo del header (z-index 1000) — nadie podía verlos ni
+     clickearlos. Mismos valores que .banner-section (patrón del codebase
+     para compensar el header fixed). */
+  padding: 104px 0 1rem;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-secondary);
+}
+
+@media (max-width: 991px) {
+  .product-breadcrumb {
+    padding-top: 86px;
+  }
+}
+
+@media (max-width: 576px) {
+  .product-breadcrumb {
+    padding-top: 82px;
+  }
 }
 
 .product-breadcrumb .breadcrumb {
@@ -44,31 +62,103 @@
   }
 }
 
+/* ─── Volver al catálogo ────────────────────────────────────── */
+.product-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-link);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  border-radius: var(--radius-sm);
+}
+
+.product-back-link:focus-visible {
+  outline: 2px solid var(--text-link);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) {
+  .product-back-link:hover {
+    text-decoration: underline;
+  }
+}
+
 /* ─── Main Layout ─────────────────────────────────────────── */
 .product-main {
   padding: 2.5rem 0 4rem;
 }
 
+/* Sangrado de sección full-bleed (≤991px). El container vive en
+   design-tokens.css: padding var(--space-6) y --space-4 bajo 576px.
+   Exponer esa medida como custom property deja que .product-buybox
+   sangre sus hairlines al borde del viewport SIN duplicar los valores
+   del container (si el container cambia, cambia acá). */
+.product-main > .container {
+  --product-bleed: var(--space-6);
+}
+
+@media (max-width: 576px) {
+  .product-main > .container {
+    --product-bleed: var(--space-4);
+  }
+}
+
 .product-page-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  /* minmax(0, 1fr) y NO 1fr: el carrusel de recomendados (slides fijas de
+     230px) le daba a la columna una min-content de 1198px y reventaba el
+     layout a 375 (viewport 375 → grid 1198). Con min 0 la columna mide el
+     contenedor y el overflow lo absorbe el scroller. */
+  grid-template-columns: minmax(0, 1fr);
   gap: 2rem;
-  align-items: start;
+}
+
+/* Fila 2 a ancho completo: descripción + recomendados cruzan TODAS las
+   columnas. Sin sticky (decisión de usuario) ya no hay runway que
+   proteger, y dejarlos en la columna izquierda dejaba un vacío a la
+   derecha que "cortaba" la sección de recomendados (viewport ancho:
+   carrusel de 728px + hueco muerto de 560px al lado). */
+.product-lower {
+  grid-column: 1 / -1;
 }
 
 @media (min-width: 992px) {
+  /* Arquitectura de 2 columnas arriba (patrón ML):
+     - Fila 1: galería (col izq) + panel de compra (col der).
+     - Fila 2: .product-lower a ancho completo (ver regla arriba).
+     460px = ancho de la caja de compra ya validado en 992/1024. */
   .product-page-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 3rem;
+    grid-template-columns: minmax(0, 1fr) 460px;
+    gap: 1.5rem;
+  }
+
+  .product-details {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+@media (min-width: 1200px) {
+  /* ≥1200 la caja se queda en 560 (mismo orden de magnitud que su diseño:
+     CTAs en 1 track, igual que ya pasaba en 992-1199) y la izquierda
+     gana ancho: 556 en 1200, 728 en 1440/1920 → recomendados 2×270 /
+     2×356 (antes 2×271 / 2×314 con 1fr 1fr). */
+  .product-page-grid {
+    grid-template-columns: minmax(0, 1fr) 560px;
   }
 }
 
 /* ─── LEFT: GALLERY ───────────────────────────────────────── */
 .product-gallery {
-  position: sticky;
-  top: calc(100px + env(safe-area-inset-top));
-  max-height: calc(100dvh - 140px - env(safe-area-inset-top) - env(safe-area-inset-bottom));
-  overflow-y: auto;
+  /* Sin sticky: la galería es la fila 1 de la columna izquierda y debajo
+     viven descripción + recomendados (.product-lower). Un sticky con
+     runway = alto propio no se mueve, y con runway mayor taparía esos
+     bloques (mismo solape que tenía la buybox). El anclaje visual lo hace
+     la buybox de la derecha. */
+  min-width: 0;
 }
 
 .product-gallery-main {
@@ -87,9 +177,14 @@
   padding: 2rem;
 }
 
+/* Mismo registro CLARO que .product-image-stage en la card (token
+   neutral-100, NO un valor nuevo): las fotos de producto tienen fondo
+   claro y sobre neutral-800 quedaban oscuras sobre oscura. Borde
+   neutral-200 = hairline clara igual que en light, para que el bloque
+   se lea igual que la card. */
 .dark-mode .product-gallery-viewport {
-  background: var(--color-neutral-800);
-  border-color: var(--color-neutral-700);
+  background: var(--color-neutral-100);
+  border-color: var(--color-neutral-200);
 }
 
 .product-main-image {
@@ -151,8 +246,10 @@
   box-shadow: 0 0 0 2px var(--color-brand-primary-light);
 }
 
+/* Miniaturas: mismo criterio que el viewport y que la card — la foto
+   se apoya sobre neutral-100, no sobre fondo oscuro. */
 .dark-mode .product-thumb {
-  background: var(--color-neutral-800);
+  background: var(--color-neutral-100);
 }
 
 .product-thumb-image {
@@ -199,12 +296,17 @@
   color: var(--text-tertiary);
 }
 
-.product-title {
-  font-size: clamp(1.5rem, 3vw, 2.25rem);
-  font-weight: 700;
+/* Scope `h1.`: .product-title también la usan las cards (ProductCardView)
+   y esta regla — product-page.css carga DESPUÉS de product-card.css —
+   les imponía 36px/700 a los títulos de card. Medido: en /producto/:id
+   las cards de recomendados tenían título 36px vs 16px en /catalogo.
+   Jerarquía ML ("el precio manda"): 24/600 desktop < precio 28/600. */
+h1.product-title {
+  font-size: clamp(1.375rem, 2vw, 1.5rem);
+  font-weight: 600;
   color: var(--text-primary);
-  letter-spacing: -0.02em;
-  line-height: 1.2;
+  letter-spacing: -0.01em;
+  line-height: 1.25;
   margin: 0;
 }
 
@@ -216,6 +318,16 @@
   padding: 0.5rem 0;
   border-top: 1px solid var(--border-color);
   border-bottom: 1px solid var(--border-color);
+}
+
+/* Scope al contexto de la ficha: product-card.css (carga antes) aplica
+   `margin: 0.3rem 0 0.75rem` a la MISMA clase .product-specs-rail de las
+   cards. Sin este reset, esas rutas se sumaban al gap flex de 24 de
+   .product-details → gaps medidos de 29/36px (huérfanos fuera de la
+   escala 4/8/12/16/24/32). Scoped (0-2-0) para NO tocar el margin de
+   las cards en catálogo/home. */
+.product-details > .product-specs-rail {
+  margin: 0;
 }
 
 .product-specs-rail .spec-chip {
@@ -240,6 +352,19 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+/* Precio protagonista (ML PDP: 28px/600 inmutable a 1440 y a 375 —
+   "el precio manda"). Scope .product-pricing para NO tocar el precio de
+   los modales (comparten la clase .modal-price-highlight, 1.2rem/800).
+   --text-link: light = rojo de marca (5.5:1 sobre --bg-primary), dark =
+   el tono claro del enlace (6.4:1); --gio-red fijo daba 3.0:1 en dark. */
+.product-pricing .modal-price-highlight {
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1.15;
+  color: var(--text-link);
+  font-variant-numeric: tabular-nums;
+}
+
 /* Actions */
 .product-actions {
   padding: 1rem 0;
@@ -250,12 +375,63 @@
   margin-bottom: 0.75rem;
 }
 
+/* Grid de CTAs: 2 columnas cuando hay "Financiar", 1 sola (full-width)
+   cuando solo queda "Comprar por WhatsApp" (auto-fit se adapta solo).
+   264px = ancho mínimo medido para que "Comprar por WhatsApp" (16.8px +
+   icono + padding 32px + border 2px = 230+32+2) quepa en UNA línea.
+   Antes el mínimo era 200px: en la caja de compra (406-504px de ancho
+   útil en 992/1024/1200) se generaban 2 tracks de 197-249px y el label
+   se partía en 2 líneas desbordando el height de 52px. Con 264px:
+   - <1280px viewport → 1 track full-width (patrón ML, 1 línea, 52px)
+   - ≥1440px → 2 tracks de 289px (1 línea cada uno)
+   - móvil ≤576 → 1 track, igual que siempre (target 48px) */
+.product-actions-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(264px, 1fr));
+  gap: 0.75rem;
+}
+
 .product-btn-contado {
   width: 100%;
-  height: 52px;
+  /* min-height y no height: en 992/1024/1200 la caja deja ~197-249px por
+     botón y "Comprar por WhatsApp" (16.8px) se parte en 2 líneas → con
+     height fijo el scrollHeight desbordaba el clientHeight y se recortaba
+     el texto. min-height conserva los 48px cuando entra en 1 línea
+     (1440/1920) y crece si hace falta. 48 = target de acción ML. */
+  min-height: 48px;
   font-size: 1.05rem;
   font-weight: 600;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-cta);
+}
+
+/* "Financiar": outline con tokens de marca (sin hex).
+   color = --text-link: el rojo de marca da 3.02 en dark; el borde rojo
+   se mantiene (no es texto, 3.02 ≥ 3.0 para UI). */
+.product-btn-financiar {
+  width: 100%;
+  min-height: 48px; /* ver nota en .product-btn-contado */
+  font-size: 1.05rem;
+  font-weight: 600;
+  border-radius: var(--radius-cta);
+  border-color: var(--color-brand-primary);
+  color: var(--text-link);
+}
+
+/* Radius 6 de los CTAs: App.css pinta `#root .btn-primary { --radius-sm
+   !important }` (1-1-0) y le gana a las reglas de componente (0-1-0), así
+   que hace falta ganarle en especificidad + !important SIN tocar la regla
+   global (afectaría a todos los btn-primary del sitio). */
+#root .product-buybox .btn-primary,
+#root .product-buybox .btn-outline-primary {
+  border-radius: var(--radius-cta) !important;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product-btn-financiar:hover {
+    background: var(--color-brand-primary);
+    border-color: var(--color-brand-primary);
+    color: var(--text-white);
+  }
 }
 
 .product-financing-hint {
@@ -272,6 +448,107 @@
 
 .dark-mode .product-financing-hint {
   background: var(--color-neutral-800);
+}
+
+/* Acción terciaria "Agregar al carrito". Con la barra sticky móvil
+   eliminada (patrón ML: 0 fixed en móvil) el carrito se agrega DESDE el
+   buybox: NO es un tercer CTA de compra (la spec cierra 2 CTAs:
+   WhatsApp + Financiar) sino una acción fantasma subordinada, y
+   conserva el requisito "Agregar al carrito agrega de verdad" +
+   trackAddToCart (spec product-detail / analytics-consent).
+   --text-link: 5.5:1 en light, 6.4:1 en dark sobre --bg-primary. */
+.product-btn-addcart {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  width: 100%;
+  /* 48 = misma altura que WhatsApp/Financiar (antes 44: los tres CTAs
+     apilados medían 48/48/44 y la fila quedaba despareja). */
+  min-height: 48px;
+  margin-top: 0.75rem;
+  /* padding 0.5rem 1rem = 16px horizontal (checklist ≥16). */
+  padding: 0.5rem 1rem;
+  /* 1rem = 16px, igual que los otros CTAs (antes 0.9rem/14.4px). */
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-link);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-cta);
+  transition: background var(--trans-fast), border-color var(--trans-fast);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .product-btn-addcart:hover {
+    background: var(--color-brand-primary-soft);
+    border-color: var(--color-brand-primary);
+  }
+}
+
+.product-btn-addcart:focus-visible {
+  outline: 2px solid var(--text-link);
+  outline-offset: 2px;
+}
+
+/* ─── Purchase Box (SECCIÓN de la ficha, sticky en desktop) ─────────
+   Envuelve .product-pricing + .product-actions. NO es una card: usa el
+   MISMO lenguaje de separación que .product-specs-rail y
+   .product-description (bloque plano sin fondo, sin radio y sin sombra,
+   delimitado por hairlines de 1px). Antes llevaba borde completo +
+   radius 8 + sombra 0 1px 2px + fondo --bg-primary: eso la leía como
+   widget pegado sobre la página, no como parte de la ficha (ref ML:
+   "buybox = borde 1px y YA, sombra cero").
+   background: transparent y NO --bg-primary: la sección pinta el fondo
+   de la página. Pintarla de --bg-card rompía los contrasts verificados
+   (financiar 6.41 → 5.31, precio 3.0 → 2.5); no pintarla conserva esos
+   ratios idénticos porque el fondo efectivo no cambia.
+   position:sticky solo ≥992px; la clase .buybox-sticky se agrega cuando
+   step === 'product' (ProductPage.tsx), así en el wizard de crédito la
+   sección queda en flujo normal. En ≤991px la compra vive 100% en flujo
+   (0 elementos fixed en móvil, patrón MercadoLibre): sin barra sticky. */
+.product-buybox {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color);
+  border-radius: 0;
+  box-shadow: none;
+  padding: 1rem 0;
+}
+
+/* Los hairlines propio de cada fila sobran contra los de la SECCIÓN:
+   pricing no pinta border-top (lo pinta la sección) pero SÍ conserva su
+   border-bottom, que es la línea que separa precio de CTAs. Actions no
+   pinta border-bottom (lo pinta la sección). padding 0 en las filas: el
+   aire lo da la sección (1rem). */
+.product-buybox .product-pricing {
+  border-top: 0;
+  padding-top: 0;
+}
+
+.product-buybox .product-actions {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+/* La sección de compra NO usa position:sticky — el usuario decidió que
+   debe bajar con el scroll como parte natural de la ficha (sin "flotar"
+   por encima del contenido). Compra en flujo en TODOS los breakpoints. */
+
+/* Focus dentro de la sección (teclado): anillo con --text-link. --text-link
+   en dark es #F87171 → 6.3:1 contra --bg-primary (#111827); el rojo de
+   marca daba 2.97:1 (apenas el mínimo de 3:1 para UI). En light es el rojo
+   de marca → 5.9:1. No toca el color de texto de los CTAs → los contrasts
+   W1/W2 verificados quedan intactos. Scope ≥992 para no pintar el anillo
+   en la sección móvil.
+   Sin .buybox-sticky:hover: con la card eliminada no queda borde que
+   cambiar, y un hover sobre toda la sección se leía como widget. */
+@media (min-width: 992px) {
+  .buybox-sticky:focus-within {
+    outline: 2px solid var(--text-link);
+    outline-offset: 2px;
+  }
 }
 
 /* Benefits */
@@ -314,12 +591,15 @@
   padding-top: calc(1.5rem + env(safe-area-inset-top));
   padding-left: calc(1.5rem + env(safe-area-inset-left));
   padding-right: calc(1.5rem + env(safe-area-inset-right));
-  opacity: 0;
-  transition: opacity var(--trans-fast);
+  /* Entrada animada al montar. El patrón original dependía de la clase
+     `.open`, que NINGÚN JS agregaba → overlay y panel quedaban en opacity:0
+     (invisible). La visibilidad ahora vive en la keyframe, sin clase. */
+  animation: product-step-overlay-in var(--trans-fast) both;
 }
 
-.product-step-content.open {
-  opacity: 1;
+@keyframes product-step-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .product-step-content > div {
@@ -331,14 +611,12 @@
   max-height: calc(90vh - env(safe-area-inset-top) - env(safe-area-inset-bottom));
   overflow-y: auto;
   box-shadow: var(--shadow-xl);
-  transform: translateY(20px);
-  opacity: 0;
-  transition: transform var(--trans-modal) var(--ease-out), opacity var(--trans-modal) var(--ease-out);
+  animation: product-step-panel-in var(--trans-modal) var(--ease-out) both;
 }
 
-.product-step-content.open > div {
-  transform: translateY(0);
-  opacity: 1;
+@keyframes product-step-panel-in {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .step-header {
@@ -395,114 +673,167 @@
   font-weight: 600;
 }
 
-/* ─── Recommended Section ─────────────────────────────────── */
+/* ─── Recommended Section (carrusel scroll-snap, huella ML) ──
+   Grilla → CARRUSEL horizontal con snap y huella fija (ref: ML
+   "Recomendados = carrusel snap con huella fija, no grid"): la longitud
+   vertical deja de crecer con el inventario y el layout no se reorganiza
+   bajo el pulgar. Cards 230px fijos + imagen 1:1 + gap 12 (ML). */
 .recommended-section {
   margin-top: 4rem;
   padding-top: 2rem;
   border-top: 1px solid var(--border-color);
+  min-width: 0;
 }
 
 .recommended-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 1.5rem;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
 }
 
 .recommended-title {
-  font-size: clamp(1.25rem, 2.5vw, 1.75rem);
-  font-weight: 700;
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+  font-weight: 600;
   color: var(--text-primary);
   margin: 0;
 }
 
-.recommended-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
+/* Flechas: solo en viewports donde el header tiene aire para ellas; el
+   track sigue siendo focuseable y scrolleable con teclado en todos los
+   tamaños. Se renderizan solo cuando hay overflow real (JS). */
+.recommended-nav {
+  display: none;
+  gap: 0.5rem;
+  flex: 0 0 auto;
 }
 
-@media (min-width: 640px) {
-  .recommended-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1.5rem;
+@media (min-width: 576px) {
+  .recommended-nav {
+    display: flex;
   }
 }
 
-@media (min-width: 992px) {
-  .recommended-grid {
-    grid-template-columns: repeat(4, 1fr);
-    gap: 1.5rem;
-  }
-}
-
-/* ─── Mobile Sticky CTA ───────────────────────────────────── */
-.product-mobile-cta {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1040;
-  background: linear-gradient(to top, var(--bg-card), transparent);
-  padding: 1rem 0 calc(0.5rem + env(safe-area-inset-bottom));
-  border-top: 1px solid var(--border-color);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.08);
-  padding-left: env(safe-area-inset-left);
-  padding-right: env(safe-area-inset-right);
-}
-
-.mobile-cta-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.75rem;
-  padding: 0 1rem;
-}
-
-.mobile-cta-btn {
-  height: 48px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  border-radius: var(--radius-md);
-  display: flex;
+.recommended-nav-btn {
+  width: 40px;
+  height: 40px;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  padding: 0;
+  background: var(--bg-card);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-xs);
+  cursor: pointer;
+  transition: background var(--trans-fast), border-color var(--trans-fast);
 }
 
-.mobile-cta-btn:first-child {
-  border-color: var(--color-brand-primary);
-  color: var(--color-brand-primary);
-  background: var(--color-brand-primary-light);
+.recommended-nav-btn:disabled {
+  opacity: 0.4;
+  cursor: default;
 }
 
+.recommended-nav-btn:focus-visible {
+  outline: 2px solid var(--text-link);
+  outline-offset: 2px;
+}
+
+/* Hover SOLO con puntero fino (en táctil no hay hover sticks). */
 @media (hover: hover) and (pointer: fine) {
-  .mobile-cta-btn:first-child:hover {
-    background: var(--color-brand-primary);
-    color: var(--text-white);
+  .recommended-nav-btn:not(:disabled):hover {
+    background: var(--bg-hover);
+    border-color: var(--color-neutral-300);
   }
 }
 
-.mobile-cta-btn:last-child {
-  background: var(--color-brand-primary);
-  color: var(--text-white);
+/* Track scrolleable: focuseable (tabindex=0 + role/aria-label en TSX) para
+   que el teclado pueda desplazarlo con las flechas. Scrollbar oculta: la
+   señal de "hay más" es el peek parcial de la 2ª card (patrón ML). */
+.recommended-track {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  scroll-snap-type: x mandatory;
+  overscroll-behavior-x: contain;
+  min-width: 0;
+  padding: 2px 2px 8px;
+  margin: -2px -2px -8px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
 }
 
-@media (hover: hover) and (pointer: fine) {
-  .mobile-cta-btn:last-child:hover {
-    background: var(--color-brand-primary-dark);
-  }
+.recommended-track::-webkit-scrollbar {
+  display: none;
+}
+
+.recommended-track:focus-visible {
+  outline: 2px solid var(--text-link);
+  outline-offset: 4px;
+}
+
+/* Huella fija (ML: ~230×350). 224px + gap 12 = paso 236: a 375 caben
+   1.5 cards (peek de la 2ª), a 768 y 1440 caben 3 completas con la 4ª
+   asomando (24px en 1440) → siempre hay señal de "hay más". */
+.recommended-slide {
+  flex: 0 0 224px;
+  min-width: 0;
+  scroll-snap-align: start;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Alturas iguales sin depender del contenido: la slide se estira en la
+   línea flex y la card llena con flex:1 (height:100% del componente no
+   resuelve contra un padre auto). */
+.recommended-slide .product-card {
+  height: auto;
+  flex: 1 1 auto;
+}
+
+/* Imagen 1:1 (ML reco card 230×230), sin altura fija de 220px. */
+.recommended-track .product-image-stage {
+  height: auto;
+  aspect-ratio: 1;
+  padding: 1rem;
+}
+
+.recommended-track .product-card-content {
+  padding: 1rem;
+}
+
+/* En el carrusel las chips de specs sobran: 5 chips en 230px ocupaban
+   108px (3 filas) y alargaban la card a 616px. ML no muestra specs en las
+   cards de recomendados — título + precio mandan. El catálogo sigue
+   mostrándolas. */
+.recommended-track .product-specs-rail {
+  display: none;
 }
 
 /* ─── Responsive ──────────────────────────────────────────── */
 @media (max-width: 991px) {
   .product-gallery {
-    position: static;
-    max-height: none;
     margin-bottom: 2rem;
   }
 
   .product-page-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Sección de compra FULL-BLEED (ML móvil): las hairlines superior e
+     inferior sangran al borde del viewport y el contenido conserva el
+     padding del container. Sin radio, sin sombra y sin fondo propio →
+     se lee como "Precio y compra", otra sección de la ficha, igual que
+     Especificaciones o Descripción. El margen negativo es exactamente
+     el padding del container (--product-bleed) así que NO hay overflow
+     horizontal. */
+  .product-buybox {
+    margin-inline: calc(-1 * var(--product-bleed, var(--space-6)));
+    padding-inline: var(--product-bleed, var(--space-6));
   }
 
   .product-step-content > div {
@@ -514,7 +845,9 @@
 
 @media (max-width: 576px) {
   .product-main {
-    padding: 1.5rem 0 3rem;
+    /* Sin barra sticky no hay nada que reservar abajo: padding de sistema
+       (16 arriba / 64 abajo). */
+    padding: 1.5rem 0 4rem;
   }
 
   .product-gallery-viewport {
@@ -522,12 +855,19 @@
     padding: 1.5rem;
   }
 
-  .product-title {
-    font-size: 1.5rem;
+  /* Móvil: el título baja intensidad (ML 22/600 desktop → título de
+     confirmación en móvil) para que el precio 28/600 mande. */
+  h1.product-title {
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.3;
   }
 
   .product-actions .btn-lg {
-    height: 48px;
+    /* min-height (no height): `.product-actions .btn-lg` tiene mayor
+       especificidad que `.product-btn-contado { min-height: 48px }`, así
+       que este valor manda en móvil y se mantiene el target de 48px. */
+    min-height: 48px;
     font-size: 1rem;
   }
 
@@ -541,15 +881,70 @@
   }
 }
 
+/* Hacks que existían SOLO por la barra sticky inferior, reviertidos con su
+   eliminación (ML: 0 elementos fixed en móvil):
+   - .cart-fab-on-product: el FAB del carrito vuelve a bottom:20px igual
+     que en el resto del sitio (medido: FAB bottom-right vs badge WhatsApp
+     bottom-left → sin solape horizontal en ningún breakpoint).
+   - body:has(.product-mobile-cta) .gio-footer: sin sticky no hay nada que
+     compensar en el padding del footer.
+   - body:has(.product-mobile-cta) .whatsapp-container: el badge vuelve a
+     comportarse igual que en las demás rutas (verificado en 375: no pisa
+     el FAB ni el header fijo). */
+
+/* ─── Accesibilidad: foco visible + targets táctiles ─────── */
+.product-buybox .btn:focus-visible,
+.product-gallery-actions .btn:focus-visible,
+.product-thumb:focus-visible,
+.step-header .btn-link:focus-visible {
+  outline: 2px solid var(--text-link);
+  outline-offset: 2px;
+}
+
+@media (max-width: 991px) {
+  /* ≥44px en táctil: el share de la galería medía 40px y el "Volver/Cerrar"
+     del wizard eran links de texto sin área de toque mínima. */
+  .product-gallery-actions .btn {
+    width: 44px;
+    height: 44px;
+  }
+
+  .step-header .btn-link {
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+  }
+}
+
 /* ─── Print Styles ────────────────────────────────────────── */
 @media print {
   .product-gallery-thumbs,
   .product-gallery-actions,
   .product-actions,
   .product-benefits,
-  .product-mobile-cta,
-  .product-step-content {
+  .product-step-content,
+  .recommended-nav {
     display: none !important;
+  }
+
+  /* En papel no hay scroll: el carrusel de recomendados se imprime como
+     grilla de 2 columnas, sin recorte horizontal. */
+  .recommended-track {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    overflow: visible !important;
+  }
+
+  .recommended-slide {
+    width: auto;
+  }
+
+  /* En papel no hay scroll: la caja de compra vuelve a ser un bloque plano. */
+  .product-buybox {
+    border: 0;
+    box-shadow: none;
+    padding: 0;
   }
 
   .product-page-grid {

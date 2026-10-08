@@ -116,6 +116,9 @@
   /* Radius — Nexton softer (12px cards) */
   --radius-none: 0;
   --radius-xs: 4px;
+  /* Radio de acción de compra (huella MercadoLibre PDP: CTA 6px; la buybox
+     usa --radius-sm = 8px, también la huella ML) */
+  --radius-cta: 6px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 16px;

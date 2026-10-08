@@ -29,6 +29,18 @@ export function buildContadoWhatsAppMessage(input: ContadoMsgInput): string {
     : `Hola, estoy interesado en comprar al contado el ${input.nombre}.\nPrecio: ${input.priceRegularStr}.\n¿Está disponible para entrega inmediata?`;
 }
 
+export interface ProductMsgInput {
+  nombre: string;
+}
+
+/**
+ * Mensaje genérico de producto para el CTA "Comprar por WhatsApp" del detalle.
+ * Copy aprobado byte-exacto — sin calificativo de medio de pago ("al contado").
+ */
+export function buildProductWhatsAppMessage(input: ProductMsgInput): string {
+  return `Hola, estoy interesado en el ${input.nombre}. ¿Me confirmas disponibilidad y precio? Gracias.`;
+}
+
 export interface CreditoMsgInput {
   financiera: Pick<Financiera, 'id' | 'nombre'>;
   nombre: string;

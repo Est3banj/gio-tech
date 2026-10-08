@@ -3,7 +3,7 @@ import type React from "react";
 import type { DerivadosPricing } from "./useProductPricing";
 
 interface PriceDisplayProps {
-  variant: 'card' | 'modal';
+  variant: 'card' | 'modal' | 'page';
   der: DerivadosPricing;
 }
 
