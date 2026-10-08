@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Fuse from "fuse.js";
 import { useProducts } from "../hooks/useProducts";
-import { normalizeText } from "../utils/formatters";
 import ProductImage from "./common/ProductImage";
-import { getProductBrand } from "../components/Catalogo";
 import type { Product } from "../types";
 import "./search-autocomplete.css";
 
@@ -58,6 +56,16 @@ export interface SearchSuggestion {
 const RECENT_SEARCHES_KEY = "gio-tech-recent-searches";
 const MAX_RECENT = 5;
 
+/** Fisher-Yates: cada apertura de sugerencias muestra subconjunto/orden distinto. */
+function shuffle<T>(items: T[]): T[] {
+  const arr = [...items];
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
 const CATEGORIES = [
   { id: "smartphones", label: "Smartphones", icon: "bi-phone", count: 0 },
   { id: "accesorios", label: "Accesorios", icon: "bi-box-seam", count: 0 },
@@ -91,10 +99,13 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [suggestionSeed, setSuggestionSeed] = useState(0);
+  const [dropMaxHeight, setDropMaxHeight] = useState<number | null>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const inputRefInternal = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
-  const { products, isLoading } = useProducts();
+  const location = useLocation();
+  const { products } = useProducts();
 
   // Refs
   const mergedInputRef = inputRef || inputRefInternal;
@@ -120,7 +131,9 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
       const updated = [trimmed, ...filtered].slice(0, MAX_RECENT);
       try {
         localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(updated));
-      } catch {}
+      } catch {
+        // localStorage puede fallar (modo privado): no bloquea la búsqueda
+      }
       return updated;
     });
   }, []);
@@ -156,11 +169,16 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
     []
   );
 
-  // Productos destacados para "acceso rápido" cuando el buscador está vacío
+  // Productos destacados para "acceso rápido" cuando el buscador está vacío.
+  // suggestionSeed cambia en cada apertura => se re-baraja el pool: no siempre
+  // aparecen los mismos productos ni en el mismo orden. Con query escrita este
+  // arreglo no se usa (el filtrado por relevancia no cambia).
   const quickAccessProducts = useMemo((): Product[] => {
     const featured = products.filter((p) => p.esDestacado);
-    return (featured.length ? featured : products).slice(0, maxProducts);
-  }, [products, maxProducts]);
+    const pool = featured.length ? featured : products;
+    if (suggestionSeed === 0) return pool.slice(0, maxProducts);
+    return shuffle(pool).slice(0, maxProducts);
+  }, [products, maxProducts, suggestionSeed]);
 
   // Compute suggestions
   const suggestions = useMemo((): SearchSuggestion[] => {
@@ -245,17 +263,45 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
     return all;
   }, [query, products, quickAccessProducts, recentSearches, maxProducts, maxCategories, showRecent]);
 
+  // Altura disponible bajo el input en pantallas chicas (<992): el dropdown
+  // SIEMPRE abre hacia abajo y debe caber en el viewport con scroll interno
+  // en vez de invertir dirección. Desktop (≥992) queda con el CSS (60vh).
+  const computeDropMaxHeight = useCallback((): number | null => {
+    if (typeof window === "undefined" || window.innerWidth >= 992) return null;
+    const rect = wrapperRef.current?.getBoundingClientRect();
+    if (!rect) return null;
+    const available = window.innerHeight - rect.bottom - 6 - 12;
+    const cap = Math.floor(window.innerHeight * 0.6);
+    return Math.max(80, Math.min(available, cap));
+  }, []);
+
+  // Un resize con el dropdown abierto (p.ej. rotar el dispositivo) invalida la
+  // altura calculada: se recalcula; al cruzar a ≥992 vuelve al CSS (60vh).
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleResize = () => setDropMaxHeight(computeDropMaxHeight());
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, [isOpen, computeDropMaxHeight]);
+
+  // Única puerta de apertura: re-baraja sugerencias + calcula altura y abre.
+  const openSuggestions = () => {
+    setSuggestionSeed((s) => s + 1);
+    setDropMaxHeight(computeDropMaxHeight());
+    setIsOpen(true);
+  };
+
   // Handle input change
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setQuery(value);
     onChange?.(value);
-    if (!isOpen && value.trim()) setIsOpen(true);
+    if (!isOpen && value.trim()) openSuggestions();
   };
 
   // Handle focus — siempre abre para mostrar acceso rápido + categorías
   const handleFocus = () => {
-    setIsOpen(true);
+    openSuggestions();
   };
 
   // Handle blur (delayed to allow clicks)
@@ -271,7 +317,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
       case "ArrowDown":
         e.preventDefault();
         setHighlightedIndex((prev) => (prev < maxIndex ? prev + 1 : 0));
-        if (!isOpen) setIsOpen(true);
+        if (!isOpen) openSuggestions();
         break;
       case "ArrowUp":
         e.preventDefault();
@@ -305,7 +351,11 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
       onSelect(suggestion);
     } else if (suggestion.href) {
       if (suggestion.type === "product") {
-        navigate(suggestion.href);
+        // state.from igual que ProductCard: "Volver al catálogo" del detalle
+        // puede restaurar scroll + filtros vía navigate(-1).
+        navigate(suggestion.href, {
+          state: { from: `${location.pathname}${location.search}` },
+        });
       } else {
         window.location.href = suggestion.href;
       }
@@ -421,6 +471,7 @@ const SearchAutocomplete: React.FC<SearchAutocompleteProps> = ({
           className="search-autocomplete-results"
           role="listbox"
           aria-label="Sugerencias de búsqueda"
+          style={dropMaxHeight !== null ? { maxHeight: `${dropMaxHeight}px` } : undefined}
         >
           {suggestions.length > 0 ? (
             <>

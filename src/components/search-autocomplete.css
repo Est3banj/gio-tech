@@ -386,32 +386,12 @@
 
 /* ─── Mobile Optimizations ────────────────────────────────── */
 @media (max-width: 768px) {
-  .search-autocomplete-results {
-    position: fixed;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    border-radius: var(--radius-xl) var(--radius-xl) 0 0;
-    max-height: 70vh;
-    border-top: 1px solid var(--border-color);
-    border-left: none;
-    border-right: none;
-    border-bottom: none;
-    animation: slideUp 0.25s var(--ease-spring);
-  }
-
-  @keyframes slideUp {
-    from {
-      opacity: 0;
-      transform: translateY(20px);
-    }
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
+  /* El dropdown SIEMPRE abre hacia abajo, igual que desktop (consistencia).
+     Antes había un bottom-sheet `position: fixed; bottom: 0` acá: con el
+     transform de .editorial-search como containing block, crecía HACIA
+     ARRIBA desde el borde del input. El fit en viewport lo resuelve el
+     max-height dinámico inline (SearchAutocomplete.tsx, <992px) y, si no,
+     el max-height base 60vh con scroll interno. NO reintroducir flip. */
   .search-suggestion {
     padding: 1rem;
   }
