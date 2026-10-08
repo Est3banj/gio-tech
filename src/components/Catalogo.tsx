@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router-dom";
 import Fuse from "fuse.js";
 import { useProducts } from "../hooks/useProducts";
 import { normalizeText } from "../utils/formatters";
+import { getProductIdFromSearchParams } from "../utils/deep-link";
 import ProductCard from "./ProductCard";
 import Reveal from "./Reveal";
 import { Row, Col, Form, Spinner } from 'react-bootstrap';
@@ -69,10 +70,10 @@ export function getProductBrand(p: Product): string {
 const Catalogo: React.FC = () => {
   const { products: productos, isLoading } = useProducts();
   const [searchParams, setSearchParams] = useSearchParams();
-  const [busqueda, setBusqueda] = useState("");
+  const [busqueda, setBusqueda] = useState(searchParams.get("buscar") || "");
   const [filtroMarca, setFiltroMarca] = useState(searchParams.get("marca") || "");
-  const [filtroPrecio, setFiltroPrecio] = useState("");
-  const [ordenamiento, setOrdenamiento] = useState("default");
+  const [filtroPrecio, setFiltroPrecio] = useState(searchParams.get("precio") || "");
+  const [ordenamiento, setOrdenamiento] = useState(searchParams.get("orden") || "default");
   const [showGeminiChat, setShowGeminiChat] = useState(false);
 
   useEffect(() => {
@@ -80,39 +81,41 @@ const Catalogo: React.FC = () => {
     if (marcaParam !== null) {
       setFiltroMarca(marcaParam);
     }
+    const precioParam = searchParams.get("precio");
+    if (precioParam !== null) {
+      setFiltroPrecio(precioParam);
+    }
+    const ordenParam = searchParams.get("orden");
+    if (ordenParam !== null) {
+      setOrdenamiento(ordenParam);
+    }
+    const buscarParam = searchParams.get("buscar");
+    if (buscarParam !== null) {
+      setBusqueda(buscarParam);
+    }
   }, [searchParams]);
 
-  // Leer query params de deep linking (?producto=ID o ?id=ID)
-  const rawTargetId = searchParams.get("producto") || searchParams.get("id");
-  const targetProductId = useMemo(() => {
-    if (!rawTargetId) return "";
-    try {
-      return decodeURIComponent(rawTargetId).trim();
-    } catch {
-      return rawTargetId.trim();
-    }
-  }, [rawTargetId]);
-
-  const isTargetProduct = (p: Product | null | undefined): boolean => {
-    if (!targetProductId || !p?.id) return false;
-    const pId = String(p.id).trim();
-    const tId = targetProductId.trim();
-    return pId === tId || pId.toLowerCase() === tId.toLowerCase();
+  // Los filtros viven en la URL (replace, sin ensuciar el historial): al
+  // volver de /producto/:id con navigate(-1) el browser restaura la
+  // entrada del catálogo CON sus params, y el estado se rehidrata aquí.
+  const sincronizarFiltrosURL = (f: {
+    marca: string;
+    precio: string;
+    orden: string;
+    buscar: string;
+  }) => {
+    const params = new URLSearchParams();
+    if (f.marca) params.set("marca", f.marca);
+    if (f.precio) params.set("precio", f.precio);
+    if (f.orden && f.orden !== "default") params.set("orden", f.orden);
+    if (f.buscar) params.set("buscar", f.buscar);
+    setSearchParams(params, { replace: true });
   };
 
-  const handleProductModalClose = () => {
-    if (searchParams.has("producto") || searchParams.has("id")) {
-      const newParams = new URLSearchParams(searchParams);
-      newParams.delete("producto");
-      newParams.delete("id");
-      setSearchParams(newParams, { replace: true });
-    }
-  };
-
-  const deepLinkedProduct = useMemo(() => {
-    if (!targetProductId || productos.length === 0) return null;
-    return productos.find(isTargetProduct) || null;
-  }, [targetProductId, productos]);
+  // Deep links legacy (?producto=ID o ?id=ID): el helper centraliza
+  // decode/trim/try-catch; el redirect se hace con <Navigate> después de
+  // TODOS los hooks y antes del JSX (sin flash del catálogo, sin modal).
+  const targetProductId = getProductIdFromSearchParams(searchParams);
 
   // Marcas extraídas dinámicamente de los productos con conteo y normalización
   const marcasConConteo = useMemo(() => {
@@ -221,7 +224,34 @@ const Catalogo: React.FC = () => {
     setFiltroMarca("");
     setFiltroPrecio("");
     setOrdenamiento("default");
+    sincronizarFiltrosURL({ marca: "", precio: "", orden: "default", buscar: "" });
   };
+
+  const cambiarFiltro = (cambios: {
+    marca?: string;
+    precio?: string;
+    orden?: string;
+    buscar?: string;
+  }) => {
+    const siguiente = {
+      marca: cambios.marca ?? filtroMarca,
+      precio: cambios.precio ?? filtroPrecio,
+      orden: cambios.orden ?? ordenamiento,
+      buscar: cambios.buscar ?? busqueda,
+    };
+    if (cambios.marca !== undefined) setFiltroMarca(cambios.marca);
+    if (cambios.precio !== undefined) setFiltroPrecio(cambios.precio);
+    if (cambios.orden !== undefined) setOrdenamiento(cambios.orden);
+    if (cambios.buscar !== undefined) setBusqueda(cambios.buscar);
+    sincronizarFiltrosURL(siguiente);
+  };
+
+  // Redirect post-hooks: conserva el ID exacto y descarta los demás query
+  // params (?marca, etc.). Ocurre aunque el producto no exista (el detalle
+  // ya maneja el 404) y sin importar si está fuera del filtro activo.
+  if (targetProductId) {
+    return <Navigate to={`/producto/${targetProductId}`} replace />;
+  }
 
   return (
     <>
@@ -254,7 +284,7 @@ const Catalogo: React.FC = () => {
                   type="text"
                   placeholder="Buscar por nombre o descripción..."
                   value={busqueda}
-                  onChange={(e) => setBusqueda(e.target.value)}
+                  onChange={(e) => cambiarFiltro({ buscar: e.target.value })}
                   className="search-glass-input"
                   aria-label="Buscar dispositivos"
                 />
@@ -262,7 +292,7 @@ const Catalogo: React.FC = () => {
                   <button
                     type="button"
                     className="search-glass-clear-btn"
-                    onClick={() => setBusqueda("")}
+                    onClick={() => cambiarFiltro({ buscar: "" })}
                     aria-label="Limpiar búsqueda"
                   >
                     <i className="bi bi-x-circle-fill"></i>
@@ -280,7 +310,7 @@ const Catalogo: React.FC = () => {
                 <i className="bi bi-tag filter-select-icon" aria-hidden="true"></i>
                 <Form.Select
                   value={filtroMarca}
-                  onChange={(e) => setFiltroMarca(e.target.value)}
+                  onChange={(e) => cambiarFiltro({ marca: e.target.value })}
                   size="sm"
                   aria-label="Filtrar por marca"
                   className="filter-glass-select"
@@ -299,7 +329,7 @@ const Catalogo: React.FC = () => {
                 <i className="bi bi-cash-stack filter-select-icon" aria-hidden="true"></i>
                 <Form.Select
                   value={filtroPrecio}
-                  onChange={(e) => setFiltroPrecio(e.target.value)}
+                  onChange={(e) => cambiarFiltro({ precio: e.target.value })}
                   size="sm"
                   aria-label="Filtrar por rango de precio"
                   className="filter-glass-select"
@@ -315,7 +345,7 @@ const Catalogo: React.FC = () => {
                 <i className="bi bi-arrow-down-up filter-select-icon" aria-hidden="true"></i>
                 <Form.Select
                   value={ordenamiento}
-                  onChange={(e) => setOrdenamiento(e.target.value)}
+                  onChange={(e) => cambiarFiltro({ orden: e.target.value })}
                   size="sm"
                   aria-label="Ordenar productos"
                   className="filter-glass-select"
@@ -373,28 +403,11 @@ const Catalogo: React.FC = () => {
             {productosOrdenados.map((producto, i) => (
               <Col key={producto.id} xs={12} sm={6} md={6} lg={4} xl={4} xxl={3} className="d-flex">
                 <Reveal delay={(i % 8) * 40} className="w-100">
-                  <ProductCard
-                    producto={producto}
-                    autoOpen={isTargetProduct(producto)}
-                    onCloseModal={handleProductModalClose}
-                    usePageNavigation={isTargetProduct(producto)}
-                  />
+                  <ProductCard producto={producto} />
                 </Reveal>
               </Col>
             ))}
           </Row>
-        )}
-
-        {/* Deep link fallback si el producto solicitado está fuera del filtro activo */}
-        {!isLoading && deepLinkedProduct && !productosOrdenados.some(isTargetProduct) && (
-          <div style={{ display: 'none' }}>
-            <ProductCard
-              producto={deepLinkedProduct}
-              autoOpen={true}
-              onCloseModal={handleProductModalClose}
-              usePageNavigation={true}
-            />
-          </div>
         )}
 
         {/* ─── Asistente Gemini Chat FAB ─── */}

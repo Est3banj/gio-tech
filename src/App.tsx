@@ -1,5 +1,5 @@
-import { useState, useEffect, lazy, Suspense } from "react";
-import { Routes, Route, Navigate, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect, useLayoutEffect, lazy, Suspense } from "react";
+import { Routes, Route, Navigate, useNavigate, useLocation, useNavigationType } from "react-router-dom";
 
 import Catalogo from "./components/Catalogo";
 import Header from "./components/Header";
@@ -15,6 +15,7 @@ import { CartProvider } from "./contexts/CartContext";
 import { WhatsappNumberProvider } from "./contexts/WhatsappNumberContext";
 import { subscribeToConfig } from "./services/config.service";
 import { useAuth } from "./hooks/useAuth";
+import { getProductIdFromSearchParams } from "./utils/deep-link";
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
@@ -33,11 +34,12 @@ const ShopPage = lazy(() => import("./components/ShopPage"));
 
 const RootRoute = () => {
   const location = useLocation();
-  const searchParams = new URLSearchParams(location.search);
-  const hasProductQuery = Boolean(searchParams.get("producto") || searchParams.get("id"));
+  // Deep links legacy (/?producto=ID o /?id=ID) → directo al detalle.
+  // El helper devuelve null si el param está vacío/ausente (sin redirect, igual que antes).
+  const targetProductId = getProductIdFromSearchParams(new URLSearchParams(location.search));
 
-  if (hasProductQuery) {
-    return <Navigate to={`/catalogo${location.search}`} replace />;
+  if (targetProductId) {
+    return <Navigate to={`/producto/${targetProductId}`} replace />;
   }
 
   return (
@@ -67,6 +69,18 @@ function AppContent() {
   const [, setConfiguracion] = useState<StoreConfig>({});
   const navigate = useNavigate();
   const location = useLocation();
+  const navigationType = useNavigationType();
+
+  // Scroll solo en PUSH: el catálogo abre la ficha arriba aunque su
+  // scroll en origen sea y=1200 (chunk cálido no clampa el documento).
+  // POP queda intacto para que el browser restaure la posición de
+  // origen (patrón estándar de scroll restoration en SPAs).
+  // REPLACE no toca el scroll (deep links / filtros de tienda).
+  useLayoutEffect(() => {
+    if (navigationType === "PUSH" && !location.hash) {
+      window.scrollTo(0, 0);
+    }
+  }, [location.key, navigationType, location.hash]);
 
   useEffect(() => {
     const unsubConfig = subscribeToConfig(
@@ -210,7 +224,9 @@ function AppContent() {
 
       {showHeaderAndFooter && <Footer />}
 
-      {(location.pathname === "/" || location.pathname === "/catalogo") && <CartFloatingButton />}
+      {(location.pathname === "/" || location.pathname === "/catalogo" || location.pathname.startsWith("/producto/")) && (
+        <CartFloatingButton />
+      )}
 
       {showHeaderAndFooter && <WhatsappFloatingButton />}
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link, Navigate, useSearchParams, useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
 import { usePopularProducts } from "../hooks/usePopularProducts";
@@ -12,6 +12,7 @@ import SearchAutocomplete from "./SearchAutocomplete";
 import Reveal from "./Reveal";
 import ReviewsFeed, { type FeedReview } from "./ReviewsFeed";
 import { useOpinions } from "../hooks/useOpinions";
+import { getProductIdFromSearchParams } from "../utils/deep-link";
 import type { Product } from "../types";
 
 interface TrustItem {
@@ -160,10 +161,12 @@ const LandingPage: React.FC = () => {
         url: o.perfilUrl || undefined,
       }));
 
-  const hasProductQuery = Boolean(searchParams.get("producto") || searchParams.get("id"));
+  // Deep links legacy (/?producto=ID o /?id=ID) → directo al detalle.
+  // Defensa si LandingPage se renderiza fuera de RootRoute; en sincronía con App.
+  const targetProductId = getProductIdFromSearchParams(searchParams);
 
-  if (hasProductQuery) {
-    return <Navigate to={`/catalogo?${searchParams.toString()}`} replace />;
+  if (targetProductId) {
+    return <Navigate to={`/producto/${targetProductId}`} replace />;
   }
 
   // Una sola grilla de productos: ranking real de vistas (top 4),
