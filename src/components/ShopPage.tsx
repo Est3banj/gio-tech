@@ -505,7 +505,6 @@ const ShopPage: React.FC = () => {
                       <Col key={producto.id} xs={12} sm={6} md={6} lg={4} xl={4} xxl={3} className="d-flex">
                         <ProductCard
                           producto={producto}
-                          usePageNavigation={true}
                         />
                       </Col>
                     ))}
@@ -516,7 +515,6 @@ const ShopPage: React.FC = () => {
                       <div key={producto.id} className="shop-list-item" role="listitem">
                         <ProductCard
                           producto={producto}
-                          usePageNavigation={true}
                         />
                       </div>
                     ))}

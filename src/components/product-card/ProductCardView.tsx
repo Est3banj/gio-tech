@@ -21,7 +21,7 @@ const ProductCardView: React.FC<ProductCardViewProps> = ({ producto, isPopular =
   const handleShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     const origin = typeof window !== 'undefined' ? window.location.origin : '';
-    const shareUrl = `${origin}/catalogo?producto=${encodeURIComponent(producto.id)}`;
+    const shareUrl = `${origin}/producto/${producto.id}`;
     const shareData = {
       title: `${nombre} | GIO TECH`,
       text: `Mira el ${nombre} en GIO TECH Putumayo:`,
@@ -192,9 +192,9 @@ const ProductCardView: React.FC<ProductCardViewProps> = ({ producto, isPopular =
             onVerDetalles();
           }}
           type="button"
-          aria-label={der.tieneFinanciacion ? `Cotizar o financiar ${nombre}` : `Cotizar o comprar ${nombre}`}
+          aria-label={`Ver detalles de ${nombre}`}
         >
-          <span>{der.tieneFinanciacion ? 'Cotizar / Financiar' : 'Cotizar / Comprar'}</span>
+          <span>Ver detalles</span>
           <i className="bi bi-arrow-right-short" aria-hidden="true"></i>
         </button>
       </div>

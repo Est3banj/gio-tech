@@ -81,7 +81,19 @@
 
 .product-card:focus-visible,
 .gio-product-card-v2:focus-visible {
-  outline: 2px solid var(--color-brand-primary);
+  /* --text-link y no --color-brand-primary: en dark el anillo cae sobre el
+     fondo de la card (#1F2937) y el rojo de marca daba 2.5:1 (< 3:1 para
+     UI). --text-link es #F87171 en dark → 6.4:1; en light es el rojo de
+     marca → 5.9:1 sobre blanco. */
+  outline: 2px solid var(--text-link);
+  outline-offset: 2px;
+}
+
+/* El CTA "Ver detalles" vive DENTRO de la card (que también es focuseable):
+   sin anillo propio, el foco de teclado se perdía al Tab entrar al botón. */
+.btn-card-action-pro:focus-visible,
+.product-cta-btn:focus-visible {
+  outline: 2px solid var(--text-link);
   outline-offset: 2px;
 }
 
@@ -258,14 +270,16 @@
   display: flex;
   flex-direction: column;
   flex-grow: 1;
-  padding: 1.25rem 1.25rem 1.4rem;
+  /* Padding uniforme en los 4 lados (antes bottom 1.4rem = 22.4px,
+     valor huérfano y desparejo vs 20px de los lados). */
+  padding: 1.25rem;
   text-align: left;
 }
 
 @media (max-width: 576px) {
   .product-card-content,
   .product-card-body {
-    padding: 1rem 1rem 1.15rem;
+    padding: 1rem;
   }
 }
 
@@ -300,15 +314,6 @@
   overflow: hidden;
   min-height: 2.6rem;
   word-break: break-word;
-}
-
-@media (max-width: 375px) {
-  .product-card-title,
-  .product-title {
-    font-size: 0.9rem;
-    min-height: 2.4rem;
-    line-height: 1.25;
-  }
 }
 
 /* ─── Specs Chips — Nexton Minimal ────────────────────────── */
@@ -388,7 +393,14 @@
 
 .pricing-tier-box {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  /* 146px = ancho max-content del badge "Crédito disponible".
+     Con `1fr 1fr` fijo, en cards angostas (152px en recomendados, ~300px en
+     catálogo) la columna de crédito quedaba en 39-118px: el badge —nowrap y
+     centrado— desbordaba HACIA LA IZQUIERDA y pisaba el precio CONTADO.
+     auto-fit + min(100%, 146px) apila las filas cuando no caben dos
+     columnas de ese ancho: el badge siempre cabe entero y NUNCA invade la
+     columna del precio. En cajas anchas (≥300px) sigue de lado a lado. */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 146px), 1fr));
   gap: 0.5rem;
   background: var(--color-neutral-50);
   padding: 0.55rem 0.7rem;
@@ -439,7 +451,11 @@
 }
 
 .product-card-price {
-  font-size: clamp(0.85rem, 2.2vw, 1rem);
+  /* 1rem fijo: el clamp anterior (0.85rem–1rem vía 2.2vw) medía 13.6px
+     en todo viewport <728px — el precio caía por debajo del mínimo de
+     16px del checklist. 16px tabular-nums cabe en la columna de precio
+     de la card (192px útiles en el slide de 224) sin cortarse. */
+  font-size: 1rem;
   font-weight: 600;
   color: var(--text-primary);
   line-height: 1.1;
@@ -513,6 +529,11 @@
   justify-content: center;
   gap: 4px;
   text-align: center;
+  /* Red de seguridad: aunque la columna quede más angosta que el badge
+     (nowrap = max-content), no puede crecer más allá de su tier → corta
+     con puntos suspensivos en vez de tapar el precio de al lado. */
+  max-width: 100%;
+  min-width: 0;
 }
 
 .cuota-highlight .badge i,
@@ -976,6 +997,21 @@
 .dark-mode .btn-product-share {
   background: rgba(30, 41, 59, 0.9);
   color: var(--text-primary);
+}
+
+/* Táctil: 32px no llega a los 44px mínimos de target. Se agranda solo en
+   ≤991px (móvil/tablet); en desktop con mouse manda el círculo de 32px. */
+@media (max-width: 991px) {
+  .btn-product-share {
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
+}
+
+.btn-product-share:focus-visible {
+  outline: 2px solid var(--text-link);
+  outline-offset: 2px;
 }
 
 @media (hover: hover) and (pointer: fine) {
