@@ -7,6 +7,11 @@
  * clásico no cubre el escenario. La única forma de detectarlo es leer
  * píxeles, y eso requiere CORS: si el host no lo soporta (o el canvas queda
  * tainted), se hace FAIL-OPEN — se queda la imagen y no se concluye nada.
+ *
+ * Además, el probe SOLO se ejecuta contra hosts de una allowlist de origen
+ * conocido por servir CORS (isCorsProbeSafeHost): un host fuera de la lista
+ * (ej. cemelectronix.com) no emite NINGÚN request de sondeo, evitando los
+ * errores CORS que el navegador loguea en consola. Imagen intacta = fail-open.
  */
 
 const BLANK_SAMPLE_SIZE = 64;
@@ -28,6 +33,38 @@ export const toCanvasProbeUrl = (url: string): string => {
 export const isVisuallyBlankMetrics = (visibleRatio: number, luminanceStd: number): boolean =>
   visibleRatio < BLANK_VISIBLE_RATIO_MAX || luminanceStd < BLANK_LUMINANCE_STD_MAX;
 
+// Allowlist de hosts sondeables: solo estos sirven CORS (ACAO) y por lo tanto
+// permiten leer píxeles sin tainted canvas. Se matchea por SUFIJO de hostname
+// (no host exacto) para cubrir subdominios variables (http2.mlstatic.com,
+// m.media-amazon.com, cualquier *.appmifile.com). Verificado con curl -I:
+// raw.githubusercontent.com / mlstatic / media-amazon / appmifile /
+// ssl-images-amazon responden ACAO; cemelectronix.com NO.
+const CORS_SAFE_HOST_SUFFIXES = [
+  "githubusercontent.com", // raw.githubusercontent.com, avatars, objects...
+  "mlstatic.com", // http0/http2/http4.mlstatic.com (MercadoLibre CDN)
+  "media-amazon.com", // m.media-amazon.com y subdominios
+  "ssl-images-amazon.com", // CDN vieja de Amazon
+  "appmifile.com", // CDN de Xiaomi (appmifile.com)
+];
+
+/**
+ * ¿Este URL apunta a un host conocido por servir CORS?
+ * Debe evaluarse SOBRE la URL ya normalizada (toCanvasProbeUrl): los blob de
+ * github.com se reescriben a raw.githubusercontent.com (que sí sirve ACAO),
+ * mientras github.com en crudo no lo hace.
+ */
+export const isCorsProbeSafeHost = (url: string): boolean => {
+  let hostname: string;
+  try {
+    hostname = new URL(url).hostname;
+  } catch {
+    return false;
+  }
+  return CORS_SAFE_HOST_SUFFIXES.some(
+    (suffix) => hostname === suffix || hostname.endsWith(`.${suffix}`)
+  );
+};
+
 /** Resuelve true solo si la imagen está vacía; false = conservar (fail-open). */
 const corsUnsupportedOrigins = new Set<string>();
 
@@ -37,10 +74,20 @@ export const probeVisuallyBlank = (src: string): Promise<boolean> =>
       resolve(false);
       return;
     }
+    // Normalización PRIMERO (blob de GitHub → raw), porque el host normalizado
+    // es el que realmente se sondea y el que decide la puerta de allowlist.
+    const probeUrl = toCanvasProbeUrl(src);
     let origin: string;
     try {
-      origin = new URL(src).origin;
+      origin = new URL(probeUrl).origin;
     } catch {
+      resolve(false);
+      return;
+    }
+    // Puerta allowlist: host fuera de la lista = SKIP TOTAL del probe, sin
+    // request de sondeo y sin errores CORS en consola. La imagen se conserva
+    // (fail-open idéntico al comportamiento pre-fix).
+    if (!isCorsProbeSafeHost(probeUrl)) {
       resolve(false);
       return;
     }
@@ -99,5 +146,5 @@ export const probeVisuallyBlank = (src: string): Promise<boolean> =>
       corsUnsupportedOrigins.add(origin);
       finish(false);
     };
-    probe.src = toCanvasProbeUrl(src);
+    probe.src = probeUrl;
   });

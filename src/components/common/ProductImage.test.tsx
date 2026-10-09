@@ -2,7 +2,11 @@ import { describe, it, expect, vi, afterEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import ProductImage, { getCategoryIcon } from './ProductImage';
-import { toCanvasProbeUrl, isVisuallyBlankMetrics } from './image-blank-detection';
+import {
+  toCanvasProbeUrl,
+  isVisuallyBlankMetrics,
+  isCorsProbeSafeHost,
+} from './image-blank-detection';
 
 describe('ProductImage Component - Blindaje Resiliente de Imágenes', () => {
   it('renders img with valid src, alt, loading="lazy" and decoding="async"', () => {
@@ -182,7 +186,31 @@ describe('ProductImage Component - Blindaje Resiliente de Imágenes', () => {
       expect(isVisuallyBlankMetrics(1.0, 60)).toBe(false); // imagen sana normal
     });
 
-    it('sustituye la imagen por el placeholder cuando el probe confirma que está vacía', async () => {
+    it('isCorsProbeSafeHost acepta por sufijo los hosts con CORS conocidos y rechaza el resto', () => {
+      // Allowlist por sufijo (subdominios variables)
+      expect(isCorsProbeSafeHost('https://raw.githubusercontent.com/a/b/main/x.png')).toBe(true);
+      expect(isCorsProbeSafeHost('https://avatars.githubusercontent.com/u/1?v=4')).toBe(true);
+      expect(isCorsProbeSafeHost('https://http2.mlstatic.com/x.webp')).toBe(true);
+      expect(isCorsProbeSafeHost('https://http0.mlstatic.com/x.webp')).toBe(true);
+      expect(isCorsProbeSafeHost('https://m.media-amazon.com/images/I/x.jpg')).toBe(true);
+      expect(isCorsProbeSafeHost('https://cdn.media-amazon.com/images/I/x.jpg')).toBe(true);
+      expect(isCorsProbeSafeHost('https://i.ssl-images-amazon.com/images/I/x.jpg')).toBe(true);
+      expect(isCorsProbeSafeHost('https://cdn.appmifile.com/x.png')).toBe(true);
+      // Fuera de allowlist → no se sondea
+      expect(isCorsProbeSafeHost('https://cemelectronix.com/wp-content/uploads/x.png')).toBe(false);
+      expect(isCorsProbeSafeHost('https://github.com/a/b/blob/main/x.png?raw=true')).toBe(false);
+      // ...pero el blob de GitHub SÍ se sondea: la puerta se evalúa SIEMPRE
+      // sobre la URL ya normalizada a raw.githubusercontent.com
+      expect(
+        isCorsProbeSafeHost(toCanvasProbeUrl('https://github.com/a/b/blob/main/x.png?raw=true'))
+      ).toBe(true);
+      expect(isCorsProbeSafeHost('https://img.test/x.png')).toBe(false);
+      expect(isCorsProbeSafeHost('https://notgithubusercontent.com/x.png')).toBe(false);
+      expect(isCorsProbeSafeHost('https://evil.githubusercontent.com.attacker.com/x.png')).toBe(false);
+      expect(isCorsProbeSafeHost('not-a-url')).toBe(false);
+    });
+
+    it('sustituye la imagen por el placeholder cuando el probe confirma que está vacía (host en allowlist)', async () => {
       class BlankProbeImage {
         crossOrigin: string | null = null;
         onload: (() => void) | null = null;
@@ -198,7 +226,11 @@ describe('ProductImage Component - Blindaje Resiliente de Imágenes', () => {
       } as unknown as RenderingContext);
 
       render(
-        <ProductImage src="https://img.test/totalmente-transparente.png" alt="Producto Vacío" brand="Apple" />
+        <ProductImage
+          src="https://raw.githubusercontent.com/Est3banj/logo/main/totalmente-transparente.png"
+          alt="Producto Vacío"
+          brand="Apple"
+        />
       );
 
       const img = screen.getByAltText('Producto Vacío');
@@ -220,8 +252,13 @@ describe('ProductImage Component - Blindaje Resiliente de Imágenes', () => {
       }
       vi.stubGlobal('Image', CorsFailImage);
 
+      // Host en allowlist: el probe SÍ se emite, pero falla → fail-open
       render(
-        <ProductImage src="https://img.test/real-pero-sin-cors.png" alt="Producto Real" brand="Apple" />
+        <ProductImage
+          src="https://http2.mlstatic.com/real-pero-sin-cors.png"
+          alt="Producto Real"
+          brand="Apple"
+        />
       );
 
       const img = screen.getByAltText('Producto Real');
@@ -229,6 +266,47 @@ describe('ProductImage Component - Blindaje Resiliente de Imágenes', () => {
 
       await new Promise((resolve) => setTimeout(resolve, 10));
       expect(screen.getByAltText('Producto Real')).toBeInTheDocument();
+      expect(screen.queryByTestId('product-image-fallback')).not.toBeInTheDocument();
+    });
+
+    it('NO sondea ni marca vacía cuando el host está fuera de la allowlist (cemelectronix)', async () => {
+      let probeImagesCreated = 0;
+      class WouldBeBlankProbeImage {
+        crossOrigin: string | null = null;
+        onload: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        constructor() {
+          probeImagesCreated += 1;
+        }
+        set src(_value: string) {
+          // Si el probe llegara a emitirse, esta imagen "vacía" marcaría el
+          // placeholder: probar pixels transparentes → blank=true
+          queueMicrotask(() => this.onload?.());
+        }
+      }
+      vi.stubGlobal('Image', WouldBeBlankProbeImage);
+      vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+        drawImage: vi.fn(),
+        getImageData: () => ({ data: new Uint8ClampedArray(64 * 64 * 4) }),
+      } as unknown as RenderingContext);
+
+      render(
+        <ProductImage
+          src="https://cemelectronix.com/wp-content/uploads/cargador.png"
+          alt="Producto Cemelectronix"
+          brand="Apple"
+        />
+      );
+
+      const img = screen.getByAltText('Producto Cemelectronix');
+      fireEvent.load(img);
+      expect(img).toHaveClass('product-image-loaded');
+
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      // Sin request de sondeo: 0 errores CORS en consola
+      expect(probeImagesCreated).toBe(0);
+      // Fail-open pre-fix: la imagen se conserva, sin placeholder
+      expect(screen.getByAltText('Producto Cemelectronix')).toBeInTheDocument();
       expect(screen.queryByTestId('product-image-fallback')).not.toBeInTheDocument();
     });
   });
