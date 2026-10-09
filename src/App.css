@@ -173,6 +173,21 @@ body,
 body {
   min-height: 100vh;
   min-height: 100dvh; /* Dynamic viewport - fixes mobile chrome shift */
+  /* OVERRIDE del `overflow-x: hidden` del bloque de arriba (misma
+     especificidad, gana el último). `overflow-x: hidden` fuerza a que
+     overflow-y compute a `auto`: eso convierte <body> en SCROLL CONTAINER.
+     Combinado con `overscroll-behavior: none` de design-tokens.css, el
+     scroll por rueda/trackpad/touch se consumía en el scrollport de body
+     (que nunca se mueve: body crece con su contenido) y NUNCA llegaba al
+     viewport → las rutas sin Header (/login, /panel, /admin, /terminos,
+     /cookies) no scrolleaban. `window.scrollTo` sí funcionaba, así que los
+     tests/la navegación lo disfrazaban, y en el storefront el bug quedaba
+     oculto porque Header pisa `overflow` del body con un inline `unset`.
+     Mismo razonamiento que 455400c con #root: `clip` recorta en X igual
+     que `hidden` pero NO crea scroll container (overflow-y queda `visible`),
+     así body deja de ser scrollport y el sticky (p. ej. el topbar del
+     admin) vuelve a anclarse al viewport. */
+  overflow-x: clip;
 }
 
 #root {
