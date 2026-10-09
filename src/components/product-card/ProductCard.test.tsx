@@ -19,7 +19,6 @@ vi.mock('../../firebase', () => ({
 
 vi.mock('../../services/productStats.service', () => ({
   recordProductView: vi.fn(),
-  getPopularProductsStats: vi.fn(async () => []),
 }))
 
 const baseProduct = (overrides: Record<string, unknown> = {}) => ({

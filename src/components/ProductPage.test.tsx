@@ -12,9 +12,8 @@ import type { Product } from '../types'
 import type { UseProductsReturn } from '../hooks/useProducts'
 
 // ─── mocks (mismo patrón que ProductCard.test) ───
-const { mockUseProducts, mockUsePopularProducts, addToCartSpy } = vi.hoisted(() => ({
+const { mockUseProducts, addToCartSpy } = vi.hoisted(() => ({
   mockUseProducts: vi.fn(),
-  mockUsePopularProducts: vi.fn(),
   addToCartSpy: vi.fn(),
 }))
 
@@ -27,16 +26,11 @@ vi.mock('../firebase', () => ({ db: {} }))
 
 vi.mock('../services/productStats.service', () => ({
   recordProductView: vi.fn(),
-  getPopularProductsStats: vi.fn(async () => []),
 }))
 
 vi.mock('../hooks/useProducts', () => ({
   useProducts: () => mockUseProducts(),
   reloadProducts: vi.fn(),
-}))
-
-vi.mock('../hooks/usePopularProducts', () => ({
-  usePopularProducts: () => mockUsePopularProducts(),
 }))
 
 vi.mock('../utils/metaPixel', () => ({
@@ -179,7 +173,6 @@ describe('ProductPage', () => {
       isLoading: false,
       error: null,
     } satisfies UseProductsReturn)
-    mockUsePopularProducts.mockReturnValue({ popularIds: [], isLoading: false })
   })
 
   afterEach(() => {
@@ -448,6 +441,50 @@ describe('ProductPage', () => {
     })
   })
 
+  // ─── Rotación de recomendados: shuffle por visita, estable durante la ficha ───
+  function nombresRecomendados(): string[] {
+    const track = document.querySelector('.recommended-track')
+    if (!track) return []
+    return [...track.querySelectorAll('.recommended-slide .product-card-title')].map(
+      (el) => el.textContent?.trim() || '',
+    )
+  }
+
+  it('recomendados: excluye el producto actual de la lista', () => {
+    renderPage('/producto/prod-1')
+
+    expect(nombresRecomendados()).not.toContain('iPhone 15')
+    // el resto del pool sigue disponible para tener scroll real
+    expect(nombresRecomendados().length).toBeGreaterThan(1)
+  })
+
+  it('recomendados: cada visita (recarga) muestra una mezcla distinta', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.11)
+    const primera = renderPage('/producto/prod-1')
+    const listaA = nombresRecomendados()
+    primera.unmount()
+
+    vi.spyOn(Math, 'random').mockReturnValue(0.93)
+    renderPage('/producto/prod-1')
+    const listaB = nombresRecomendados()
+
+    expect(listaA.length).toBeGreaterThan(1)
+    expect(listaA).not.toEqual(listaB)
+  })
+
+  it('recomendados: estable durante la visita (un re-render no re-mezcla)', () => {
+    vi.spyOn(Math, 'random').mockReturnValue(0.42)
+    renderPage('/producto/prod-1')
+    const antes = nombresRecomendados()
+
+    // resize → sincronizarTrack → setState con objeto nuevo → re-render real
+    window.dispatchEvent(new Event('resize'))
+    const despues = nombresRecomendados()
+
+    expect(antes.length).toBeGreaterThan(1)
+    expect(despues).toEqual(antes)
+  })
+
   // (10) Volver → step product + reset del wizard; (11) sin barra flotante +
   // buybox sticky solo en step product (pulido ML: 0 fixed de compra en móvil)
   it('sin barra flotante, buybox sticky en step product y "Volver" resetea el formulario', async () => {
@@ -506,7 +543,6 @@ describe('ProductPage', () => {
         isLoading: false,
         error: null,
       } satisfies UseProductsReturn)
-      mockUsePopularProducts.mockReturnValue({ popularIds: [], isLoading: false })
     })
 
     afterEach(() => {

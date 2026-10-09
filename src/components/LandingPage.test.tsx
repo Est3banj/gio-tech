@@ -54,15 +54,10 @@ const mockProductsList: Product[] = [
 ];
 
 const mockUseProducts = vi.fn();
-const mockUsePopularProducts = vi.fn();
 const mockUseConfig = vi.fn();
 
 vi.mock('../hooks/useProducts', () => ({
   useProducts: () => mockUseProducts(),
-}));
-
-vi.mock('../hooks/usePopularProducts', () => ({
-  usePopularProducts: () => mockUsePopularProducts(),
 }));
 
 vi.mock('../hooks/useConfig', () => ({
@@ -96,10 +91,6 @@ describe('LandingPage Component - Reestructuración CRO de Alto Impacto', () => 
       products: mockProductsList,
       isLoading: false,
       error: null,
-    });
-    mockUsePopularProducts.mockReturnValue({
-      popularIds: ['prod-1', 'prod-2', 'prod-3', 'prod-4'],
-      isLoading: false,
     });
     mockUseConfig.mockReturnValue({
       config: {

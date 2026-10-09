@@ -1,7 +1,6 @@
 import React from "react";
 import { Link, Navigate, useSearchParams, useNavigate } from "react-router-dom";
 import { useProducts } from "../hooks/useProducts";
-import { usePopularProducts } from "../hooks/usePopularProducts";
 import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
 import ProductCard from "./ProductCard";
 import BannerSlider from "./BannerSlider";
@@ -144,7 +143,6 @@ const LandingPage: React.FC = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { products } = useProducts();
-  const { popularIds } = usePopularProducts();
   const phoneNumber = useWhatsappNumber() || "573223652569";
   const { opinions } = useOpinions();
 
@@ -170,14 +168,10 @@ const LandingPage: React.FC = () => {
     return <Navigate to={`/producto/${targetProductId}`} replace />;
   }
 
-  // Una sola grilla de productos: ranking real de vistas (top 4),
-  // con fallback a rotación editorial si aún no hay datos de vistas.
-  const rankingVistas: Product[] = popularIds
-    .map((id) => products.find((p) => p.id === id))
-    .filter((p): p is Product => Boolean(p))
-    .slice(0, 4);
-  const productosDestacados: Product[] =
-    rankingVistas.length > 0 ? rankingVistas : seleccionarDestacados(products, []);
+  // Una sola grilla de productos: rotación diaria determinística sobre todo
+  // el catálogo elegible. El ranking de vistas (top 4 fijos) congelaba la
+  // sección para siempre — la rotación solo corría sin datos de vistas.
+  const productosDestacados: Product[] = seleccionarDestacados(products);
   const waTechLink = `https://wa.me/${phoneNumber}?text=${encodeURIComponent("Hola GIO TECH, me gustaría consultar por el servicio técnico express para mi celular")}`;
 
   // Conteo por marca (match exacto) para la prueba de inventario en Marcas oficiales

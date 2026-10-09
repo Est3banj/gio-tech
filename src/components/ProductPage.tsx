@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { useParams, Link, Navigate, useSearchParams, useLocation, useNavigate } from "react-router-dom";
 import { useProducts, reloadProducts } from "../hooks/useProducts";
-import { usePopularProducts } from "../hooks/usePopularProducts";
 import { useCart } from "../contexts/cart-context";
 import { useWhatsappNumber } from "../contexts/whatsapp-number-context";
 import { buildProductWhatsAppMessage, buildCreditoWhatsAppMessage, buildWhatsAppUrl, appendConsentEvidence } from "../utils/whatsapp-messages";
@@ -18,7 +17,12 @@ import FinancieraGrid from "./product-card/FinancieraGrid";
 import ProductImage from "./common/ProductImage";
 import { getProductType, FINANCIERAS } from "../data/financieras";
 import { extractProductSpecs } from "../utils/specs-parser";
-import { seleccionarDestacados } from "../utils/featured-products";
+import {
+  seleccionarDestacados,
+  mezclarPorVisita,
+  RECOMENDADOS_POOL,
+  RECOMENDADOS_COUNT,
+} from "../utils/featured-products";
 import type { Product, Financiera } from "../types";
 import ProductCard from "./ProductCard";
 import "./product-page.css";
@@ -634,7 +638,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
                 </div>
               )}
 
-              <RecommendedProducts currentProductId={producto.id} />
+              <RecommendedProducts key={producto.id} currentProductId={producto.id} />
             </div>
           </div>
         </div>
@@ -649,7 +653,6 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
 // región focuseable (tabindex=0) para desplazarlo con el teclado.
 function RecommendedProducts({ currentProductId }: { currentProductId: string }) {
   const { products } = useProducts();
-  const { popularIds, isLoading: cargandoPopulares } = usePopularProducts();
   const trackRef = useRef<HTMLDivElement>(null);
   const [trackEstado, setTrackEstado] = useState({
     scrolleable: false,
@@ -657,16 +660,23 @@ function RecommendedProducts({ currentProductId }: { currentProductId: string })
     alFinal: true,
   });
 
+  // Semilla del shuffle: se genera UNA vez al montar (el `key` de la ficha
+  // la renueva al cambiar de producto) — el mezclado NO corre en cada render,
+  // así la lista queda estable durante toda la visita.
+  const [semilla] = useState(() => Math.random());
+
   const recomendados = useMemo(() => {
-    // Pide 6 candidatos y los usa todos DESPUÉS de excluir el producto
-    // actual (el carrusel necesita inventario para tener scroll real;
-    // antes la grilla recortaba a 4). Con count=4 (FEATURED_COUNT) y el
-    // producto actual dentro de los destacados del día, la exclusión
-    // dejaba 3 cards → una columna vacía.
-    return seleccionarDestacados(products, popularIds, undefined, 6)
-      .filter((p) => String(p.id) !== String(currentProductId))
-      .slice(0, 6);
-  }, [products, popularIds, currentProductId]);
+    // Candidatos: pool determinista del día (12), excluido el producto
+    // actual ANTES de recortar (así el carrusel siempre tiene inventario
+    // para tener scroll real). Recién ahí el shuffle por visita: distinto
+    // en cada recarga, mismo resultado si el usuario solo re-renderiza.
+    const candidatos = seleccionarDestacados(
+      products,
+      new Date(),
+      RECOMENDADOS_POOL,
+    ).filter((p) => String(p.id) !== String(currentProductId));
+    return mezclarPorVisita(candidatos, semilla).slice(0, RECOMENDADOS_COUNT);
+  }, [products, currentProductId, semilla]);
 
   const sincronizarTrack = useCallback(() => {
     const el = trackRef.current;
@@ -707,11 +717,10 @@ function RecommendedProducts({ currentProductId }: { currentProductId: string })
     el.scrollBy?.({ left: direccion * paso, behavior: 'smooth' });
   };
 
-  // Espera a los stats de popularidad: renderizar con el fallback y
-  // reemplazar la lista 1s después cambiaba las cards bajo el usuario
-  // (y disparaba el salto de snap de arriba). Un solo render con la lista
-  // final.
-  if (cargandoPopulares || recomendados.length === 0) return null;
+  // Espera al catálogo: sin productos no hay candidatos que mostrar.
+  // (Antes además esperaba los stats de popularidad, que hoy ya no
+  // alimentan el carrusel.)
+  if (recomendados.length === 0) return null;
 
   return (
     <section className="recommended-section" aria-labelledby="recommended-title">

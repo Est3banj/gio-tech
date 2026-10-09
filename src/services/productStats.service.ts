@@ -1,17 +1,11 @@
 import { 
-  collection, 
-  query, 
-  orderBy, 
-  limit, 
-  getDocs, 
-  doc, 
-  updateDoc, 
-  increment, 
-  getDoc, 
+  doc,
+  updateDoc,
+  increment,
+  getDoc,
   setDoc 
 } from 'firebase/firestore';
 import { db } from '../firebase';
-import type { ProductStats } from '../types';
 
 /**
  * Registra una vista de producto.
@@ -44,29 +38,3 @@ export const recordProductView = async (productId: string): Promise<void> => {
   }
 };
 
-/**
- * Obtiene los productos más vistos.
- * @param limitCount - Cantidad de productos a retornar
- * @returns Array de stats de productos
- */
-export const getPopularProductsStats = async (limitCount = 4): Promise<ProductStats[]> => {
-  try {
-    const statsRef = collection(db, 'producto_stats');
-    const q = query(
-      statsRef,
-      orderBy('vistas', 'desc'),
-      limit(limitCount)
-    );
-    
-    const querySnapshot = await getDocs(q);
-    return querySnapshot.docs.map(docSnap => ({
-      id: docSnap.id,
-      productoId: docSnap.data().productoId || docSnap.id,
-      vistas: docSnap.data().vistas || 0,
-      ultimaVista: docSnap.data().ultimaVista?.toDate()
-    } as ProductStats));
-  } catch (error) {
-    console.error('Error obteniendo productos populares:', error);
-    return [];
-  }
-};

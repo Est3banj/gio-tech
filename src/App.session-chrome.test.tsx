@@ -100,7 +100,6 @@ vi.mock('./services/product.service', () => ({
 }));
 
 vi.mock('./services/productStats.service', () => ({
-  getPopularProductsStats: vi.fn(() => Promise.resolve([])),
   recordProductView: vi.fn(),
 }));
 
