@@ -22,12 +22,22 @@ const BLANK_LUMINANCE_STD_MAX = 18;
 // 64×64): los3 casos "en blanco" del catálogo miden std ≤ 14.4 o vr ≤ 0.132,
 // y la siguiente imagen sana arranca en std 24.9 / vr 0.269 — hay margen.
 
-/** Convierte un blob URL de GitHub (?raw=true) a su raw.githubusercontent equivalente. */
-export const toCanvasProbeUrl = (url: string): string => {
+/**
+ * Convierte un blob URL de GitHub (?raw=true) a su raw.githubusercontent
+ * equivalente: sin el path /blob/ y sin la query ?raw=true. Cualquier otra
+ * URL (amazon/mlstatic/cemelectronix/etc.) se devuelve intacta.
+ * Es la normalización compartida: la usa el <img> de ProductImage para
+ * servir el asset directo (evita la cadena de redirects de github.com)
+ * y el probe de píxeles, que sondea exactamente la misma URL final.
+ */
+export const toDisplayUrl = (url: string): string => {
   const match = url.match(/^https:\/\/github\.com\/([^/]+)\/([^/]+)\/blob\/([^?]+)\?raw=true$/);
   if (!match) return url;
   return `https://raw.githubusercontent.com/${match[1]}/${match[2]}/${match[3]}`;
 };
+
+/** Normalización del probe (alias de toDisplayUrl, comportamiento idéntico). */
+export const toCanvasProbeUrl = (url: string): string => toDisplayUrl(url);
 
 /** ¿Estos píxeles representan una imagen "vacía" (transparente o plana)? */
 export const isVisuallyBlankMetrics = (visibleRatio: number, luminanceStd: number): boolean =>

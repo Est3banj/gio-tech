@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase';
+import { toDisplayUrl } from './common/image-blank-detection';
 import type { Banner } from '../types';
 
 export const AUTOPLAY_DURATION = 5000;
@@ -208,7 +209,7 @@ const BannerSlider: React.FC = () => {
 
             return (
               <img
-                src={bannerSrc}
+                src={toDisplayUrl(bannerSrc)}
                 alt={currentBanner.title || 'Banner promocional'}
                 className="banner-slide-img"
                 loading={currentIndex === 0 ? 'eager' : 'lazy'}

@@ -147,6 +147,26 @@ describe('ProductImage Component - Blindaje Resiliente de Imágenes', () => {
     expect(screen.queryByTestId('product-image-fallback')).not.toBeInTheDocument();
   });
 
+  it('sirve blobs de GitHub desde raw.githubusercontent en el src (card y thumb) y deja intactos los hosts no-github', () => {
+    const blob = 'https://github.com/Est3banj/logo/blob/main/cubo.png?raw=true';
+    const raw = 'https://raw.githubusercontent.com/Est3banj/logo/main/cubo.png';
+
+    const { rerender } = render(<ProductImage src={blob} alt="Imagen Github" />);
+    expect(screen.getByAltText('Imagen Github')).toHaveAttribute('src', raw);
+
+    rerender(<ProductImage src={blob} alt="Imagen Github" variant="thumb" />);
+    expect(screen.getByAltText('Imagen Github')).toHaveAttribute('src', raw);
+
+    rerender(<ProductImage src="https://cemelectronix.com/wp-content/uploads/x.png" alt="Imagen Github" />);
+    expect(screen.getByAltText('Imagen Github')).toHaveAttribute(
+      'src',
+      'https://cemelectronix.com/wp-content/uploads/x.png'
+    );
+
+    rerender(<ProductImage src="https://http2.mlstatic.com/img.webp" alt="Imagen Github" />);
+    expect(screen.getByAltText('Imagen Github')).toHaveAttribute('src', 'https://http2.mlstatic.com/img.webp');
+  });
+
   describe('getCategoryIcon helper', () => {
     it('resolves correct icons based on category and title keywords', () => {
       expect(getCategoryIcon('Celulares', 'Samsung S24')).toBe('bi-phone');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { BrandLogo } from "../BrandLogos";
-import { probeVisuallyBlank } from "./image-blank-detection";
+import { probeVisuallyBlank, toDisplayUrl } from "./image-blank-detection";
 
 export interface ProductImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> {
   src?: string | null;
@@ -80,6 +80,10 @@ export const ProductImage: React.FC<ProductImageProps> = ({
   ...restProps
 }) => {
   const cleanSrc = typeof src === "string" ? src.trim() : "";
+  // Blobs de GitHub se sirven directo desde raw.githubusercontent (sin la
+  // cadena blob → github.com/raw → raw.githubusercontent). Hosts ajenos
+  // quedan intactos. El probe comparte esta misma normalización.
+  const displaySrc = toDisplayUrl(cleanSrc);
   const [hasError, setHasError] = useState(!cleanSrc);
   const [isLoaded, setIsLoaded] = useState(false);
 
@@ -135,7 +139,7 @@ export const ProductImage: React.FC<ProductImageProps> = ({
 
     return (
       <img
-        src={cleanSrc}
+        src={displaySrc}
         alt={alt}
         className={`product-thumb-img ${isLoaded ? "product-image-loaded" : "product-image-loading"} ${className}`}
         loading={loading}
@@ -182,7 +186,7 @@ export const ProductImage: React.FC<ProductImageProps> = ({
 
   return (
     <img
-      src={cleanSrc}
+      src={displaySrc}
       alt={alt}
       className={`${className} ${isLoaded ? "product-image-loaded" : "product-image-loading"}`}
       loading={loading}

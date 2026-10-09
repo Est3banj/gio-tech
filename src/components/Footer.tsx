@@ -3,6 +3,7 @@ import React, { useContext } from 'react';
 import { Container, Row, Col } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import { useConfig } from '../hooks/useConfig';
+import { toDisplayUrl } from './common/image-blank-detection';
 import { WhatsappNumberContext, DEFAULT_WHATSAPP_NUMBER } from '../contexts/whatsapp-number-context';
 import { openCookiePreferences } from '../services/consent.service';
 
@@ -34,7 +35,7 @@ const Footer: React.FC = () => {
           <Col xs={12} md={4} className="footer-col footer-col-brand">
             <Link to="/" className="footer-brand mb-2 d-inline-flex align-items-center gap-2 text-decoration-none">
               <img
-                src={logoUrl}
+                src={toDisplayUrl(logoUrl)}
                 alt={businessName}
                 className="footer-brand-logo"
                 loading="lazy"

@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useConfig, useThemeMode } from "../hooks";
+import { toDisplayUrl } from "./common/image-blank-detection";
 
 export const DEFAULT_HEADER_ADDRESS = "Cra. 32 #13 36, Puerto Asís, Putumayo";
 
@@ -141,7 +142,7 @@ const Header: React.FC = () => {
             {config?.logo && (
               <Link to="/" className="d-flex align-items-center text-decoration-none" onClick={closeMobileMenu}>
                 <img
-                  src={config.logo}
+                  src={toDisplayUrl(config.logo)}
                   alt={config.nombre || "Logo"}
                   className="gio-logo"
                 />
