@@ -1,7 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, afterEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import React from 'react';
 import ProductImage, { getCategoryIcon } from './ProductImage';
+import { toCanvasProbeUrl, isVisuallyBlankMetrics } from './image-blank-detection';
 
 describe('ProductImage Component - Blindaje Resiliente de Imágenes', () => {
   it('renders img with valid src, alt, loading="lazy" and decoding="async"', () => {
@@ -151,6 +152,84 @@ describe('ProductImage Component - Blindaje Resiliente de Imágenes', () => {
       expect(getCategoryIcon('Accesorios', 'Cargador 67W')).toBe('bi-box-seam');
       expect(getCategoryIcon('Laptops', 'MacBook Air M2')).toBe('bi-laptop');
       expect(getCategoryIcon('Servicio Técnico', 'Cambio de pantalla')).toBe('bi-tools');
+    });
+  });
+
+  describe('Detección de imagen vacía (stage en blanco)', () => {
+    afterEach(() => {
+      vi.unstubAllGlobals();
+      vi.restoreAllMocks();
+    });
+
+    it('toCanvasProbeUrl reescribe blob de GitHub a raw.githubusercontent y deja el resto intacto', () => {
+      expect(toCanvasProbeUrl('https://github.com/Est3banj/logo/blob/main/cubo.png?raw=true')).toBe(
+        'https://raw.githubusercontent.com/Est3banj/logo/main/cubo.png'
+      );
+      expect(toCanvasProbeUrl('https://github.com/a/b/blob/refs/heads/main/x%20y.png?raw=true')).toBe(
+        'https://raw.githubusercontent.com/a/b/refs/heads/main/x%20y.png'
+      );
+      expect(toCanvasProbeUrl('https://http2.mlstatic.com/img.webp')).toBe('https://http2.mlstatic.com/img.webp');
+      expect(toCanvasProbeUrl('https://github.com/a/b/commit/abc')).toBe('https://github.com/a/b/commit/abc');
+    });
+
+    it('isVisuallyBlankMetrics marca como vacía solo con ratios calibrados (vr<0.2 o std<18)', () => {
+      expect(isVisuallyBlankMetrics(0.13, 14.4)).toBe(true); // cableipho.png (90% transparente)
+      expect(isVisuallyBlankMetrics(0.4, 10.1)).toBe(true); // cubo.png (plana)
+      expect(isVisuallyBlankMetrics(1.0, 13.3)).toBe(true); // foto plana casi blanca
+      expect(isVisuallyBlankMetrics(0.0, 0.0)).toBe(true); // totalmente transparente
+      expect(isVisuallyBlankMetrics(0.269, 46.1)).toBe(false); // siguiente más baja del catálogo
+      expect(isVisuallyBlankMetrics(0.9, 24.9)).toBe(false); // imagen sana con bajo contraste
+      expect(isVisuallyBlankMetrics(1.0, 60)).toBe(false); // imagen sana normal
+    });
+
+    it('sustituye la imagen por el placeholder cuando el probe confirma que está vacía', async () => {
+      class BlankProbeImage {
+        crossOrigin: string | null = null;
+        onload: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        set src(_value: string) {
+          queueMicrotask(() => this.onload?.());
+        }
+      }
+      vi.stubGlobal('Image', BlankProbeImage);
+      vi.spyOn(HTMLCanvasElement.prototype, 'getContext').mockReturnValue({
+        drawImage: vi.fn(),
+        getImageData: () => ({ data: new Uint8ClampedArray(64 * 64 * 4) }),
+      } as unknown as RenderingContext);
+
+      render(
+        <ProductImage src="https://img.test/totalmente-transparente.png" alt="Producto Vacío" brand="Apple" />
+      );
+
+      const img = screen.getByAltText('Producto Vacío');
+      fireEvent.load(img);
+      expect(img).toHaveClass('product-image-loaded');
+
+      await waitFor(() => expect(screen.getByTestId('product-image-fallback')).toBeInTheDocument());
+      expect(screen.queryByAltText('Producto Vacío')).not.toBeInTheDocument();
+    });
+
+    it('conserva la imagen cuando el probe no puede concluir (CORS sin soportar)', async () => {
+      class CorsFailImage {
+        crossOrigin: string | null = null;
+        onload: (() => void) | null = null;
+        onerror: (() => void) | null = null;
+        set src(_value: string) {
+          queueMicrotask(() => this.onerror?.());
+        }
+      }
+      vi.stubGlobal('Image', CorsFailImage);
+
+      render(
+        <ProductImage src="https://img.test/real-pero-sin-cors.png" alt="Producto Real" brand="Apple" />
+      );
+
+      const img = screen.getByAltText('Producto Real');
+      fireEvent.load(img);
+
+      await new Promise((resolve) => setTimeout(resolve, 10));
+      expect(screen.getByAltText('Producto Real')).toBeInTheDocument();
+      expect(screen.queryByTestId('product-image-fallback')).not.toBeInTheDocument();
     });
   });
 });

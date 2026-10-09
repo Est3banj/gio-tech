@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { BrandLogo } from "../BrandLogos";
+import { probeVisuallyBlank } from "./image-blank-detection";
 
 export interface ProductImageProps extends Omit<React.ImgHTMLAttributes<HTMLImageElement>, "src"> {
   src?: string | null;
@@ -88,6 +89,31 @@ export const ProductImage: React.FC<ProductImageProps> = ({
     setIsLoaded(false);
   }, [cleanSrc]);
 
+  // Guardas contra resoluciones tardías del probe de "imagen vacía":
+  // solo concluye si el src vigente sigue siendo el evaluado y el
+  // componente sigue montado.
+  const cleanSrcRef = useRef(cleanSrc);
+  cleanSrcRef.current = cleanSrc;
+  const mountedRef = useRef(true);
+  const probedSrcRef = useRef<string | null>(null);
+  useEffect(() => {
+    mountedRef.current = true;
+    return () => {
+      mountedRef.current = false;
+    };
+  }, []);
+
+  const handleLoad = useCallback(() => {
+    setIsLoaded(true);
+    if (!cleanSrc || probedSrcRef.current === cleanSrc) return;
+    probedSrcRef.current = cleanSrc;
+    void probeVisuallyBlank(cleanSrc).then((blank) => {
+      if (blank && mountedRef.current && cleanSrcRef.current === cleanSrc) {
+        setHasError(true);
+      }
+    });
+  }, [cleanSrc]);
+
   const categoryIcon = getCategoryIcon(category, alt);
   const normalizedBrand = (brand || "").trim();
 
@@ -114,7 +140,7 @@ export const ProductImage: React.FC<ProductImageProps> = ({
         className={`product-thumb-img ${isLoaded ? "product-image-loaded" : "product-image-loading"} ${className}`}
         loading={loading}
         decoding={decoding}
-        onLoad={() => setIsLoaded(true)}
+        onLoad={handleLoad}
         onError={() => setHasError(true)}
         style={style}
         {...restProps}
@@ -161,7 +187,7 @@ export const ProductImage: React.FC<ProductImageProps> = ({
       className={`${className} ${isLoaded ? "product-image-loaded" : "product-image-loading"}`}
       loading={loading}
       decoding={decoding}
-      onLoad={() => setIsLoaded(true)}
+      onLoad={handleLoad}
       onError={() => setHasError(true)}
       style={style}
       {...restProps}
