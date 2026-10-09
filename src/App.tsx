@@ -65,7 +65,7 @@ const PanelDispatcher = () => {
 };
 
 function AppContent() {
-  const { user, logout } = useAuth();
+  const { user, role, logout } = useAuth();
   const [, setConfiguracion] = useState<StoreConfig>({});
   const navigate = useNavigate();
   const location = useLocation();
@@ -106,8 +106,6 @@ function AppContent() {
     }
   };
 
-  const routesToHideSessionInfo = ["/", "/login", "/servicio-tecnico", "/panel", "/admin"];
-  const showSessionInfo = user && !routesToHideSessionInfo.includes(location.pathname);
   // Páginas legales en "documento limpio" (sin header/footer/WhatsApp): mismo patrón que /terminos.
   const showHeaderAndFooter =
     location.pathname !== "/login" &&
@@ -116,12 +114,22 @@ function AppContent() {
     location.pathname !== "/terminos" &&
     location.pathname !== "/cookies";
 
+  // Chrome de sesión (email + "Cerrar sesión") SOLO en superficies de app/auth
+  // (/login, /panel). Nunca en la web pública —con o sin tema de temporada—:
+  // el admin navegando su propia tienda no debe ver UI de sesión de cara al
+  // cliente. En /panel, el admin ya tiene logout en el topbar de AdminLayout.
+  const isPublicSurface =
+    showHeaderAndFooter ||
+    location.pathname === "/terminos" ||
+    location.pathname === "/cookies";
+  const showSessionInfo = Boolean(user) && !isPublicSurface && role !== "admin";
+
   return (
     <div className="d-flex flex-column min-vh-100">
       {showHeaderAndFooter && <Header />}
 
       {showSessionInfo && (
-        <div className="section-inner d-flex justify-content-between align-items-center my-3 p-3 bg-light rounded shadow-sm">
+        <div className="section-inner session-bar d-flex justify-content-between align-items-center my-3 p-3 rounded shadow-sm">
           <div>
             <strong>{user.email}</strong> ({user.rol})
           </div>

@@ -292,6 +292,15 @@ a:focus-visible,
   }
 }
 
+/* Chrome de sesión (solo /login y /panel): tokens semánticos en vez de
+   bg-light para que respete tema de temporada y dark mode. */
+.session-bar {
+  background-color: var(--bg-card, #f8f9fa);
+  color: var(--text-primary, #212529);
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.075));
+  box-shadow: var(--shadow-sm, 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075));
+}
+
 .header-offset {
   padding-top: 120px !important;
 }
