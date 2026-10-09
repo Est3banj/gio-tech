@@ -101,6 +101,10 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
   const [formValid, setFormValid] = useState(false);
   const [validPhase, setValidPhase] = useState<ValidacionPhase>('idle');
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  // Logo de financiera caído (404/asset inexistente): nombre de la financiera
+  // SOLO como fallback visible, nunca junto al logo (keyed por id para que
+  // cambiar de financiera reintente el logo nuevo).
+  const [logoFailedId, setLogoFailedId] = useState<string | null>(null);
 
   // Gallery images (mock - would come from product.images in real scenario)
   // Guard: Firestore es editable desde el admin, así que `imagenes` puede
@@ -554,9 +558,22 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
 
                     {step === 'credito-form' && selectedFinanciera && (
                       <div className="step-content">
-                        <h3 id="step-title" className="step-title">
-                          <img src={`/logoscredito/${selectedFinanciera.id.toLowerCase()}.webp`} alt={selectedFinanciera.nombre} className="financiera-logo-sm" />
-                          {selectedFinanciera.nombre}
+                        <h3
+                          id="step-title"
+                          className="step-title"
+                          aria-label={selectedFinanciera.nombre}
+                        >
+                          <img
+                            src={`/logoscredito/${selectedFinanciera.id.toLowerCase()}.webp`}
+                            alt=""
+                            className={`financiera-logo-sm${logoFailedId === selectedFinanciera.id ? ' d-none' : ''}`}
+                            onError={() => setLogoFailedId(selectedFinanciera.id)}
+                          />
+                          {logoFailedId === selectedFinanciera.id && (
+                            <span className="financiera-name-fallback">
+                              {selectedFinanciera.nombre}
+                            </span>
+                          )}
                         </h3>
                         <CreditForm
                           key={selectedFinanciera.id}
