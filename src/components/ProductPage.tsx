@@ -555,7 +555,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ productId: propProductId }) =
                     {step === 'credito-form' && selectedFinanciera && (
                       <div className="step-content">
                         <h3 id="step-title" className="step-title">
-                          <img src={`/logoscredito/${selectedFinanciera.id.toLowerCase()}.webp`} alt={selectedFinanciera.nombre} className="financiera-logo-sm me-2" />
+                          <img src={`/logoscredito/${selectedFinanciera.id.toLowerCase()}.webp`} alt={selectedFinanciera.nombre} className="financiera-logo-sm" />
                           {selectedFinanciera.nombre}
                         </h3>
                         <CreditForm

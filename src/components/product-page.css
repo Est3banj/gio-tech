@@ -648,6 +648,26 @@ h1.product-title {
   color: var(--text-primary);
   margin-bottom: 1.5rem;
   text-align: center;
+  /* El título del paso de crédito lleva el logo de la financiera como
+     hermano del texto: flex mantiene el par contenido en su caja en todos
+     los breakpoints (antes el img sin CSS caía a su tamaño natural de
+     800×140+ y rompía el panel del wizard). */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Slot del logo de financiera en el header del formulario de crédito.
+   Altura fija + object-fit contain: el asset manda la proporción y NUNCA
+   desborda el título (sistecredito.webp es 800×140, esmiopcion 1401×501). */
+.financiera-logo-sm {
+  height: 32px;
+  width: auto;
+  max-width: 150px;
+  object-fit: contain;
+  flex: 0 1 auto;
 }
 
 .step-content .modal-segmented-control {

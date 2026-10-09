@@ -72,7 +72,7 @@ const CreditForm: React.FC<CreditFormProps> = ({
   return (
     <>
       <div className="text-center mb-3">
-        <img src={financiera.logo} alt={financiera.nombre} style={{ maxHeight: 40, objectFit: 'contain' }} />
+        <img src={financiera.logo} alt={financiera.nombre} style={{ maxHeight: 40, maxWidth: '100%', objectFit: 'contain' }} />
         <h6 className="mt-2 fw-bold">{financiera.nombre}</h6>
       </div>
 
