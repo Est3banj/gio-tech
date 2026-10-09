@@ -8,7 +8,7 @@ import ProductCard from "./ProductCard";
 import Reveal from "./Reveal";
 import { Row, Col, Form, Spinner } from 'react-bootstrap';
 import BannerSlider from "./BannerSlider";
-import GeminiChat from "./GeminiChat";
+import GeminiChat, { CHAT_ENABLED } from "./GeminiChat";
 import type { Product } from "../types";
 
 interface RangoPrecio {
@@ -411,102 +411,104 @@ const Catalogo: React.FC = () => {
         )}
 
         {/* ─── Asistente Gemini Chat FAB ─── */}
-        <button
-          type="button"
-          onClick={() => setShowGeminiChat(true)}
-          aria-label="Abrir chat con IA"
-          title="Chatea con nuestro asistente IA"
-          className="gio-chat-fab"
-          style={{
-            position: 'fixed',
-            bottom: '100px',
-            right: '20px',
-            width: '56px',
-            height: '56px',
-            padding: 0,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 1050,
-            background: '#0d6efd',
-            borderRadius: '50%',
-            border: 'none',
-            boxShadow: '0 4px 20px rgba(13,110,253,0.4)',
-            cursor: 'pointer',
-            color: 'white',
-            transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-          }}
-          onMouseEnter={e => {
-            e.currentTarget.style.transform = 'scale(1.08)';
-            e.currentTarget.style.boxShadow = '0 6px 28px rgba(13,110,253,0.5)';
-          }}
-          onMouseLeave={e => {
-            e.currentTarget.style.transform = 'scale(1)';
-            e.currentTarget.style.boxShadow = '0 4px 20px rgba(13,110,253,0.4)';
-          }}
-        >
-          <i className="bi bi-chat-dots-fill" style={{ fontSize: '1.5rem', lineHeight: 1 }} />
-        </button>
+        {CHAT_ENABLED && (<>
+          <button
+            type="button"
+            onClick={() => setShowGeminiChat(true)}
+            aria-label="Abrir chat con IA"
+            title="Chatea con nuestro asistente IA"
+            className="gio-chat-fab"
+            style={{
+              position: 'fixed',
+              bottom: '100px',
+              right: '20px',
+              width: '56px',
+              height: '56px',
+              padding: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              zIndex: 1050,
+              background: '#0d6efd',
+              borderRadius: '50%',
+              border: 'none',
+              boxShadow: '0 4px 20px rgba(13,110,253,0.4)',
+              cursor: 'pointer',
+              color: 'white',
+              transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.transform = 'scale(1.08)';
+              e.currentTarget.style.boxShadow = '0 6px 28px rgba(13,110,253,0.5)';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = '0 4px 20px rgba(13,110,253,0.4)';
+            }}
+          >
+            <i className="bi bi-chat-dots-fill" style={{ fontSize: '1.5rem', lineHeight: 1 }} />
+          </button>
 
-        <div
-          onClick={() => setShowGeminiChat(true)}
-          className="gio-chat-tooltip"
-          style={{
-            position: 'fixed',
-            bottom: '117px',
-            right: '90px',
-            background: '#fff',
-            color: '#212529',
-            padding: '8px 16px 8px 14px',
-            borderRadius: '20px',
-            fontSize: '0.85rem',
-            fontWeight: 500,
-            boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
-            cursor: 'pointer',
-            zIndex: 1049,
-            whiteSpace: 'nowrap',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '8px',
-            border: '1px solid #e9ecef',
-            transition: 'opacity 0.3s ease',
-          }}
-        >
-          <i className="bi bi-chat-dots" style={{ color: '#0d6efd', fontSize: '1rem' }} />
-          Te ayudamos a elegir
-        </div>
+          <div
+            onClick={() => setShowGeminiChat(true)}
+            className="gio-chat-tooltip"
+            style={{
+              position: 'fixed',
+              bottom: '117px',
+              right: '90px',
+              background: '#fff',
+              color: '#212529',
+              padding: '8px 16px 8px 14px',
+              borderRadius: '20px',
+              fontSize: '0.85rem',
+              fontWeight: 500,
+              boxShadow: '0 2px 12px rgba(0,0,0,0.1)',
+              cursor: 'pointer',
+              zIndex: 1049,
+              whiteSpace: 'nowrap',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              border: '1px solid #e9ecef',
+              transition: 'opacity 0.3s ease',
+            }}
+          >
+            <i className="bi bi-chat-dots" style={{ color: '#0d6efd', fontSize: '1rem' }} />
+            Te ayudamos a elegir
+          </div>
 
-        <style>{`
-          .gio-chat-fab {
-            animation: gio-fab-pulse 2.5s ease-in-out infinite;
-          }
-          @keyframes gio-fab-pulse {
-            0% { box-shadow: 0 4px 20px rgba(13,110,253,0.4); }
-            50% { box-shadow: 0 4px 28px rgba(13,110,253,0.55); }
-            100% { box-shadow: 0 4px 20px rgba(13,110,253,0.4); }
-          }
-          @media (max-width: 768px) {
-            .gio-chat-tooltip {
-              display: none !important;
-            }
+          <style>{`
             .gio-chat-fab {
-              bottom: 85px !important;
-              right: 18px !important;
-              width: 48px !important;
-              height: 48px !important;
+              animation: gio-fab-pulse 2.5s ease-in-out infinite;
             }
-            .gio-chat-fab i {
-              font-size: 1.25rem !important;
+            @keyframes gio-fab-pulse {
+              0% { box-shadow: 0 4px 20px rgba(13,110,253,0.4); }
+              50% { box-shadow: 0 4px 28px rgba(13,110,253,0.55); }
+              100% { box-shadow: 0 4px 20px rgba(13,110,253,0.4); }
             }
-          }
-        `}</style>
+            @media (max-width: 768px) {
+              .gio-chat-tooltip {
+                display: none !important;
+              }
+              .gio-chat-fab {
+                bottom: 85px !important;
+                right: 18px !important;
+                width: 48px !important;
+                height: 48px !important;
+              }
+              .gio-chat-fab i {
+                font-size: 1.25rem !important;
+              }
+            }
+          `}</style>
 
-        {showGeminiChat && (
-          <GeminiChat 
-            productos={productos} 
-            onClose={() => setShowGeminiChat(false)} 
-          />
-        )}
+          {showGeminiChat && (
+            <GeminiChat
+              productos={productos}
+              onClose={() => setShowGeminiChat(false)}
+            />
+          )}
+        </>)}
       </section>
     </>
   );

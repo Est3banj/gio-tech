@@ -24,9 +24,13 @@ vi.mock('./BannerSlider', () => ({
   default: () => <div data-testid="banner-slider">Banner Slider</div>,
 }));
 
-vi.mock('./GeminiChat', () => ({
-  default: () => <div data-testid="gemini-chat">Gemini Chat</div>,
-}));
+vi.mock('./GeminiChat', async (importOriginal) => {
+  const actual = await importOriginal<typeof import('./GeminiChat')>();
+  return {
+    ...actual,
+    default: () => <div data-testid="gemini-chat">Gemini Chat</div>,
+  };
+});
 
 vi.mock('./WelcomeModal', () => ({
   default: () => <div data-testid="welcome-modal">Welcome Modal</div>,

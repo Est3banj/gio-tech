@@ -10,6 +10,9 @@ import { extractMatchedProducts } from '../utils/product-matcher';
 import type { Product, ChatMessage } from '../types';
 import type { MatchedProduct } from '../utils/product-matcher';
 
+// Temporalmente desactivado — rework pendiente (2026-10)
+export const CHAT_ENABLED = false;
+
 interface GeminiChatProps {
   productos: Product[];
   onClose: () => void;
