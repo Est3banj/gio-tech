@@ -6,6 +6,7 @@ import { useConfig } from '../hooks/useConfig';
 import { toDisplayUrl } from './common/image-blank-detection';
 import { WhatsappNumberContext, DEFAULT_WHATSAPP_NUMBER } from '../contexts/whatsapp-number-context';
 import { openCookiePreferences } from '../services/consent.service';
+import { HalloweenFooterDecor } from './HalloweenDecor';
 
 export const DEFAULT_FOOTER_ADDRESS = 'Cra. 32 #13 36, Puerto Asís, Putumayo';
 export const DEFAULT_MAPS_URL = 'https://maps.google.com/?q=GIO+TECH,+Cra.+32+%2313+36,+Puerto+As%C3%ADs,+Putumayo';
@@ -28,6 +29,8 @@ const Footer: React.FC = () => {
 
   return (
     <footer className="gio-footer mt-auto" role="contentinfo">
+      {/* Decor Halloween: araña en hilo colgando del borde superior, lateral */}
+      <HalloweenFooterDecor />
       <Container>
         {/* Fila Principal de 3 Columnas */}
         <Row className="gy-4 gx-lg-5 mb-4">

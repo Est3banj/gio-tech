@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useConfig, useThemeMode } from "../hooks";
 import { toDisplayUrl } from "./common/image-blank-detection";
+import { HalloweenHeaderDecor } from "./HalloweenDecor";
 
 export const DEFAULT_HEADER_ADDRESS = "Cra. 32 #13 36, Puerto Asís, Putumayo";
 
@@ -121,6 +122,9 @@ const Header: React.FC = () => {
 
   return (
     <header className={`gio-header ${isSolid || isMobileMenuOpen ? "scrolled" : ""}`}>
+      {/* Decor Halloween: wrapper propio recortado (NO overflow en el header) */}
+      <HalloweenHeaderDecor />
+
       {/* ─── Micro-Trust Bar Unificada (Infinite Marquee) ─── */}
       <div className="gio-top-trust-bar" role="region" aria-label="Información de confianza">
         <div className="trust-marquee-track">

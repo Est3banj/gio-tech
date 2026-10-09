@@ -10,6 +10,7 @@ import { seleccionarDestacados } from "../utils/featured-products";
 import { DEFAULT_MAPS_URL } from "./Footer";
 import SearchAutocomplete from "./SearchAutocomplete";
 import Reveal from "./Reveal";
+import { HalloweenHeroDecor } from "./HalloweenDecor";
 import ReviewsFeed, { type FeedReview } from "./ReviewsFeed";
 import { useOpinions } from "../hooks/useOpinions";
 import { getProductIdFromSearchParams } from "../utils/deep-link";
@@ -198,6 +199,8 @@ const LandingPage: React.FC = () => {
     <div className="landing-wrapper">
       {/* ─── 1. HERO EDITORIAL ─── */}
       <section className="editorial-hero" aria-label="Buscador principal GIO TECH">
+        {/* Decor Halloween: bats dentro de los bounds del hero + calabazas en el borde inferior */}
+        <HalloweenHeroDecor />
         <div className="landing-container">
           <h1 className="editorial-title">
             Tu nuevo celular al <span className="editorial-accent">mejor precio</span>

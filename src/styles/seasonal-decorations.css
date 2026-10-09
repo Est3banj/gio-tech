@@ -373,6 +373,375 @@ html[data-theme-name="halloween"] .gio-product-card-v2:hover {
   border-color: rgba(255, 109, 0, 0.45) !important;
 }
 
+/* ─── HALLOWEEN DECOR v2 — decor ANCLADO A SECCIONES (header, hero,
+       cards, ficha, footer). "Decorar la tienda, no la pantalla":
+       SIN capa fixed, SIN vignette global, SIN bats globales.
+       Cada wrapper (.hd-decor) recorta con overflow:hidden EN EL WRAPPER.
+       Gateo 100% CSS: sin data-theme-name="halloween" → display:none. ─── */
+
+html:not([data-theme-name="halloween"]) .hd-decor {
+  display: none !important;
+}
+
+/* Siluetas: negras en claro, fantasma tenue en dark (siempre visibles) */
+html[data-theme-name="halloween"] .hd-decor {
+  --hd-sil: rgba(6, 3, 12, 0.9);
+}
+
+html[data-theme-name="halloween"].dark-mode .hd-decor,
+html[data-theme-name="halloween"] body.dark-mode .hd-decor {
+  --hd-sil: rgba(226, 214, 255, 0.17);
+}
+
+html[data-theme-name="halloween"] .hd-decor {
+  pointer-events: none;
+  overflow: hidden;
+}
+
+html[data-theme-name="halloween"] .hd-decor .hd-piece {
+  position: absolute;
+  display: block;
+  pointer-events: none;
+}
+
+html[data-theme-name="halloween"] .hd-decor .hd-piece svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+/* ─── HEADER — telaraña en la esquina superior izquierda + 2 murciélagos.
+       Wrapper acotado y recortado: NO tocamos overflow del header completo
+       (rompería el dropdown del buscador y el mobile-nav-overlay). ─── */
+
+html[data-theme-name="halloween"] .hd-header-decor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: min(560px, 100%);
+  height: 100%;
+  /* sobre la trust bar (z2) y la nav row (z1), bajo chrome externo */
+  z-index: 3;
+  color: var(--hd-sil);
+}
+
+html[data-theme-name="halloween"] .hd-header-decor .hd-h-web {
+  top: 0;
+  left: 0;
+  width: 64px;
+  height: 64px;
+  opacity: 0.4;
+}
+
+html[data-theme-name="halloween"] .hd-header-decor .hd-h-bat {
+  color: var(--hd-sil);
+}
+
+html[data-theme-name="halloween"] .hd-header-decor .hd-h-bat--1 {
+  top: 46px;
+  left: 240px;
+  width: 34px;
+  opacity: 0.4;
+  animation: hdBatFlutter 7s ease-in-out infinite alternate;
+}
+
+html[data-theme-name="halloween"] .hd-header-decor .hd-h-bat--2 {
+  top: 58px;
+  left: 430px;
+  width: 26px;
+  opacity: 0.3;
+  animation: hdBatFlutter 9s ease-in-out infinite alternate-reverse;
+}
+
+/* ─── HERO (landing) — bats DENTRO de los bounds, detrás del texto;
+       calabazas apoyadas en el borde inferior (esquinas), fuera de los CTAs.
+       El gradiente vive DENTRO del wrapper (clippeado al hero): sin vignette
+       global. ─── */
+
+html[data-theme-name="halloween"] .editorial-hero {
+  position: relative;
+}
+
+html[data-theme-name="halloween"] .editorial-hero .landing-container {
+  position: relative;
+  z-index: 1;
+}
+
+html[data-theme-name="halloween"] .hd-hero-decor {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  color: var(--hd-sil);
+  background: radial-gradient(
+    ellipse 78% 68% at 50% 42%,
+    rgba(123, 31, 162, 0) 55%,
+    rgba(123, 31, 162, 0.07) 100%
+  );
+}
+
+html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-bat {
+  color: var(--hd-sil);
+  will-change: transform;
+}
+
+html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-bat--1 {
+  top: 16%;
+  left: 8%;
+  width: 52px;
+  opacity: 0.42;
+  animation: hdBatFly1 16s ease-in-out infinite alternate;
+}
+
+html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-bat--2 {
+  top: 12%;
+  right: 10%;
+  width: 40px;
+  opacity: 0.34;
+  animation: hdBatFly2 19s ease-in-out infinite alternate;
+}
+
+html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-bat--3 {
+  top: 62%;
+  right: 18%;
+  width: 30px;
+  opacity: 0.3;
+  animation: hdBatFly3 13s ease-in-out infinite alternate;
+}
+
+/* Calabazas: cuerpo silueta + cara ámbar con glow (solo dentro del hero) */
+html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-pumpkin {
+  color: var(--hd-sil);
+}
+
+html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-pumpkin .hd-face {
+  filter: drop-shadow(0 0 3px rgba(255, 109, 0, 0.9));
+}
+
+html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-pumpkin::before {
+  content: "";
+  position: absolute;
+  inset: -32%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 109, 0, 0.32) 0%, rgba(255, 109, 0, 0) 65%);
+  pointer-events: none;
+  animation: hdGlow 4.5s ease-in-out infinite alternate;
+}
+
+html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-pumpkin--left {
+  left: 8px;
+  bottom: 4px;
+  width: 68px;
+  opacity: 0.92;
+}
+
+html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-pumpkin--right {
+  right: 8px;
+  bottom: 4px;
+  width: 56px;
+  opacity: 0.85;
+}
+
+/* ─── FOOTER — 1 araña en hilo del borde superior, lateral.
+       Wrapper recortado en la esquina derecha: fuera de las columnas de links. ─── */
+
+html[data-theme-name="halloween"] .gio-footer {
+  position: relative;
+}
+
+html[data-theme-name="halloween"] .hd-footer-decor {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 120px;
+  height: 240px;
+  z-index: 0;
+  color: var(--hd-sil);
+}
+
+html[data-theme-name="halloween"] .hd-footer-decor .hd-footer-spider {
+  top: 0;
+  right: 4px;
+  width: 40px;
+  opacity: 0.5;
+  transform-origin: 50% 0;
+  animation: hdSpiderSway 7s ease-in-out infinite alternate;
+}
+
+/* ─── CARDS — micro-detalle SOLO en hover, SOLO punta fina.
+       Cero presencia táctil/estática: sin hover → opacity 0 (count visible 0).
+       CSS puro (::after data-URI): sin markup en las cards. ─── */
+
+@media (hover: hover) and (pointer: fine) {
+  html[data-theme-name="halloween"] .product-card .product-image-stage::after,
+  html[data-theme-name="halloween"] .gio-product-card-v2 .product-image-stage::after {
+    content: "";
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 54px;
+    height: 54px;
+    background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none' stroke='%2306030c' stroke-linecap='round'><g stroke-width='7'><path d='M0 0L198 28'/><path d='M0 0L178 91'/><path d='M0 0L139 144'/><path d='M0 0L85 181'/><path d='M0 0L21 199'/></g><g stroke-width='4.5'><path d='M50 7Q39 12 45 23Q33 24 35 36Q23 34 21 45Q11 40 5 50'/><path d='M99 14Q78 25 89 45Q66 49 70 72Q46 68 42 91Q22 79 11 100'/><path d='M149 21Q117 37 134 68Q99 73 104 108Q70 101 63 136Q33 119 16 149'/><path d='M198 28Q156 49 178 91Q132 98 139 144Q93 135 85 181Q44 158 21 199'/></g></svg>");
+    background-repeat: no-repeat;
+    background-size: contain;
+    opacity: 0;
+    transition: opacity 0.35s ease;
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  html[data-theme-name="halloween"] .product-card:hover .product-image-stage::after,
+  html[data-theme-name="halloween"] .gio-product-card-v2:hover .product-image-stage::after {
+    opacity: 0.5;
+  }
+}
+
+/* ─── FICHA — telarañita discreta en la esquina del stage de imagen.
+       Contenido al recuadro, máx 60×60, opacidad baja. CSS puro. ─── */
+
+html[data-theme-name="halloween"] .product-main .product-gallery-viewport {
+  position: relative;
+}
+
+html[data-theme-name="halloween"] .product-main .product-gallery-viewport::after {
+  content: "";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 60px;
+  height: 60px;
+  background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' fill='none' stroke='%2306030c' stroke-linecap='round'><g stroke-width='7'><path d='M0 0L198 28'/><path d='M0 0L178 91'/><path d='M0 0L139 144'/><path d='M0 0L85 181'/><path d='M0 0L21 199'/></g><g stroke-width='4.5'><path d='M50 7Q39 12 45 23Q33 24 35 36Q23 34 21 45Q11 40 5 50'/><path d='M99 14Q78 25 89 45Q66 49 70 72Q46 68 42 91Q22 79 11 100'/><path d='M149 21Q117 37 134 68Q99 73 104 108Q70 101 63 136Q33 119 16 149'/><path d='M198 28Q156 49 178 91Q132 98 139 144Q93 135 85 181Q44 158 21 199'/></g></svg>");
+  background-repeat: no-repeat;
+  background-size: contain;
+  opacity: 0.38;
+  pointer-events: none;
+  z-index: 3;
+}
+
+/* ─── Keyframes ─── */
+
+@keyframes hdBatFlutter {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-5deg);
+  }
+  to {
+    transform: translate3d(-14px, 6px, 0) rotate(6deg);
+  }
+}
+
+@keyframes hdBatFly1 {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-6deg);
+  }
+  to {
+    transform: translate3d(46px, -16px, 0) rotate(7deg);
+  }
+}
+
+@keyframes hdBatFly2 {
+  from {
+    transform: translate3d(0, 0, 0) rotate(5deg);
+  }
+  to {
+    transform: translate3d(-40px, 14px, 0) rotate(-6deg);
+  }
+}
+
+@keyframes hdBatFly3 {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-4deg);
+  }
+  to {
+    transform: translate3d(30px, 18px, 0) rotate(6deg);
+  }
+}
+
+@keyframes hdSpiderSway {
+  from {
+    transform: rotate(-3.5deg);
+  }
+  to {
+    transform: rotate(3.5deg);
+  }
+}
+
+@keyframes hdGlow {
+  from {
+    opacity: 0.45;
+  }
+  to {
+    opacity: 0.95;
+  }
+}
+
+/* Reduced motion: siluetas estáticas (se ven, no se mueven) */
+@media (prefers-reduced-motion: reduce) {
+  html[data-theme-name="halloween"] .hd-decor .hd-piece,
+  html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-pumpkin::before {
+    animation: none !important;
+  }
+}
+
+/* Mobile: piezas más chicas, sin pisar brand/actions/chips */
+@media (max-width: 768px) {
+  html[data-theme-name="halloween"] .hd-header-decor .hd-h-web {
+    width: 36px;
+    height: 36px;
+  }
+
+  html[data-theme-name="halloween"] .hd-header-decor .hd-h-bat--1 {
+    top: 44px;
+    left: 96px;
+    width: 24px;
+  }
+
+  html[data-theme-name="halloween"] .hd-header-decor .hd-h-bat--2 {
+    top: 54px;
+    left: 170px;
+    width: 18px;
+  }
+
+  html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-bat--1 {
+    top: 16%;
+    left: 8%;
+    width: 36px;
+  }
+
+  html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-bat--2 {
+    top: 12%;
+    right: 8%;
+    width: 28px;
+  }
+
+  html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-bat--3 {
+    top: 66%;
+    right: auto;
+    left: 6%;
+    width: 24px;
+  }
+
+  html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-pumpkin--left {
+    left: 2px;
+    bottom: 4px;
+    width: 56px;
+  }
+
+  html[data-theme-name="halloween"] .hd-hero-decor .hd-hero-pumpkin--right {
+    right: 2px;
+    bottom: 4px;
+    width: 52px;
+  }
+
+  html[data-theme-name="halloween"] .hd-footer-decor {
+    width: 72px;
+    height: 180px;
+  }
+
+  html[data-theme-name="halloween"] .hd-footer-decor .hd-footer-spider {
+    right: 2px;
+    width: 34px;
+  }
+}
+
 /* ============================================================
    🏷️ BLACK FRIDAY – ULTRA-CLEAN GOLD & DARK ELEGANCE
    ============================================================ */
